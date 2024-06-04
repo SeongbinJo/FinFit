@@ -12,19 +12,25 @@ class HomeViewController: UIViewController {
     private var addTransactionButton: UIButton = UIButton(type: .system)
     private var titleHStackView: UIStackView = UIStackView()
     
+    private var yearMonthButtonLabel: UILabel = {
+        let label = UILabel()
+        label.text = "yyyy년 M월"
+        return label
+    }()
     private var changeMonthButton: UIButton = UIButton(type: .system)
     
     private var weekDayOfStackView: UIStackView = UIStackView()
     private var calendarCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private var calendarView: UIView = UIView()
     
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
         CalendarManager.manager.configureCalendar()
-        CalendarManager.manager.initializeDays()
+        CalendarManager.manager.updateDays()
+        CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
         
         setupTitleHStackView()
         setupchangeMonthButton()
@@ -33,25 +39,31 @@ class HomeViewController: UIViewController {
     }
     
     func setupTitleHStackView() {
+        let currentSpendingAmountLabel = UILabel()
         let dummyTitleAmount = UILabel()
-        dummyTitleAmount.text = "100,000"
-        currentSpendingAmountLabel.text = "이번달 소비금액은 \(dummyTitleAmount.text!)원 입니다."
+        dummyTitleAmount.text = "100,000,000"
+        
+        currentSpendingAmountLabel.text = "이번달 소비금액은\n\(dummyTitleAmount.text!)원 입니다."
         currentSpendingAmountLabel.font = UIFont.systemFont(ofSize: 24)
-        currentSpendingAmountLabel.numberOfLines = 2
+        currentSpendingAmountLabel.numberOfLines = 0
         currentSpendingAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         currentSpendingAmountLabel.backgroundColor = .red
-        currentSpendingAmountLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        
         
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         addTransactionButton.setTitle("내역추가", for: .normal)
         addTransactionButton.configuration = config
+        addTransactionButton.addAction(UIAction {_ in
+            print("hi")
+        }, for: .touchUpInside)
+        addTransactionButton.setContentHuggingPriority(.required, for: .horizontal)
+
         addTransactionButton.translatesAutoresizingMaskIntoConstraints = false
-        addTransactionButton.backgroundColor = . blue
-        currentSpendingAmountLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        addTransactionButton.backgroundColor = .blue
         
         titleHStackView.axis = .horizontal
-        titleHStackView.distribution = .equalCentering
+        titleHStackView.distribution = .fill
         titleHStackView.alignment = .top
         titleHStackView.addArrangedSubview(currentSpendingAmountLabel)
         titleHStackView.addArrangedSubview(addTransactionButton)
@@ -67,6 +79,7 @@ class HomeViewController: UIViewController {
         ])
     }
     
+    
     func setupchangeMonthButton() {
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
@@ -74,9 +87,8 @@ class HomeViewController: UIViewController {
         config.imagePadding = 5
         
         var container = AttributeContainer()
-        let title = "2024년 6월"
         container.font = UIFont.systemFont(ofSize: 20, weight: .light)
-        config.attributedTitle = AttributedString(title, attributes: container)
+        config.attributedTitle = AttributedString(yearMonthButtonLabel.text ?? "정보없음", attributes: container)
         
         changeMonthButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         changeMonthButton.configuration = config
@@ -87,11 +99,11 @@ class HomeViewController: UIViewController {
         view.addSubview(changeMonthButton)
         
         NSLayoutConstraint.activate([
-            changeMonthButton.topAnchor.constraint(equalTo: titleHStackView.bottomAnchor, constant: 20),
+            changeMonthButton.topAnchor.constraint(equalTo: titleHStackView.bottomAnchor, constant: 25),
             changeMonthButton.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
         ])
     }
-
+    
     func setupWeekDayOfStackView() {
         weekDayOfStackView.axis = .horizontal
         weekDayOfStackView.distribution = .fillEqually
@@ -156,7 +168,7 @@ class HomeViewController: UIViewController {
             calendarView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
         ])
     }
-
+    
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

@@ -38,7 +38,7 @@ class CalendarManager {
     }
     
     // 달의 1일이 무슨 요일인지 파악 후, 달력의 날짜 요소들을 days에 업데이트
-    func initializeDays() {
+    func updateDays() {
         self.days.removeAll()
         let weekOfFirstDay = self.weekOfFirstDay() // 1일이 무슨 요일인지?
         let countOfDay = self.countDayInMonth() // 이 달은 며칠인지?
@@ -63,5 +63,11 @@ class CalendarManager {
     // days 전체를 반환
     func getDays() -> [String] {
         return self.days
+    }
+    
+    // HomeView의 changeMonthButton의 text를 업데이트
+    func updateYearMonthLabel(label: UILabel) {
+        let currentYearMonthString = self.dateFormatter.string(from: self.calendarDate)
+        label.text = currentYearMonthString
     }
 }
