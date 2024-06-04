@@ -11,9 +11,8 @@ import DGCharts //그래프를 그리기 위한 라이브러리
 class ReportViewController: UIViewController {
     //MARK: - property
     //그래프 작성을 위한 임시 데이터
-    let categories: [String] = ["카페", "음식점", "주유소", "주차장"]
-    let priceData: [Double] = [5000, 8000, 30000, 1500]
-    
+    let categories: [String] = ["카페", "음식점", "게임칩", "주차장", "쇼핑", "키보드", "냉장고", "컴퓨터", "모니터", "집"]
+    let priceData: [Double] = [5000, 8000, 30000, 1500, 40000, 130000, 700000, 2000000, 340000, 10000000000000]
     
     //MARK: - 1. Stack(지출금액이름, 지출금액)
     //지출금액이름
@@ -43,6 +42,25 @@ class ReportViewController: UIViewController {
         stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
+    }()
+    
+    //MARK: - ScrollView(그래프 카테고리 Legend)
+    //legend를 담을 StackView
+    private lazy var legendStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    //ScrollView(그래프 카테고리 Legend)
+    private lazy var legendScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(legendStackView)
+        return scrollView
     }()
     
     //MARK: - 2. Stack(stack(지출금액이름, 지출금액), 그래프)
@@ -75,7 +93,6 @@ class ReportViewController: UIViewController {
         
         //그래프를 그려주는 함수 실행
         setBarData(barChartView: view, barChartDataEntries: entryData(values: priceData)) //금액을 기준으로 그래프를 만들기 때문에 금액변수를 넘긴다.
-        
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -117,11 +134,14 @@ class ReportViewController: UIViewController {
 //        view.addSubview(spendingAmountNameLabel) //view에 지출금액이름 label 추가
 //        view.addSubview(spendingAmountLabel) //view에 지출금액 label 추가
         view.addSubview(spendindUIView)
+        view.addSubview(legendScrollView)
+        setupLegendScrollView(labels: categories)
         
         //오토레이아웃 설정
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             
+            //MARK: - 상단 Report
             //stackView를 담는 UIView
             spendindUIView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
             spendindUIView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
@@ -153,6 +173,22 @@ class ReportViewController: UIViewController {
             spendingReport.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor, constant: -10),
             spendingReport.widthAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, constant: -20),
             spendingReport.heightAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, multiplier: 0.6),
+            
+            //MARK: - 중간 카테고리 스크롤
+            //legend 스크롤
+            legendScrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
+            legendScrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
+            legendScrollView.topAnchor.constraint(equalTo: spendindUIView.bottomAnchor, constant: 10),
+            legendScrollView.widthAnchor.constraint(equalTo: safeArea.widthAnchor, constant: -20),
+            legendScrollView.heightAnchor.constraint(equalToConstant: 40),
+            
+            //legend 스택
+            legendStackView.leadingAnchor.constraint(equalTo: legendScrollView.leadingAnchor),
+            legendStackView.trailingAnchor.constraint(equalTo: legendScrollView.trailingAnchor),
+            legendStackView.topAnchor.constraint(equalTo: legendScrollView.topAnchor),
+            legendStackView.bottomAnchor.constraint(equalTo: legendScrollView.bottomAnchor),
+            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor)
+
         ])
     }
     
@@ -182,6 +218,40 @@ class ReportViewController: UIViewController {
         return barDataEntries
     }
 
+    //그래프의 legend를 스크롤로 생성하는 함수
+    private func setupLegendScrollView(labels: [String]){
+        for label in labels{
+            //모양
+            let capsuleView = UIView()
+            capsuleView.backgroundColor = .systemPink
+            capsuleView.layer.cornerRadius = 20
+            capsuleView.layer.masksToBounds = true
+            capsuleView.translatesAutoresizingMaskIntoConstraints = false
+            
+            //텍스트
+            let labelView = UILabel()
+            labelView.text = label
+            labelView.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            labelView.textAlignment = .center
+            labelView.textColor = .white
+            labelView.translatesAutoresizingMaskIntoConstraints = false
+            
+            capsuleView.addSubview(labelView)
+            legendStackView.addArrangedSubview(capsuleView)
+            
+            NSLayoutConstraint.activate([
+                //캡슐뷰
+                capsuleView.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
+
+                //라벨뷰
+                labelView.leadingAnchor.constraint(equalTo: capsuleView.leadingAnchor, constant: 8),
+                labelView.trailingAnchor.constraint(equalTo: capsuleView.trailingAnchor, constant: -8),
+                labelView.topAnchor.constraint(equalTo: capsuleView.topAnchor),
+                labelView.bottomAnchor.constraint(equalTo: capsuleView.bottomAnchor)
+            ])
+        }
+    }
+    
     /*
     // MARK: - Navigation
 
