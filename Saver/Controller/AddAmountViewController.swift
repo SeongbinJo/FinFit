@@ -117,8 +117,12 @@ class AddAmountViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save,
                                                             target: self,
-                                                            action: .none)
-        // TODO: - 뒤로가기 추가 필요(dismis..?)
+                                                            action: #selector(save))
+        
+        // 버튼 모양 화살표로 바꾸고 싶음
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
+                                                           target: self,
+                                                           action: #selector(cancle))
         
         
         // MARK: - 뷰 붙이기
@@ -151,7 +155,15 @@ class AddAmountViewController: UIViewController {
     
     // MARK: - 메소드
     // TODO: - 거래 내역 저장 메소드
+    @objc func save() {
+        
+    }
     
-    // TODO: - 키보드 올라가면 화면 올라가는 메소드(봐서 겹치면)
+    @objc func cancle() {
+        dismiss(animated: true)
+    }
+    
+    // TODO: - 시간나면: 키보드 올라가면 화면 올라가는 메소드(봐서 겹치면)
+    // TODO: - 시간나면: 아무 곳이나 탭하면 키보드 내려가는 메소드
 
 }
