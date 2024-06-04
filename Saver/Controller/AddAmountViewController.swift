@@ -35,14 +35,14 @@ class AddAmountViewController: UIViewController {
         stackView.distribution = .fill
         stackView.spacing = 20
         
-        let dateTitle = UILabel()
-        dateTitle.text = "거래 날짜"
-        dateTitle.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        let title = UILabel()
+        title.text = "거래 날짜"
+        title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         
         let dateSelector = UIStackView()
         // TODO: - 옆으로 넘기는 달력 추가
         
-        stackView.addArrangedSubview(dateTitle)
+        stackView.addArrangedSubview(title)
         stackView.addArrangedSubview(dateSelector)
         
         return stackView
@@ -53,17 +53,57 @@ class AddAmountViewController: UIViewController {
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.distribution = .fill
-        stackView.spacing = 10
+        stackView.spacing = 18
         
-        let transactionDetailTitle = UILabel()
-        transactionDetailTitle.text = "거래 내역"
-        transactionDetailTitle.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        let tiitle = UILabel()
+        tiitle.text = "거래 내역"
+        tiitle.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         
-        let transactionDetailTextField = UITextField()
-        transactionDetailTextField.placeholder = "거래 내역을 입력해주세요."
+        let textField = UITextField()
+        textField.placeholder = "거래 내역을 입력해주세요."
         
-        stackView.addArrangedSubview(transactionDetailTitle)
-        stackView.addArrangedSubview(transactionDetailTextField)
+        stackView.addArrangedSubview(tiitle)
+        stackView.addArrangedSubview(textField)
+        
+        return stackView
+    }()
+    
+    private lazy var transactionAmount: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.distribution = .fill
+        stackView.spacing = 18
+        
+        let title = UILabel()
+        title.text = "거래 금액"
+        title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        
+        let textField = UITextField()
+        textField.placeholder = "거래 금액을 입려해주세요."
+        
+        // TODO: - 숫자 키보드만 나오도록
+        
+        stackView.addArrangedSubview(title)
+        stackView.addArrangedSubview(textField)
+        
+        return stackView
+    }()
+    
+    private lazy var transactionCategory: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.distribution = .fill
+        stackView.spacing = 18
+        
+        let title = UILabel()
+        title.text = "거래 카테고리"
+        title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        
+        // TODO: - 카테고리 목록 만들기
+        
+        stackView.addArrangedSubview(title)
         
         return stackView
     }()
@@ -77,12 +117,15 @@ class AddAmountViewController: UIViewController {
                                                             action: .none)
         // TODO: - 뒤로가기 추가 필요(dismis..?)
         
+        
         // MARK: - 뷰 붙이기
         view.addSubview(self.mainContainer)
         
         mainContainer.addArrangedSubview(titleView)
         mainContainer.addArrangedSubview(dateView)
         mainContainer.addArrangedSubview(transactionDetailView)
+        mainContainer.addArrangedSubview(transactionAmount)
+        mainContainer.addArrangedSubview(transactionCategory)
         
         
         // MARK: - 뷰 위치 잡기
@@ -90,6 +133,8 @@ class AddAmountViewController: UIViewController {
         titleView.translatesAutoresizingMaskIntoConstraints = false
         dateView.translatesAutoresizingMaskIntoConstraints = false
         transactionDetailView.translatesAutoresizingMaskIntoConstraints = false
+        transactionAmount.translatesAutoresizingMaskIntoConstraints = false
+        transactionCategory.translatesAutoresizingMaskIntoConstraints = false
         
         let safeArea = view.safeAreaLayoutGuide
         
@@ -100,7 +145,8 @@ class AddAmountViewController: UIViewController {
         ])
     }
     
-
     
+    // MARK: - 메소드
+    // TODO: - 거래 내역 저장 메소드
 
 }
