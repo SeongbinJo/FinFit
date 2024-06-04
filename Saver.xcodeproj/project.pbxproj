@@ -12,6 +12,7 @@
 		7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953E8062C0D508C0095AC36 /* HomeViewController.swift */; };
 		7953E80C2C0D508F0095AC36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7953E80B2C0D508F0095AC36 /* Assets.xcassets */; };
 		7953E80F2C0D508F0095AC36 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 7953E80E2C0D508F0095AC36 /* Base */; };
+		79C945502C0F470F0027170F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 79C9454F2C0F470F0027170F /* DGCharts */; };
 		79FE80842C0D9A5800517428 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80832C0D9A5800517428 /* DataModel.swift */; };
 		79FE80862C0D9FA600517428 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80852C0D9FA600517428 /* DataController.swift */; };
 		79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80882C0DA4A700517428 /* ReportViewController.swift */; };
@@ -35,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79C945502C0F470F0027170F /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +107,9 @@
 			dependencies = (
 			);
 			name = Saver;
+			packageProductDependencies = (
+				79C9454F2C0F470F0027170F /* DGCharts */,
+			);
 			productName = Saver;
 			productReference = 7953E7FF2C0D508C0095AC36 /* Saver.app */;
 			productType = "com.apple.product-type.application";
@@ -133,6 +138,9 @@
 				Base,
 			);
 			mainGroup = 7953E7F62C0D508C0095AC36;
+			packageReferences = (
+				79C9454E2C0F470F0027170F /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			productRefGroup = 7953E8002C0D508C0095AC36 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -375,6 +383,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		79C9454E2C0F470F0027170F /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		79C9454F2C0F470F0027170F /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79C9454E2C0F470F0027170F /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7953E7F72C0D508C0095AC36 /* Project object */;
 }

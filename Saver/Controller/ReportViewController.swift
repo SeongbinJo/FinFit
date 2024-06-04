@@ -41,6 +41,13 @@ class ReportViewController: UIViewController {
         return stackView
     }()
     
+    //MARK: - 지출금액 그래프
+    private lazy var spendingReport: UIView = {
+       let view = UIView()
+        
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
