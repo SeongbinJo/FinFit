@@ -92,6 +92,13 @@ class HomeViewController: UIViewController {
         
         changeMonthButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         changeMonthButton.configuration = config
+        changeMonthButton.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            let VC = CalendarPopUpViewController(nibName: nil, bundle: nil)
+            VC.modalPresentationStyle = .overFullScreen
+            present(VC, animated: false)
+        }, for: .touchUpInside)
+        
         changeMonthButton.translatesAutoresizingMaskIntoConstraints = false
         
         changeMonthButton.backgroundColor = .yellow
@@ -103,6 +110,7 @@ class HomeViewController: UIViewController {
             changeMonthButton.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
         ])
     }
+    
     
     func setupWeekDayOfStackView() {
         weekDayOfStackView.axis = .horizontal
@@ -144,7 +152,7 @@ class HomeViewController: UIViewController {
     func setupCalendarView() {
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
-        calendarCollectionView.register(CalendarCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        calendarCollectionView.register(CalendarCollectionViewCell.self, forCellWithReuseIdentifier: "CalendarCell")
         calendarCollectionView.translatesAutoresizingMaskIntoConstraints = false
         calendarCollectionView.backgroundColor = .lightGray
         
@@ -169,6 +177,7 @@ class HomeViewController: UIViewController {
         ])
     }
     
+    
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -186,7 +195,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CalendarCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
         let days = CalendarManager.manager.getDays()
         cell.configureCell(day: days[indexPath.row])
         return cell
