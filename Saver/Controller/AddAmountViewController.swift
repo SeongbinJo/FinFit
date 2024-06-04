@@ -20,6 +20,8 @@ class AddAmountViewController: UIViewController {
         return stackView
     }()
     
+    // TODO: - 지출/수입 버튼 추가
+    
     private lazy var titleView: UILabel = {
         let titleView = UILabel()
         titleView.text = "소비 내역 추가"
@@ -39,8 +41,10 @@ class AddAmountViewController: UIViewController {
         title.text = "거래 날짜"
         title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         
-        let dateSelector = UIStackView()
-        // TODO: - 옆으로 넘기는 달력 추가
+        let dateSelector = UIDatePicker()
+        dateSelector.datePickerMode = .date
+        dateSelector.locale = Locale(identifier: "ko_kr")
+        dateSelector.preferredDatePickerStyle = .wheels
         
         stackView.addArrangedSubview(title)
         stackView.addArrangedSubview(dateSelector)
@@ -53,7 +57,7 @@ class AddAmountViewController: UIViewController {
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.distribution = .fill
-        stackView.spacing = 18
+        stackView.spacing = 10
         
         let tiitle = UILabel()
         tiitle.text = "거래 내역"
@@ -73,7 +77,7 @@ class AddAmountViewController: UIViewController {
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.distribution = .fill
-        stackView.spacing = 18
+        stackView.spacing = 10
         
         let title = UILabel()
         title.text = "거래 금액"
@@ -81,8 +85,7 @@ class AddAmountViewController: UIViewController {
         
         let textField = UITextField()
         textField.placeholder = "거래 금액을 입려해주세요."
-        
-        // TODO: - 숫자 키보드만 나오도록
+        textField.keyboardType = .numberPad
         
         stackView.addArrangedSubview(title)
         stackView.addArrangedSubview(textField)
@@ -95,13 +98,13 @@ class AddAmountViewController: UIViewController {
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.distribution = .fill
-        stackView.spacing = 18
+        stackView.spacing = 10
         
         let title = UILabel()
         title.text = "거래 카테고리"
         title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         
-        // TODO: - 카테고리 목록 만들기
+        // TODO: - 카테고리 목록 만들기(어디서 어떻게 받아오지..?)
         
         stackView.addArrangedSubview(title)
         
@@ -148,5 +151,7 @@ class AddAmountViewController: UIViewController {
     
     // MARK: - 메소드
     // TODO: - 거래 내역 저장 메소드
+    
+    // TODO: - 키보드 올라가면 화면 올라가는 메소드(봐서 겹치면)
 
 }
