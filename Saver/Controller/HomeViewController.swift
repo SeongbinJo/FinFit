@@ -28,7 +28,7 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        CalendarManager.manager.configureCalendar()
+        CalendarManager.manager.configureCalendar(date: Date())
         CalendarManager.manager.updateDays()
         CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
         
@@ -90,7 +90,7 @@ class HomeViewController: UIViewController {
         container.font = UIFont.systemFont(ofSize: 20, weight: .light)
         config.attributedTitle = AttributedString(yearMonthButtonLabel.text ?? "정보없음", attributes: container)
         
-        changeMonthButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        changeMonthButton.setImage(UIImage(systemName: "calendar"), for: .normal)
         changeMonthButton.configuration = config
         changeMonthButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }

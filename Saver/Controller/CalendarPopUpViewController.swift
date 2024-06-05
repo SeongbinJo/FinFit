@@ -15,6 +15,8 @@ class MonthCollectionVieCell: UICollectionViewCell {
         monthLabel.font = UIFont.systemFont(ofSize: 13, weight: .light)
         monthLabel.translatesAutoresizingMaskIntoConstraints = false
         
+        contentView.layer.cornerRadius = 5
+        contentView.layer.borderWidth = 0.5
         contentView.backgroundColor = .red
         contentView.addSubview(monthLabel)
         
@@ -26,24 +28,65 @@ class MonthCollectionVieCell: UICollectionViewCell {
 }
 
 class CalendarPopUpViewController: UIViewController {
+    private let calendar: Calendar = Calendar.current
+    private let dateFormatter: DateFormatter = DateFormatter()
+    private var currentMonth: Date = Date()
+    
     private var backgroundView: UIView = UIView()
     private var yearLabel: UILabel = UILabel()
     private var cancelButton: UIButton = UIButton(type: .system)
+    private var prevButton: UIButton = UIButton(type: .system)
+    private var nextButton: UIButton = UIButton(type: .system)
+    private var hStackView: UIStackView = UIStackView()
     private var monthCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-
+        
+        dateFormatter.dateFormat = "yyyy년"
+        
         setupBackgroundView()
     }
 
+    
+    //MARK: - backgroundView 설정
     func setupBackgroundView() {
+        // backgroundView
         backgroundView.backgroundColor = .green
         backgroundView.layer.cornerRadius = 10
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        yearLabel.text = "2024년"
-        yearLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        // yearLabel.text의 초기화
+        yearLabel.text = self.dateFormatter.string(from: self.currentMonth )
+        
+        // 이전년도 버튼
+        prevButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        prevButton.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            self.currentMonth = self.calendar.date(byAdding: DateComponents(year: -1), to: self.currentMonth) ?? Date()
+            yearLabel.text = self.dateFormatter.string(from: self.currentMonth)
+        }, for: .touchUpInside)
+        
+        // 다음년도 버튼
+        nextButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
+        nextButton.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            self.currentMonth = self.calendar.date(byAdding: DateComponents(year: 1), to: self.currentMonth) ?? Date()
+            yearLabel.text = self.dateFormatter.string(from: self.currentMonth)
+        }, for: .touchUpInside)
+        
+        //hStackView 설정
+        hStackView.axis = .horizontal
+        hStackView.distribution = .fillEqually
+        hStackView.alignment = .center
+        
+        hStackView.addArrangedSubview(prevButton)
+        hStackView.addArrangedSubview(yearLabel)
+        hStackView.addArrangedSubview(nextButton)
+        
+        hStackView.translatesAutoresizingMaskIntoConstraints = false
+        
         
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
@@ -62,20 +105,20 @@ class CalendarPopUpViewController: UIViewController {
         monthCollectionView.translatesAutoresizingMaskIntoConstraints = false
         monthCollectionView.backgroundColor = .lightGray
         
-        backgroundView.addSubview(yearLabel)
+        backgroundView.addSubview(hStackView)
         backgroundView.addSubview(cancelButton)
         backgroundView.addSubview(monthCollectionView)
         
         view.addSubview(backgroundView)
         
         NSLayoutConstraint.activate([
-            yearLabel.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
-            yearLabel.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
+            hStackView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 15),
+            hStackView.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
             
             cancelButton.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 10),
             cancelButton.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 10),
             
-            monthCollectionView.topAnchor.constraint(equalTo: yearLabel.bottomAnchor, constant: 5),
+            monthCollectionView.topAnchor.constraint(equalTo: hStackView.bottomAnchor, constant: 10),
             monthCollectionView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 10),
             monthCollectionView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -10),
             monthCollectionView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -10),
@@ -88,6 +131,7 @@ class CalendarPopUpViewController: UIViewController {
     }
 }
 
+//MARK: - UICollectionView extension
 extension CalendarPopUpViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return .zero // 열 간의 간격을 0으로 설정
@@ -109,6 +153,7 @@ extension CalendarPopUpViewController: UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MonthCell", for: indexPath)
         
     }
 }

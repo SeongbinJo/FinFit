@@ -20,8 +20,8 @@ class CalendarManager {
     }
     
     // 달력 초기화
-    func configureCalendar() {
-        let components = self.calendar.dateComponents([.year, .month], from: Date())
+    func configureCalendar(date: Date) {
+        let components = self.calendar.dateComponents([.year, .month], from: date)
         self.calendarDate = self.calendar.date(from: components) ?? Date()
     }
     
