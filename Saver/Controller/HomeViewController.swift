@@ -8,6 +8,8 @@
 import UIKit
 
 class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
+    private var scrollView: UIScrollView = UIScrollView()
+    
     private var currentSpendingAmountLabel: UILabel = UILabel()
     private var addTransactionButton: UIButton = UIButton(type: .system)
     private var titleHStackView: UIStackView = UIStackView()
@@ -24,6 +26,9 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     private var calendarCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private var calendarView: UIView = UIView()
     
+    private var currentDayTitle: UILabel = UILabel()
+    private var transactionTableView: UITableView = UITableView(frame: .zero, style: .plain)
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,15 +37,34 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         CalendarManager.manager.configureCalendar(date: Date())
         CalendarManager.manager.updateDays()
         CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
-        
+
+        setupScrollView()
         setupTitleHStackView()
         setupchangeMonthButton()
         setupWeekDayOfStackView()
         setupCalendarView()
         setupPrevNextMonthStackView()
+        setupTransactionTableView()
+
     }
     
     //MARK: - View 관련 Setup
+    //MARK: - 스크롤 뷰
+    func setupScrollView() {
+        scrollView.backgroundColor = .blue
+
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+    
+        view.addSubview(scrollView)
+        
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+    }
+    
     //MARK: - 소비금액 타이틀 & 내역추가 버튼
     func setupTitleHStackView() {
         let currentSpendingAmountLabel = UILabel()
@@ -65,7 +89,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
 
         addTransactionButton.translatesAutoresizingMaskIntoConstraints = false
         addTransactionButton.backgroundColor = .blue
-        
+
         titleHStackView.axis = .horizontal
         titleHStackView.distribution = .fill
         titleHStackView.alignment = .top
@@ -74,12 +98,12 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         titleHStackView.translatesAutoresizingMaskIntoConstraints = false
         titleHStackView.backgroundColor = .yellow
         
-        view.addSubview(titleHStackView)
+        scrollView.addSubview(titleHStackView)
         
         NSLayoutConstraint.activate([
-            titleHStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            titleHStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            titleHStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            titleHStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            titleHStackView.leadingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.leadingAnchor, constant: 20),
+            titleHStackView.trailingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.trailingAnchor, constant: -20),
         ])
     }
     
@@ -114,7 +138,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         
         changeMonthButton.backgroundColor = .yellow
         
-        view.addSubview(changeMonthButton)
+        scrollView.addSubview(changeMonthButton)
         
         NSLayoutConstraint.activate([
             changeMonthButton.topAnchor.constraint(equalTo: titleHStackView.bottomAnchor, constant: 25),
@@ -163,7 +187,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         
         prevNextButtonStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(prevNextButtonStackView)
+        scrollView.addSubview(prevNextButtonStackView)
         
         NSLayoutConstraint.activate([
             prevNextButtonStackView.topAnchor.constraint(equalTo: changeMonthButton.topAnchor),
@@ -228,13 +252,37 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             calendarCollectionView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor)
         ])
         
-        view.addSubview(calendarView)
+        scrollView.addSubview(calendarView)
         
         NSLayoutConstraint.activate([
             calendarView.topAnchor.constraint(equalTo: changeMonthButton.bottomAnchor, constant: 15),
             calendarView.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
             calendarView.trailingAnchor.constraint(equalTo: titleHStackView.trailingAnchor),
             calendarView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
+        ])
+    }
+    
+    //MARK: - 날짜별 Transaction 테이블 뷰
+    func setupTransactionTableView() {
+        currentDayTitle.text = "dd일 요일"
+        currentDayTitle.backgroundColor = .brown
+        currentDayTitle.translatesAutoresizingMaskIntoConstraints = false
+        
+        transactionTableView.delegate = self
+        transactionTableView.dataSource = self
+        transactionTableView.register(UITableViewCell.self, forCellReuseIdentifier: "TransactionCell")
+        transactionTableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        transactionTableView.backgroundColor = .lightGray
+        
+        view.addSubview(currentDayTitle)
+        view.addSubview(transactionTableView)
+        
+        NSLayoutConstraint.activate([
+            currentDayTitle.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: 15),
+            currentDayTitle.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
+            currentDayTitle.heightAnchor.constraint(equalToConstant: 400)
+            
         ])
     }
     
@@ -272,6 +320,20 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
         let days = CalendarManager.manager.getDays()
         cell.configureCell(day: days[indexPath.row])
+        return cell
+    }
+    
+    
+}
+
+
+extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        10
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath)
         return cell
     }
     
