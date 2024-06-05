@@ -38,8 +38,8 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         CalendarManager.manager.updateDays()
         CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
 
-        setupScrollView()
         setupTitleHStackView()
+        setupScrollView()
         setupchangeMonthButton()
         setupWeekDayOfStackView()
         setupCalendarView()
@@ -51,13 +51,13 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     //MARK: - View 관련 Setup
     //MARK: - 스크롤 뷰
     func setupScrollView() {
-        scrollView.backgroundColor = .blue
+//        scrollView.backgroundColor = .blue
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(scrollView)
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: titleHStackView.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -97,12 +97,12 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         titleHStackView.translatesAutoresizingMaskIntoConstraints = false
         titleHStackView.backgroundColor = .yellow
         
-        scrollView.addSubview(titleHStackView)
+        view.addSubview(titleHStackView)
         
         NSLayoutConstraint.activate([
-            titleHStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            titleHStackView.leadingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.leadingAnchor, constant: 20),
-            titleHStackView.trailingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.trailingAnchor, constant: -20),
+            titleHStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            titleHStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            titleHStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
     
@@ -140,7 +140,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         scrollView.addSubview(changeMonthButton)
         
         NSLayoutConstraint.activate([
-            changeMonthButton.topAnchor.constraint(equalTo: titleHStackView.bottomAnchor, constant: 25),
+            changeMonthButton.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 10),
             changeMonthButton.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
         ])
     }
@@ -280,9 +280,12 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         NSLayoutConstraint.activate([
             currentDayTitle.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: 15),
             currentDayTitle.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
-            currentDayTitle.heightAnchor.constraint(equalToConstant: 400),
-            currentDayTitle.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
             
+            transactionTableView.topAnchor.constraint(equalTo: currentDayTitle.bottomAnchor, constant: 10),
+            transactionTableView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
+            transactionTableView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
+            transactionTableView.heightAnchor.constraint(equalToConstant: 500),
+            transactionTableView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
     }
     
@@ -309,7 +312,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = self.calendarView.frame.width / 7
-        return CGSize(width: width, height: width * 1)
+        return CGSize(width: width, height: width)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -319,11 +322,24 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
         let days = CalendarManager.manager.getDays()
+        let cellSize = self.calendarView.frame.width / 7
+//        if days.count <= 35 {
+//            NSLayoutConstraint.activate([
+//                self.calendarCollectionView.heightAnchor.constraint(equalToConstant: cellSize * 5)
+//            ])
+//        }else if days.count > 35 {
+//            NSLayoutConstraint.activate([
+//                self.calendarCollectionView.heightAnchor.constraint(equalToConstant: cellSize * 6)
+//            ])
+//        }
         cell.configureCell(day: days[indexPath.row])
         return cell
     }
     
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath)
+        print(indexPath.row)
+    }
 }
 
 
