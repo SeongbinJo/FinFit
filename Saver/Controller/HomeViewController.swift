@@ -52,9 +52,8 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     //MARK: - 스크롤 뷰
     func setupScrollView() {
         scrollView.backgroundColor = .blue
-
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-    
+        
         view.addSubview(scrollView)
         
         NSLayoutConstraint.activate([
@@ -258,7 +257,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             calendarView.topAnchor.constraint(equalTo: changeMonthButton.bottomAnchor, constant: 15),
             calendarView.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
             calendarView.trailingAnchor.constraint(equalTo: titleHStackView.trailingAnchor),
-            calendarView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
+            calendarView.heightAnchor.constraint(greaterThanOrEqualToConstant: 420)
         ])
     }
     
@@ -275,13 +274,14 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         
         transactionTableView.backgroundColor = .lightGray
         
-        view.addSubview(currentDayTitle)
-        view.addSubview(transactionTableView)
+        scrollView.addSubview(currentDayTitle)
+        scrollView.addSubview(transactionTableView)
         
         NSLayoutConstraint.activate([
             currentDayTitle.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: 15),
             currentDayTitle.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
-            currentDayTitle.heightAnchor.constraint(equalToConstant: 400)
+            currentDayTitle.heightAnchor.constraint(equalToConstant: 400),
+            currentDayTitle.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
             
         ])
     }
