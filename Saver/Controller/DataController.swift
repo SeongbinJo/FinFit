@@ -16,7 +16,6 @@ class DBController {
     var container: ModelContainer? //바탕화면, 옵셔널로 선언
     var context: ModelContext? //폴더, 옵셔널로 선언
     
-    
     init() {
         do{
             //container 생성자 -> 컨테이너 만들건데 형식은 DataModelType인 나 자신의 형식으로 만들어줘!
@@ -79,8 +78,6 @@ class DBController {
              **/
         }
     }
-   
-    
     
     //update data
     //데이터 수정하기

@@ -11,8 +11,11 @@ import DGCharts //그래프를 그리기 위한 라이브러리
 class ReportViewController: UIViewController {
     //MARK: - property
     //그래프 작성을 위한 임시 데이터
-    let categories: [String] = ["카페", "음식점", "게임칩", "주차장", "쇼핑", "키보드", "냉장고", "컴퓨터", "모니터", "집"]
-    let priceData: [Double] = [5000, 8000, 30000, 1500, 40000, 130000, 700000, 2000000, 340000, 10000000000]
+//    let categories: [String] = ["카페", "음식점", "게임칩", "주차장", "쇼핑", "키보드", "냉장고", "컴퓨터", "모니터", "집"]
+//    let priceData: [Double] = [5000, 8000, 30000, 1500, 40000, 130000, 700000, 2000000, 340000, 10000]
+    
+    var categories: [String: [SaverModel]] = [:]
+    var priceData: [Double] = []
     
     //MARK: - 1. Stack(지출금액이름, 지출금액)
     //지출금액이름
@@ -124,9 +127,14 @@ class ReportViewController: UIViewController {
     //MARK: - 카테고리별 지출 내역 Table
     private lazy var categoryExpenditureTableView: UITableView = {
         let tableView = UITableView()
+        tableView.dataSource = self
+        tableView.delegate = self
         tableView.layer.cornerRadius = 10
         tableView.layer.masksToBounds = true
-        tableView.backgroundColor = .darkGray
+//        tableView.backgroundColor = .darkGray
+//        tableView.separatorStyle = .none //언더라인 없애기
+        //셀 만드는 거 - GOD성빈님(역시 에이스...)
+        tableView.register(CategoryExpenditureTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -145,9 +153,25 @@ class ReportViewController: UIViewController {
     private func setup(){
 //        view.addSubview(spendingAmountNameLabel) //view에 지출금액이름 label 추가
 //        view.addSubview(spendingAmountLabel) //view에 지출금액 label 추가
+        
+        //해당 달의 데이터만 가져오기
+        self.categories = createDummyData().reduce(into: [String: [SaverModel]]()) { result, element in
+            let filteredTransactions = element.value.filter { data in
+                let components = Calendar.current.dateComponents([.month], from: data.transactionDate)
+                return components.month == 6
+            }
+            result[element.key] = filteredTransactions
+            
+            // 각 카테고리별 값의 총합을 계산하여 priceData에 추가
+            let total = filteredTransactions.reduce(0.0) { $0 + $1.spendingAmount }
+                priceData.append(total)
+        }
+        print(categories)
+        print(priceData)
+        
         view.addSubview(spendindUIView)
         view.addSubview(legendScrollView)
-        setupLegendScrollView(labels: categories)
+        setupLegendScrollView(labels: categories.map{$0.key})
         view.addSubview(categoryExpenditureTableView)
         
         //오토레이아웃 설정
@@ -158,7 +182,7 @@ class ReportViewController: UIViewController {
             //stackView를 담는 UIView
             spendindUIView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
             spendindUIView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
-            spendindUIView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
+            spendindUIView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             
             //StackView(지출금액이름, 지출금액)
             spendingAmountStackView.leadingAnchor.constraint(equalTo: spendindUIView.leadingAnchor, constant: 10),
@@ -193,7 +217,7 @@ class ReportViewController: UIViewController {
             legendScrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
             legendScrollView.topAnchor.constraint(equalTo: spendindUIView.bottomAnchor, constant: 10),
             legendScrollView.widthAnchor.constraint(equalTo: safeArea.widthAnchor, constant: -20),
-            legendScrollView.heightAnchor.constraint(equalToConstant: 40),
+            legendScrollView.heightAnchor.constraint(equalToConstant: 30),
             
             //legend 스택
             legendStackView.leadingAnchor.constraint(equalTo: legendScrollView.leadingAnchor),
@@ -244,7 +268,7 @@ class ReportViewController: UIViewController {
             //모양
             let capsuleView = UIView()
             capsuleView.backgroundColor = .systemPink
-            capsuleView.layer.cornerRadius = 20
+            capsuleView.layer.cornerRadius = 15
             capsuleView.layer.masksToBounds = true
             capsuleView.translatesAutoresizingMaskIntoConstraints = false
             
@@ -271,7 +295,6 @@ class ReportViewController: UIViewController {
             ])
         }
     }
-    
     /*
     // MARK: - Navigation
 
@@ -284,3 +307,87 @@ class ReportViewController: UIViewController {
 
 }
 
+//MARK: - Delegate
+extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
+    
+    //section의 개수
+    func numberOfSections(in tableView: UITableView) -> Int {
+        let temp = categories["영화관"]!
+        var dateArr = [String]()
+        for o in temp{
+            if !dateArr.contains(o.transactionDate.formatted(.dateTime.day())){
+                dateArr.append(o.transactionDate.formatted(.dateTime.day()))
+            }
+        }
+        return dateArr.count
+    }
+    
+    //section Header 높이 설정
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        30
+    }
+    
+    
+    //Section Header설정
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.text = "\(categories["영화관"]!.sorted(by: {$0.transactionDate < $1.transactionDate})[section].transactionDate.formatted(.dateTime.day()))일"
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        headerView.addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            
+            label.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 10),
+            label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+        ])
+        
+        return headerView
+    }
+    
+    //행의 개수
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        categories["영화관"]!.count
+    }
+    
+    //cell생성
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CategoryExpenditureTableViewCell
+        cell.configureCell(entry: categories["영화관"]![indexPath.row])
+        return cell
+    }
+    
+    //높이설정
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        100
+    }
+}
+
+//MARK: - 더미데이터 생성
+extension ReportViewController{
+    private func createDummyData() -> [String: [SaverModel]]{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+        
+        let categories = ["카페", "베이커리", "서점", "영화관", "레스토랑", "택시"]
+        var dummyData: [String: [SaverModel]] = [:]
+        
+        for category in categories{
+            var entries = [SaverModel]()
+            for cnt in 1...30{
+                let name = "\(category) 거래 \(cnt)"
+                let amount = Double(arc4random_uniform(50000) + 1000) //1000 ~ 51000
+                let randomDaysAgo = Int(arc4random_uniform(30))
+                let date = Calendar.current.date(byAdding: .day, value: -randomDaysAgo, to: Date())! //오늘 기준으로 랜덤으로 일을 뺀 날짜를 저장
+                entries.append(SaverModel(transactionName: name, spendingAmount: amount, transactionDate: date, name: category))
+            }
+            dummyData[category] = entries
+        }
+        
+        return dummyData
+    }
+}
