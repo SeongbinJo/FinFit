@@ -17,6 +17,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     private var prevMonthButton: UIButton = UIButton(type: .system)
     private var nextMonthButton: UIButton = UIButton(type: .system)
+    private var todayButton: UIButton = UIButton(type: .system)
     private var prevNextButtonStackView: UIStackView = UIStackView()
     
     private var weekDayOfStackView: UIStackView = UIStackView()
@@ -143,12 +144,21 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             self.ConfigurationChangeMonthButton()
             self.calendarCollectionView.reloadData()
         }, for: .touchUpInside)
+        todayButton.setTitle("Today", for: .normal)
+        todayButton.addAction(UIAction { _ in
+            CalendarManager.manager.configureCalendar(date: Date())
+            CalendarManager.manager.updateDays()
+            CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+            self.ConfigurationChangeMonthButton()
+            self.calendarCollectionView.reloadData()
+        }, for: .touchUpInside)
         
         prevNextButtonStackView.axis = .horizontal
         prevNextButtonStackView.alignment = .center
-        prevNextButtonStackView.spacing = 30
+        prevNextButtonStackView.spacing = 20
         
         prevNextButtonStackView.addArrangedSubview(prevMonthButton)
+        prevNextButtonStackView.addArrangedSubview(todayButton)
         prevNextButtonStackView.addArrangedSubview(nextMonthButton)
         
         prevNextButtonStackView.translatesAutoresizingMaskIntoConstraints = false
