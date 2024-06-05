@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol CalendarPopUpViewControllerDelegate: NSObject {
+    func updateCalendar(date: Date) -> ()
+}
+
 class MonthCollectionVieCell: UICollectionViewCell {
     private var monthLabel: UILabel = UILabel()
     
@@ -28,6 +32,8 @@ class MonthCollectionVieCell: UICollectionViewCell {
 }
 
 class CalendarPopUpViewController: UIViewController {
+    weak var delegate: CalendarPopUpViewControllerDelegate?
+    
     private let calendar: Calendar = Calendar.current
     private let dateFormatter: DateFormatter = DateFormatter()
     private var currentMonth: Date = Date()
@@ -153,7 +159,11 @@ extension CalendarPopUpViewController: UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MonthCell", for: indexPath)
-        
+        self.dateFormatter.dateFormat = "yyyy년 M월"
+        let dateString = "\(self.yearLabel.text!) \(indexPath.row + 1)월"
+        let date = self.dateFormatter.date(from: dateString)
+        print(dateString)
+        self.delegate?.updateCalendar(date: date ?? Date())
+        dismiss(animated: false)
     }
 }

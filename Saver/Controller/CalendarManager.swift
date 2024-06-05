@@ -11,7 +11,7 @@ class CalendarManager {
     static let manager = CalendarManager()
     private let calendar = Calendar.current
     private let dateFormatter = DateFormatter()
-    private var calendarDate = Date()
+    var calendarDate = Date()
     private var days: [String]
     
     private init() {
@@ -23,6 +23,7 @@ class CalendarManager {
     func configureCalendar(date: Date) {
         let components = self.calendar.dateComponents([.year, .month], from: date)
         self.calendarDate = self.calendar.date(from: components) ?? Date()
+        print("configureCalendar() 실행, \(self.calendarDate).")
     }
     
     // 1일이 무슨 요일인지?
@@ -52,6 +53,8 @@ class CalendarManager {
                 self.days.append(String(day - weekOfFirstDay + 1))
             }
         }
+        
+        print("updateDays() 실행, \(self.days)")
     }
     
     // days.count
@@ -69,5 +72,16 @@ class CalendarManager {
     func updateYearMonthLabel(label: UILabel) {
         let currentYearMonthString = self.dateFormatter.string(from: self.calendarDate)
         label.text = currentYearMonthString
+        print("updateYearMonthLabel() 실행")
+    }
+    
+    // 이전 달
+    func prevMonth() {
+        self.calendarDate = self.calendar.date(byAdding: DateComponents(month: -1), to: self.calendarDate) ?? Date()
+    }
+    
+    // 다음 달
+    func nextMonth() {
+        self.calendarDate = self.calendar.date(byAdding: DateComponents(month: 1), to: self.calendarDate) ?? Date()
     }
 }

@@ -7,17 +7,17 @@
 
 import UIKit
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
     private var currentSpendingAmountLabel: UILabel = UILabel()
     private var addTransactionButton: UIButton = UIButton(type: .system)
     private var titleHStackView: UIStackView = UIStackView()
     
-    private var yearMonthButtonLabel: UILabel = {
-        let label = UILabel()
-        label.text = "yyyy년 M월"
-        return label
-    }()
+    private var yearMonthButtonLabel: UILabel = UILabel()
     private var changeMonthButton: UIButton = UIButton(type: .system)
+    
+    private var prevMonthButton: UIButton = UIButton(type: .system)
+    private var nextMonthButton: UIButton = UIButton(type: .system)
+    private var prevNextButtonStackView: UIStackView = UIStackView()
     
     private var weekDayOfStackView: UIStackView = UIStackView()
     private var calendarCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -36,8 +36,11 @@ class HomeViewController: UIViewController {
         setupchangeMonthButton()
         setupWeekDayOfStackView()
         setupCalendarView()
+        setupPrevNextMonthStackView()
     }
     
+    //MARK: - View 관련 Setup
+    //MARK: - 소비금액 타이틀 & 내역추가 버튼
     func setupTitleHStackView() {
         let currentSpendingAmountLabel = UILabel()
         let dummyTitleAmount = UILabel()
@@ -79,8 +82,8 @@ class HomeViewController: UIViewController {
         ])
     }
     
-    
-    func setupchangeMonthButton() {
+    //MARK: - ChangeMonthButton의 configuration
+    func ConfigurationChangeMonthButton() {
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         config.imagePlacement = .trailing
@@ -92,11 +95,18 @@ class HomeViewController: UIViewController {
         
         changeMonthButton.setImage(UIImage(systemName: "calendar"), for: .normal)
         changeMonthButton.configuration = config
+    }
+    
+    //MARK: - changeMonthButton setup
+    func setupchangeMonthButton() {
+        ConfigurationChangeMonthButton()
+
         changeMonthButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
-            let VC = CalendarPopUpViewController(nibName: nil, bundle: nil)
-            VC.modalPresentationStyle = .overFullScreen
-            present(VC, animated: false)
+            let calendarPopUpViewController = CalendarPopUpViewController(nibName: nil, bundle: nil)
+            calendarPopUpViewController.delegate = self
+            calendarPopUpViewController.modalPresentationStyle = .overFullScreen
+            present(calendarPopUpViewController, animated: false)
         }, for: .touchUpInside)
         
         changeMonthButton.translatesAutoresizingMaskIntoConstraints = false
@@ -111,7 +121,47 @@ class HomeViewController: UIViewController {
         ])
     }
     
+    //MARK: - PrevMonthButton/NextMonthButton StackView setup
+    func setupPrevNextMonthStackView() {
+        prevMonthButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        prevMonthButton.addAction(UIAction { _ in
+            CalendarManager.manager.prevMonth()
+            CalendarManager.manager.configureCalendar(date: CalendarManager.manager.calendarDate)
+            CalendarManager.manager.updateDays()
+            CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+            // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
+            self.ConfigurationChangeMonthButton()
+            self.calendarCollectionView.reloadData()
+        }, for: .touchUpInside)
+        nextMonthButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
+        nextMonthButton.addAction(UIAction { _ in
+            CalendarManager.manager.nextMonth()
+            CalendarManager.manager.configureCalendar(date: CalendarManager.manager.calendarDate)
+            CalendarManager.manager.updateDays()
+            CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+            // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
+            self.ConfigurationChangeMonthButton()
+            self.calendarCollectionView.reloadData()
+        }, for: .touchUpInside)
+        
+        prevNextButtonStackView.axis = .horizontal
+        prevNextButtonStackView.alignment = .center
+        prevNextButtonStackView.spacing = 30
+        
+        prevNextButtonStackView.addArrangedSubview(prevMonthButton)
+        prevNextButtonStackView.addArrangedSubview(nextMonthButton)
+        
+        prevNextButtonStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(prevNextButtonStackView)
+        
+        NSLayoutConstraint.activate([
+            prevNextButtonStackView.topAnchor.constraint(equalTo: changeMonthButton.topAnchor),
+            prevNextButtonStackView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor)
+        ])
+    }
     
+    //MARK: - 일~토 요일 스택뷰
     func setupWeekDayOfStackView() {
         weekDayOfStackView.axis = .horizontal
         weekDayOfStackView.distribution = .fillEqually
@@ -149,6 +199,7 @@ class HomeViewController: UIViewController {
         ])
     }
     
+    //MARK: - 캘린더 뷰 setup
     func setupCalendarView() {
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
@@ -175,6 +226,19 @@ class HomeViewController: UIViewController {
             calendarView.trailingAnchor.constraint(equalTo: titleHStackView.trailingAnchor),
             calendarView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
         ])
+    }
+    
+    //MARK: - 기능 메서드
+    // CalendarPopUpViewControllerDelegate 필수 메서드
+    func updateCalendar(date: Date) {
+        print("요기요기 : \(date)")
+        CalendarManager.manager.configureCalendar(date: date)
+        CalendarManager.manager.updateDays()
+        CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+        // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
+        ConfigurationChangeMonthButton()
+        
+        calendarCollectionView.reloadData()
     }
     
     
