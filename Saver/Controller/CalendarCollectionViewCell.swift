@@ -38,6 +38,20 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         return stackView
     }()
     
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        contentView.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
     
     func configureCell(day: String) {
         numberOfDayLabel.text = day
@@ -47,12 +61,6 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         default:
             amountOfDay.text = "-"
         }
-        
-        contentView.addSubview(stackView)
-        
-        NSLayoutConstraint.activate([
-            stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-        ])
+    
     }
 }

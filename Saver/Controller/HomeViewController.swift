@@ -52,6 +52,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     //MARK: - 스크롤 뷰
     func setupScrollView() {
 //        scrollView.backgroundColor = .blue
+        scrollView.showsVerticalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(scrollView)
@@ -140,7 +141,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         scrollView.addSubview(changeMonthButton)
         
         NSLayoutConstraint.activate([
-            changeMonthButton.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 10),
+            changeMonthButton.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 40),
             changeMonthButton.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
         ])
     }
@@ -269,7 +270,8 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         
         transactionTableView.delegate = self
         transactionTableView.dataSource = self
-        transactionTableView.register(UITableViewCell.self, forCellReuseIdentifier: "TransactionCell")
+        transactionTableView.register(TransactionTableViewCell.self, forCellReuseIdentifier: "TransactionCell")
+        transactionTableView.showsVerticalScrollIndicator = false
         transactionTableView.translatesAutoresizingMaskIntoConstraints = false
         
         transactionTableView.backgroundColor = .lightGray
@@ -322,7 +324,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
         let days = CalendarManager.manager.getDays()
-        let cellSize = self.calendarView.frame.width / 7
+//        let cellSize = self.calendarView.frame.width / 7
 //        if days.count <= 35 {
 //            NSLayoutConstraint.activate([
 //                self.calendarCollectionView.heightAnchor.constraint(equalToConstant: cellSize * 5)
@@ -344,12 +346,18 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        80
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         10
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
+//        cell.configureCell(transaction: SaverModel(transactionName: "내역 1", spendingAmount: 1300.0, transactionDate: Date(), name: "식비"))
+        cell.configureCell()
         return cell
     }
     
