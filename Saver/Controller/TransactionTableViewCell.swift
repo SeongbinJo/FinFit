@@ -55,7 +55,16 @@ class TransactionTableViewCell: UITableViewCell {
     }
     
     func setupTransactionHStackView() {
+        let editMenu: UIAction = UIAction(title: "수정", image: UIImage(systemName: "pencil")) { action in
+            print("수정 클릭")
+        }
+        let removeMenu: UIAction = UIAction(title: "삭제", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
+            print("삭제 클릭")
+        }
+        let menu: UIMenu = UIMenu(options: .displayInline, children: [editMenu, removeMenu])
         editMenuButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        editMenuButton.menu = menu
+        editMenuButton.showsMenuAsPrimaryAction = true
         
         transactionHStackView.axis = .horizontal
         transactionHStackView.distribution = .fill
