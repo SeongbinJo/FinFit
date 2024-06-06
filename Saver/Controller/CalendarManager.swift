@@ -32,6 +32,12 @@ class CalendarManager {
         return numberOfWeekDay
     }
     
+    // 특정 날짜의 요일
+    func weekOfDay(date: Date) -> Int {
+        let numberOfWeekDay = self.calendar.component(.weekday, from: date) - 1
+        return numberOfWeekDay
+    }
+    
     // 해당 달의 날짜 개수(28~31)
     func countDayInMonth() -> Int {
         let countOfDay = self.calendar.range(of: .day, in: .month, for: self.calendarDate)?.count ?? 0

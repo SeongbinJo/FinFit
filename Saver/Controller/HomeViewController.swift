@@ -8,6 +8,8 @@
 import UIKit
 
 class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
+    private var dateFormatter: DateFormatter = DateFormatter()
+    
     private var scrollView: UIScrollView = UIScrollView()
     
     private var currentSpendingAmountLabel: UILabel = UILabel()
@@ -264,7 +266,9 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     //MARK: - 날짜별 Transaction 테이블 뷰
     func setupTransactionTableView() {
-        currentDayTitle.text = "dd일 요일"
+        self.dateFormatter.dateFormat = "d일 E요일"
+        self.dateFormatter.locale = Locale(identifier: "ko-KR")
+        currentDayTitle.text = self.dateFormatter.string(from: Date())
         currentDayTitle.backgroundColor = .brown
         currentDayTitle.translatesAutoresizingMaskIntoConstraints = false
         
@@ -341,6 +345,36 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(indexPath)
         print(indexPath.row)
+        // 선택한 셀 불러오기
+//        if let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell {
+//            print(cell.numberOfDayLabel.text)
+//        }
+    
+        let days = CalendarManager.manager.getDays()
+        self.dateFormatter.dateFormat = "yyyy년 M월 d일"
+        let dateString = self.yearMonthButtonLabel.text ?? "" + " \(String(days[indexPath.row]))일"
+        let date = self.dateFormatter.date(from: dateString) ?? Date()
+        let weekDayNumber = CalendarManager.manager.weekOfDay(date: date)
+        var weekDayString = String(days[indexPath.row]) + "일"
+        switch weekDayNumber {
+        case 1:
+            weekDayString += " 일요일"
+        case 2:
+            weekDayString += " 월요일"
+        case 3:
+            weekDayString += " 화요일"
+        case 4:
+            weekDayString += " 수요일"
+        case 5:
+            weekDayString += " 목요일"
+        case 6:
+            weekDayString += " 금요일"
+        case 7:
+            weekDayString += " 토요일"
+        default:
+            print("default")
+        }
+        self.currentDayTitle.text = weekDayString
     }
 }
 

@@ -8,7 +8,7 @@
 import UIKit
 
 class CalendarCollectionViewCell: UICollectionViewCell {
-    private lazy var numberOfDayLabel: UILabel = {
+    var numberOfDayLabel: UILabel = {
         let numberLabel = UILabel()
         numberLabel.text = "0"
         
@@ -16,7 +16,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         return numberLabel
     }()
     
-    private lazy var amountOfDay: UILabel = {
+    lazy var amountOfDay: UILabel = {
         let amountLabel = UILabel()
         amountLabel.text = "1,400,000"
         amountLabel.font = UIFont.systemFont(ofSize: 10, weight: .light)

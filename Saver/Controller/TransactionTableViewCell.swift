@@ -37,6 +37,7 @@ class TransactionTableViewCell: UITableViewCell {
         
         categoryNameHStackView.axis = .horizontal
         categoryNameHStackView.distribution = .equalSpacing
+        categoryNameHStackView.spacing = 10
         categoryNameHStackView.alignment = .center
         
         categoryNameHStackView.addArrangedSubview(transactionCategory)
@@ -112,7 +113,7 @@ class TransactionTableViewCell: UITableViewCell {
             transactionAmount.text = "0 원"
         }
         
-        transactionCategory.text = "식비"
+        transactionCategory.text = "[식비]"
         transactionName.text = "포켓몬 빵"
     }
 }
