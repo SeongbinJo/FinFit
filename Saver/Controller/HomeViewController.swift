@@ -9,6 +9,7 @@ import UIKit
 
 class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
     private var dateFormatter: DateFormatter = DateFormatter()
+    private var todayString: String = ""
     
     private var scrollView: UIScrollView = UIScrollView()
     
@@ -26,6 +27,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     private var weekDayOfStackView: UIStackView = UIStackView()
     private var calendarCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    private var calendarCollectionViewHeightContraint: NSLayoutConstraint!
     private var calendarView: UIView = UIView()
     
     private var currentDayTitle: UILabel = UILabel()
@@ -35,6 +37,9 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        dateFormatter.dateFormat = "yyyy년 M월 d일"
+        todayString = dateFormatter.string(from: Date())
         
         CalendarManager.manager.configureCalendar(date: Date())
         CalendarManager.manager.updateDays()
@@ -48,6 +53,12 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         setupPrevNextMonthStackView()
         setupTransactionTableView()
 
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // 레이아웃이 완료된 후 높이 업데이트
+        updateCollectionViewHeight()
     }
     
     //MARK: - View 관련 Setup
@@ -254,8 +265,11 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             calendarCollectionView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
             calendarCollectionView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor),
 //            calendarCollectionView.heightAnchor.constraint(equalToConstant: calendarCollectionView.contentSize.height),
-            calendarCollectionView.heightAnchor.constraint(equalToConstant: 400)
+//            calendarCollectionView.heightAnchor.constraint(equalToConstant: 346)
         ])
+        
+        calendarCollectionViewHeightContraint = calendarCollectionView.heightAnchor.constraint(equalToConstant: 0)
+        calendarCollectionViewHeightContraint.isActive = true
         
         scrollView.addSubview(calendarView)
         
@@ -264,6 +278,20 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             calendarView.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
             calendarView.trailingAnchor.constraint(equalTo: titleHStackView.trailingAnchor),
         ])
+
+    }
+    
+    func updateCollectionViewHeight() {
+        let numberOfItems = calendarCollectionView.numberOfItems(inSection: 0)
+        let rows = ceil(Double(numberOfItems) / 7.0)
+        let cellHeight = self.calendarView.frame.width / 7
+        let newHeight = (CGFloat(rows) * cellHeight) + ((rows - 1) * 11)
+        print("현재 셀 개수 : \(numberOfItems)")
+        print("현재 셀 개수를 7(일주일)로 나눈후 ceil(소수점 올림)한 값 : \(rows)")
+        print("셀 한개의 높이 : \(cellHeight)")
+        print("해당 달력의 총 높이(셀의 총 행 높이) : \(newHeight)")
+        
+        calendarCollectionViewHeightContraint.constant = newHeight
     }
     
     //MARK: - 날짜별 Transaction 테이블 뷰
@@ -323,13 +351,14 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        CalendarManager.manager.countOfDays()
+        let countOfCell = CalendarManager.manager.countOfDays()
+        return countOfCell
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
         let days = CalendarManager.manager.getDays()
-        cell.configureCell(day: days[indexPath.row])
+        cell.configureCell(day: days[indexPath.row], dateString: self.todayString)
         return cell
     }
     
