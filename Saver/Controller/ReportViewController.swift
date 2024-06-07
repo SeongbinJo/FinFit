@@ -14,8 +14,14 @@ class ReportViewController: UIViewController {
 //    let categories: [String] = ["카페", "음식점", "게임칩", "주차장", "쇼핑", "키보드", "냉장고", "컴퓨터", "모니터", "집"]
 //    let priceData: [Double] = [5000, 8000, 30000, 1500, 40000, 130000, 700000, 2000000, 340000, 10000]
     
+    //더메테이터를 위한 변수(추후삭제)
     var categories: [String: [SaverModel]] = [:]
     var priceData: [Double] = []
+    var selectedCategory: String?
+    
+    //스크롤뷰의 높이 설정
+    let initialHeight: CGFloat = 200 //초기 테이블 뷰 높이
+    let expandedHeight: CGFloat = 500 //확대된 테이블 뷰 높이
     
     //MARK: - 1. Stack(지출금액이름, 지출금액)
     //지출금액이름
@@ -132,6 +138,7 @@ class ReportViewController: UIViewController {
         tableView.layer.cornerRadius = 10
         tableView.layer.masksToBounds = true
 //        tableView.backgroundColor = .darkGray
+        tableView.sectionHeaderTopPadding = 0
 //        tableView.separatorStyle = .none //언더라인 없애기
         //셀 만드는 거 - GOD성빈님(역시 에이스...)
         tableView.register(CategoryExpenditureTableViewCell.self, forCellReuseIdentifier: "cell")
@@ -166,8 +173,9 @@ class ReportViewController: UIViewController {
             let total = filteredTransactions.reduce(0.0) { $0 + $1.spendingAmount }
                 priceData.append(total)
         }
-        print(categories)
-        print(priceData)
+        
+        //불러온 데이터가 하나라도 존재하면 그 중 첫 번째 키를 selectedCategory에 저장한다.
+        self.selectedCategory = categories.first?.key
         
         view.addSubview(spendindUIView)
         view.addSubview(legendScrollView)
@@ -293,26 +301,35 @@ class ReportViewController: UIViewController {
                 labelView.topAnchor.constraint(equalTo: capsuleView.topAnchor),
                 labelView.bottomAnchor.constraint(equalTo: capsuleView.bottomAnchor)
             ])
+            
+            //각 legend 항목에 대한 TapGesture 추가
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(legendTapped(_:)))
+            capsuleView.addGestureRecognizer(tapGesture)
+            capsuleView.accessibilityIdentifier = label
+            capsuleView.isUserInteractionEnabled = true
         }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    //legend를 Tap했을 때 발생하는 액션함수
+    @objc func legendTapped(_ getsture: UITapGestureRecognizer){
+        guard let selectedView = getsture.view else { return }
+        selectedCategory = selectedView.accessibilityIdentifier
+        categoryExpenditureTableView.reloadData()
     }
-    */
 
 }
 
+
+
 //MARK: - Delegate
+//UITableView
 extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     
+    //MARK: - Section 설정
     //section의 개수
     func numberOfSections(in tableView: UITableView) -> Int {
-        let temp = categories["영화관"]!
+        guard let selectedCategory = self.selectedCategory else { return 0 }
+        let temp = categories[selectedCategory]!
         var dateArr = [String]()
         for o in temp{
             if !dateArr.contains(o.transactionDate.formatted(.dateTime.day())){
@@ -330,44 +347,69 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     
     //Section Header설정
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let selectedCategory = self.selectedCategory else { return nil }
         let headerView = UIView()
+        headerView.backgroundColor = .white
         
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 18)
-        label.text = "\(categories["영화관"]!.sorted(by: {$0.transactionDate < $1.transactionDate})[section].transactionDate.formatted(.dateTime.day()))일"
+        label.text = "\(categories[selectedCategory]!.sorted(by: {$0.transactionDate < $1.transactionDate})[section].transactionDate.formatted(.dateTime.day()))일"
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
 
         headerView.addSubview(label)
         
         NSLayoutConstraint.activate([
-            
             label.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 10),
-            label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+            label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
         ])
         
         return headerView
     }
     
+    //MARK: - row, cell 설정
     //행의 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories["영화관"]!.count
+        guard let selectedCategory = self.selectedCategory else { return 0 }
+        return categories[selectedCategory]!.count
     }
     
     //cell생성
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CategoryExpenditureTableViewCell
-        cell.configureCell(entry: categories["영화관"]![indexPath.row])
+        guard let selectedCategory = self.selectedCategory else { return cell }
+        cell.configureCell(entry: categories[selectedCategory]![indexPath.row])
         return cell
     }
     
     //높이설정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        100
+        80
     }
+    
+    
 }
 
-//MARK: - 더미데이터 생성
+////scrollviewDelegate
+//extension ReportViewController: UIScrollViewDelegate{
+//    func scrollViewDidScroll(_ scrollView: UIScrollView){
+//        let offset = scrollView.contentOffset.y //스크롤뷰의 y좌표
+//
+//        if offset <= 0 {
+//                    // 스크롤이 맨 위에 도달하면 테이블 뷰 확장
+//                    UIView.animate(withDuration: 0.3) {
+//                        self.categoryExpenditureTableView.frame = CGRect(x: 0, y: 500, width: self.view.frame.width, height: self.expandedHeight)
+//                    }
+//                } else if offset >= 200 {
+//                    // 스크롤이 다른 위치에 있을 때 초기 크기로 복원
+//                    UIView.animate(withDuration: 0.3) {
+//                        self.categoryExpenditureTableView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.initialHeight)
+//                    }
+//                }
+//    }
+//}
+
+//MARK: - 더미데이터 생성(추후삭졔)
 extension ReportViewController{
     private func createDummyData() -> [String: [SaverModel]]{
         let dateFormatter = DateFormatter()
