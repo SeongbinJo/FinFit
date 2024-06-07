@@ -43,7 +43,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.dateFormatter.dateFormat = "yyyy년 M월 d일"
+        self.dateFormatter.dateFormat = "d"
         self.today = self.dateFormatter.string(from: Date())
         
         contentView.addSubview(stackView)
@@ -58,11 +58,16 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         fatalError()
     }
     
-    func configureCell(day: String, dateString: String) {
+    override func prepareForReuse() {
+        contentView.backgroundColor = .clear
+    }
+    
+    func configureCell(day: String, isToday: Bool) {
         numberOfDayLabel.text = day
-//        if dateString == self.today {
-//            contentView.backgroundColor = .red
-//        }
+        if isToday && day == self.today {
+            contentView.backgroundColor = .red
+            print(day)
+        }
         switch day {
         case "":
             amountOfDay.text = ""
