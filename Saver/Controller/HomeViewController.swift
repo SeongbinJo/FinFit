@@ -237,6 +237,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     //MARK: - 캘린더 뷰 setup
     func setupCalendarView() {
+
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
         calendarCollectionView.register(CalendarCollectionViewCell.self, forCellWithReuseIdentifier: "CalendarCell")
@@ -251,7 +252,9 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             calendarCollectionView.topAnchor.constraint(equalTo: weekDayOfStackView.bottomAnchor, constant: 5),
             calendarCollectionView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
             calendarCollectionView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
-            calendarCollectionView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor)
+            calendarCollectionView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor),
+//            calendarCollectionView.heightAnchor.constraint(equalToConstant: calendarCollectionView.contentSize.height),
+            calendarCollectionView.heightAnchor.constraint(equalToConstant: 400)
         ])
         
         scrollView.addSubview(calendarView)
@@ -260,7 +263,6 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             calendarView.topAnchor.constraint(equalTo: changeMonthButton.bottomAnchor, constant: 15),
             calendarView.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
             calendarView.trailingAnchor.constraint(equalTo: titleHStackView.trailingAnchor),
-            calendarView.heightAnchor.constraint(greaterThanOrEqualToConstant: 420)
         ])
     }
     
@@ -298,7 +300,6 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     //MARK: - 기능 메서드
     // CalendarPopUpViewControllerDelegate 필수 메서드
     func updateCalendar(date: Date) {
-        print("요기요기 : \(date)")
         CalendarManager.manager.configureCalendar(date: date)
         CalendarManager.manager.updateDays()
         CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
@@ -328,51 +329,38 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
         let days = CalendarManager.manager.getDays()
-//        let cellSize = self.calendarView.frame.width / 7
-//        if days.count <= 35 {
-//            NSLayoutConstraint.activate([
-//                self.calendarCollectionView.heightAnchor.constraint(equalToConstant: cellSize * 5)
-//            ])
-//        }else if days.count > 35 {
-//            NSLayoutConstraint.activate([
-//                self.calendarCollectionView.heightAnchor.constraint(equalToConstant: cellSize * 6)
-//            ])
-//        }
         cell.configureCell(day: days[indexPath.row])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath)
-        print(indexPath.row)
         // 선택한 셀 불러오기
 //        if let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell {
 //            print(cell.numberOfDayLabel.text)
 //        }
-    
         let days = CalendarManager.manager.getDays()
         self.dateFormatter.dateFormat = "yyyy년 M월 d일"
-        let dateString = self.yearMonthButtonLabel.text ?? "" + " \(String(days[indexPath.row]))일"
+        let dateString = self.yearMonthButtonLabel.text! + " \(String(days[indexPath.row]))일"
         let date = self.dateFormatter.date(from: dateString) ?? Date()
         let weekDayNumber = CalendarManager.manager.weekOfDay(date: date)
         var weekDayString = String(days[indexPath.row]) + "일"
         switch weekDayNumber {
-        case 1:
+        case 0:
             weekDayString += " 일요일"
-        case 2:
+        case 1:
             weekDayString += " 월요일"
-        case 3:
+        case 2:
             weekDayString += " 화요일"
-        case 4:
+        case 3:
             weekDayString += " 수요일"
-        case 5:
+        case 4:
             weekDayString += " 목요일"
-        case 6:
+        case 5:
             weekDayString += " 금요일"
-        case 7:
+        case 6:
             weekDayString += " 토요일"
         default:
-            print("default")
+            print("default: \(weekDayNumber)")
         }
         self.currentDayTitle.text = weekDayString
     }
