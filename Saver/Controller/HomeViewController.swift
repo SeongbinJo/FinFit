@@ -12,12 +12,12 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         SaverModel(transactionName: "Groceries", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Food"),
         SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Housing"),
         SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Income"),
-        SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 3).date!, name: "Income"),
-        SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 3).date!, name: "Utilities"),
-        SaverModel(transactionName: "Dining Out", spendingAmount: -75.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 4).date!, name: "Food"),
-        SaverModel(transactionName: "Subscription", spendingAmount: -15.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 7).date!, name: "Entertainment"),
-        SaverModel(transactionName: "Insurance", spendingAmount: -200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 8).date!, name: "Insurance"),
-        SaverModel(transactionName: "Car Payment", spendingAmount: -300.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 9).date!, name: "Transport"),
+        SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Income"),
+        SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Utilities"),
+        SaverModel(transactionName: "Dining Out", spendingAmount: -75.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Food"),
+        SaverModel(transactionName: "Subscription", spendingAmount: -15.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Entertainment"),
+        SaverModel(transactionName: "Insurance", spendingAmount: -200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Insurance"),
+        SaverModel(transactionName: "Car Payment", spendingAmount: -300.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Transport"),
         SaverModel(transactionName: "Gym Membership", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Health"),
         SaverModel(transactionName: "Gift", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Other"),
         SaverModel(transactionName: "Freelance", spendingAmount: 500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Income"),
@@ -71,6 +71,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         CalendarManager.manager.configureCalendar(date: Date())
         CalendarManager.manager.updateDays()
         CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+        self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
         checkToday()
 
         setupTitleHStackView()
@@ -393,6 +394,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     
     //MARK: - 더미데이터 전용 메서드!!
+    // 달력의 클릭한 날짜의 내역리스트
     private func filteredDummyData(date: Date) -> [SaverModel] {
         let dateComponents = self.calendar.dateComponents([.year, .month, .day], from: date)
         let changedDate = self.calendar.date(from: dateComponents)
@@ -402,6 +404,16 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         return filteredArray
     }
     
+    // 이번달의 내역 총 합계
+    private func totalAmountCurrentMonth(yearMonthString: String) -> Double {
+        let date = self.dateFormatter.date(from: yearMonthString)
+        var result: Double = 0.0
+        let array = HomeViewController.dummyData.filter { $0.transactionDate == date }
+        for i in array {
+            print(i.transactionDate)
+        }
+        return result
+    }
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

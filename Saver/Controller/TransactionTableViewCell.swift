@@ -40,6 +40,7 @@ class TransactionTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         // 셀 재사용시 이전 셀의 잔재가 있을경우 여기서 초기화 시켜준다!
         nilLabel.text = ""
+        editMenuButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
     
     //MARK: - 리스트 셀
