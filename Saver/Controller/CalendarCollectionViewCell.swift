@@ -62,18 +62,40 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = .clear
     }
     
-    func configureCell(day: String, isToday: Bool) {
+    // day = 1~31 중 하나의 문자열
+    // 'yyyy년 M월 d일'의 String or Date를 넘겨주고 configureCell에서
+    // DataController로 필터링해서 데이터를 가져온 다음,
+    // 해당 데이터들의 금액의 합을 구해서 amountOfDay에 String값으로 넣어준다!?
+    
+    // 델리겟 프로토콜을 선언하고 콜렉션 뷰의 셀이 초기화 될때,
+    // DataController의 함수들을 HomeViewController(테이블 뷰 extension 내부)에 선언된 델리겟 필수 메서드 안에서 사용하고,
+    // configureCell() 내부에서 delegate.method()로 함수 실행.
+    // 그럼 의존성 낮출 수 있나..? 유지보수나 재사용성을 보면 델리게이트 패턴을 사용하는게 옳다 -소혜 강사님-
+    func configureCell(date: Date, day: String, isToday: Bool) {
         numberOfDayLabel.text = day
         if isToday && day == self.today {
             contentView.backgroundColor = .red
-            print(day)
         }
         switch day {
         case "":
             amountOfDay.text = ""
         default:
-            amountOfDay.text = "-"
+            amountOfDay.text = totalAmountOfDayData(date: date)
         }
     
     }
+    
+    //MARK: - 날짜별 spendingAmount 합계(더미데이터 전용)
+    // 매개변수의 날짜를 필터링한 후, 내역이 존재하면 reduce로 합산
+    func totalAmountOfDayData(date: Date) -> String {
+        let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == date }
+
+        if filteredArray.isEmpty {
+            return "-"
+        }else {
+            let result: Double = filteredArray.reduce(0) { $0 + $1.spendingAmount }
+            return String(result)
+        }
+    }
+    
 }

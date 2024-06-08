@@ -92,7 +92,7 @@ class TransactionTableViewCell: UITableViewCell {
         ])
     }
     
-    //MARK: - SwiftData가 정상 적용되었을 경우 사용할 Cell 초기화 메서드
+    //MARK: - SwiftData가 정상 적용되었을 경우 사용할 Cell 초기화 메서드(현재 더미데이터 사용)
     func configureCell(transaction: SaverModel) {
         let amount = transaction.spendingAmount
         switch amount {

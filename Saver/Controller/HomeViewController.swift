@@ -8,11 +8,27 @@
 import UIKit
 
 class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
-    var dummyData: [SaverModel] = [
-        SaverModel(transactionName: "Groceries", spendingAmount: -50.0, transactionDate: Date(), name: "Food"),
-        SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: Date(), name: "Housing"),
-        SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: Date(), name: "Income"),
-        SaverModel(transactionName: "Bonus", spendingAmount: 300.0, transactionDate: Date(), name: "Income"),
+    static var dummyData: [SaverModel] = [
+        SaverModel(transactionName: "Groceries", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Food"),
+        SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Housing"),
+        SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Income"),
+        SaverModel(transactionName: "Bonus", spendingAmount: 300.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 3).date!, name: "Income"),
+        SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 3).date!, name: "Utilities"),
+        SaverModel(transactionName: "Dining Out", spendingAmount: -75.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 4).date!, name: "Food"),
+        SaverModel(transactionName: "Subscription", spendingAmount: -15.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 7).date!, name: "Entertainment"),
+        SaverModel(transactionName: "Insurance", spendingAmount: -200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 8).date!, name: "Insurance"),
+        SaverModel(transactionName: "Car Payment", spendingAmount: -300.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 9).date!, name: "Transport"),
+        SaverModel(transactionName: "Gym Membership", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Health"),
+        SaverModel(transactionName: "Gift", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Other"),
+        SaverModel(transactionName: "Freelance", spendingAmount: 500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Income"),
+        SaverModel(transactionName: "Lottery", spendingAmount: 1000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 13).date!, name: "Income"),
+        SaverModel(transactionName: "Books", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 15).date!, name: "Entertainment"),
+        SaverModel(transactionName: "Medicine", spendingAmount: -25.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 15).date!, name: "Health"),
+        SaverModel(transactionName: "Phone Bill", spendingAmount: -60.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 16).date!, name: "Utilities"),
+        SaverModel(transactionName: "Internet Bill", spendingAmount: -40.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Utilities"),
+        SaverModel(transactionName: "Concert Ticket", spendingAmount: -120.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Entertainment"),
+        SaverModel(transactionName: "Bus Pass", spendingAmount: -70.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Transport"),
+        SaverModel(transactionName: "Water Bill", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 20).date!, name: "Utilities")
     ]
     
     private var dateFormatter: DateFormatter = DateFormatter()
@@ -116,7 +132,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
             print("내역추가 버튼 클릭. (현재 테이블 뷰. 셀 관련 액션 테스트 중")
-            self.dummyData.removeLast()
+            HomeViewController.dummyData.removeLast()
             self.transactionTableView.reloadData()
         }, for: .touchUpInside)
         addTransactionButton.setContentHuggingPriority(.required, for: .horizontal)
@@ -389,8 +405,10 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
         let days = CalendarManager.manager.getDays()
-        self.dateFormatter.dateFormat = "yyyy년 M월"
-        cell.configureCell(day: days[indexPath.row], isToday: self.isToday)
+        self.dateFormatter.dateFormat = "yyyy년 M월 d일"
+        let dateString = self.yearMonthButtonLabel.text! + " \(String(days[indexPath.row]))일"
+        let date = self.dateFormatter.date(from: dateString) ?? Date()
+        cell.configureCell(date: date, day: days[indexPath.row], isToday: self.isToday)
         return cell
     }
     
@@ -437,8 +455,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if self.dummyData.count > 0 {
-            return self.dummyData.count
+        if HomeViewController.dummyData.count > 0 {
+            return HomeViewController.dummyData.count
         }else {
             return 1
         }
@@ -446,8 +464,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
-        if self.dummyData.count > 0 {
-            cell.configureCell(transaction: self.dummyData[indexPath.row])
+        if HomeViewController.dummyData.count > 0 {
+            cell.configureCell(transaction: HomeViewController.dummyData[indexPath.row])
             return cell
         }else {
             cell.configureNilCell()
