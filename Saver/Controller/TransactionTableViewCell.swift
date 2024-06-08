@@ -86,8 +86,24 @@ class TransactionTableViewCell: UITableViewCell {
     }
     
     //MARK: - SwiftData가 정상 적용되었을 경우 사용할 Cell 초기화 메서드
-//    func configureCell(transaction: SaverModel) {
-//        let amount = transaction.spendingAmount
+    func configureCell(transaction: SaverModel) {
+        let amount = transaction.spendingAmount
+        switch amount {
+        case ..<0:
+            transactionAmount.text = "\(amount) 원"
+        case 1..<Double.infinity:
+            transactionAmount.text = "+\(amount) 원"
+        default:
+            transactionAmount.text = "0 원"
+        }
+        
+        transactionCategory.text = transaction.name
+        transactionName.text = transaction.transactionName
+    }
+    
+    //MARK: - 테이블 뷰 셀 표현 테스트용 메서드
+//    func configureCell() {
+//        let amount = 1500.0
 //        switch amount {
 //        case ..<0:
 //            transactionAmount.text = "-\(amount) 원"
@@ -97,23 +113,7 @@ class TransactionTableViewCell: UITableViewCell {
 //            transactionAmount.text = "0 원"
 //        }
 //        
-//        transactionCategory.text = transaction.name
-//        transactionName.text = transaction.transactionName
+//        transactionCategory.text = "[식비]"
+//        transactionName.text = "포켓몬 빵"
 //    }
-    
-    //MARK: - 테이블 뷰 셀 표현 테스트용 메서드
-    func configureCell() {
-        let amount = 1500.0
-        switch amount {
-        case ..<0:
-            transactionAmount.text = "-\(amount) 원"
-        case 1..<Double.infinity:
-            transactionAmount.text = "+\(amount) 원"
-        default:
-            transactionAmount.text = "0 원"
-        }
-        
-        transactionCategory.text = "[식비]"
-        transactionName.text = "포켓몬 빵"
-    }
 }

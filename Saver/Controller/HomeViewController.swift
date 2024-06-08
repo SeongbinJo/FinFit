@@ -8,7 +8,12 @@
 import UIKit
 
 class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
-    static var dummy: [Int] = [1,1,1,1,1,1,1,1,1,1]
+    var dummyData: [SaverModel] = [
+        SaverModel(transactionName: "Groceries", spendingAmount: -50.0, transactionDate: Date(), name: "Food"),
+        SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: Date(), name: "Housing"),
+        SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: Date(), name: "Income"),
+        SaverModel(transactionName: "Bonus", spendingAmount: 300.0, transactionDate: Date(), name: "Income"),
+    ]
     
     private var dateFormatter: DateFormatter = DateFormatter()
     
@@ -111,7 +116,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
             print("내역추가 버튼 클릭. (현재 테이블 뷰. 셀 관련 액션 테스트 중")
-            HomeViewController.dummy.removeLast()
+            self.dummyData.removeLast()
             self.transactionTableView.reloadData()
         }, for: .touchUpInside)
         addTransactionButton.setContentHuggingPriority(.required, for: .horizontal)
@@ -432,13 +437,13 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        HomeViewController.dummy.count
+        self.dummyData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
-//        cell.configureCell(transaction: SaverModel(transactionName: "내역 1", spendingAmount: 1300.0, transactionDate: Date(), name: "식비"))
-        cell.configureCell()
+        cell.configureCell(transaction: self.dummyData[indexPath.row])
+//        cell.configureCell()
         return cell
     }
     
