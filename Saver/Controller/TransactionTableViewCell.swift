@@ -8,6 +8,7 @@
 import UIKit
 
 class TransactionTableViewCell: UITableViewCell {
+    //MARK: - 리스트 셀
     private var transactionAmount: UILabel = UILabel()
     
     private var transactionCategory: UILabel = UILabel()
@@ -18,6 +19,9 @@ class TransactionTableViewCell: UITableViewCell {
     private var categoryNameHStackView: UIStackView = UIStackView()
     private var labelVStackView: UIStackView = UIStackView()
     private var transactionHStackView: UIStackView = UIStackView()
+    
+    //MARK: - 리스트 없을 경우의 셀 표현
+    private var nilLabel: UILabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,12 +29,15 @@ class TransactionTableViewCell: UITableViewCell {
         setupCategoryNameHStackView()
         setupLabelVStackView()
         setupTransactionHStackView()
+        
+        setupNilLabel()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - 리스트 셀
     func setupCategoryNameHStackView() {
         transactionCategory.text = "[테스트 카테고리]"
         transactionName.text = "테스트 내역 1"
@@ -99,6 +106,29 @@ class TransactionTableViewCell: UITableViewCell {
         
         transactionCategory.text = transaction.name
         transactionName.text = transaction.transactionName
+    }
+    
+    
+    //MARK: - 리스트 내역 없을경우의 셀 setup
+    func setupNilLabel() {
+        nilLabel.text = ""
+        nilLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentView.addSubview(nilLabel)
+        
+        NSLayoutConstraint.activate([
+            nilLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            nilLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+        ])
+    }
+    
+    func configureNilCell() {
+        transactionName.text = ""
+        transactionAmount.text = ""
+        transactionCategory.text = ""
+        editMenuButton.setImage(nil, for: .normal)
+        
+        nilLabel.text = "내역이 존재하지 않습니다."
     }
     
     //MARK: - 테이블 뷰 셀 표현 테스트용 메서드

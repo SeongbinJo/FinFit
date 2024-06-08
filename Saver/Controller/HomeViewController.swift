@@ -437,14 +437,22 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.dummyData.count
+        if self.dummyData.count > 0 {
+            return self.dummyData.count
+        }else {
+            return 1
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
-        cell.configureCell(transaction: self.dummyData[indexPath.row])
-//        cell.configureCell()
-        return cell
+        if self.dummyData.count > 0 {
+            cell.configureCell(transaction: self.dummyData[indexPath.row])
+            return cell
+        }else {
+            cell.configureNilCell()
+            return cell
+        }
     }
     
     
