@@ -60,6 +60,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         contentView.backgroundColor = .clear
+        amountOfDay.textColor = .black
     }
     
     // day = 1~31 중 하나의 문자열
