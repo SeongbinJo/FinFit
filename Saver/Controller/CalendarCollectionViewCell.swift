@@ -81,6 +81,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
             amountOfDay.text = ""
         default:
             amountOfDay.text = totalAmountOfDayData(date: date)
+            
         }
     
     }
@@ -90,12 +91,17 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     func totalAmountOfDayData(date: Date) -> String {
         let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == date }
 
-        if filteredArray.isEmpty {
-            return "-"
-        }else {
-            let result: Double = filteredArray.reduce(0) { $0 + $1.spendingAmount }
-            return String(result)
+        guard !filteredArray.isEmpty else { return "-" }
+        let result: Double = filteredArray.reduce(0) { $0 + $1.spendingAmount }
+        switch result {
+        case ..<0.0:
+            amountOfDay.textColor = .red
+        case 0.0:
+            amountOfDay.textColor = .black
+        default:
+            amountOfDay.textColor = .blue
         }
+        return String(result)
     }
     
 }
