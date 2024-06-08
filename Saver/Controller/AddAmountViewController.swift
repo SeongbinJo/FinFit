@@ -53,7 +53,7 @@ class AddAmountViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var transactionDetailView: UIStackView = {
+    private lazy var transactionName: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .leading
@@ -131,7 +131,7 @@ class AddAmountViewController: UIViewController {
         
         mainContainer.addArrangedSubview(titleView)
         mainContainer.addArrangedSubview(dateView)
-        mainContainer.addArrangedSubview(transactionDetailView)
+        mainContainer.addArrangedSubview(transactionName)
         mainContainer.addArrangedSubview(transactionAmount)
         mainContainer.addArrangedSubview(transactionCategory)
         
@@ -140,7 +140,7 @@ class AddAmountViewController: UIViewController {
         mainContainer.translatesAutoresizingMaskIntoConstraints = false
         titleView.translatesAutoresizingMaskIntoConstraints = false
         dateView.translatesAutoresizingMaskIntoConstraints = false
-        transactionDetailView.translatesAutoresizingMaskIntoConstraints = false
+        transactionName.translatesAutoresizingMaskIntoConstraints = false
         transactionAmount.translatesAutoresizingMaskIntoConstraints = false
         transactionCategory.translatesAutoresizingMaskIntoConstraints = false
         
@@ -155,11 +155,33 @@ class AddAmountViewController: UIViewController {
     
     
     // MARK: - 메소드
-    // TODO: - 거래 내역 저장 메소드
+    // TODO: - 해당 메소드 정상 작동하는지 확인
     @objc func save() {
-        guard let title = titleView.text, !title.isEmpty else {
+        guard let transactionNameTextField = transactionName.subviews.compactMap({ $0 as? UITextField }).first,
+              let spendingAmountTextField = transactionAmount.subviews.compactMap({ $0 as? UITextField }).first
+        /*나중에 카테고리 받아온걸로 변경 let transactionCategory = transactionCategory*/ else {
             return
         }
+        
+        // 데이터 유형 불일치 해결 위해 추가
+        guard let transactionName = transactionNameTextField.text,
+              let spendingAmountText = spendingAmountTextField.text,
+              let spendingAmount = Double(spendingAmountText) else {
+            return
+        }
+        
+        guard let transactionDate = dateView.subviews.compactMap({ $0 as? UIDatePicker }).first?.date else {
+            return
+        }
+        
+        let addTransaction = SaverModel(transactionName: transactionName, // 거래명
+                                        spendingAmount: spendingAmount, // 거래금액
+                                        transactionDate: transactionDate, // 거래날짜
+                                        name: "") // 카테고리
+        
+        DBController.shared.insertData(data: addTransaction)
+        
+        dismiss(animated: true)
     }
     
     @objc func cancle() {

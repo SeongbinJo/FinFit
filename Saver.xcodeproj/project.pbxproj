@@ -16,7 +16,6 @@
 		79FE80862C0D9FA600517428 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80852C0D9FA600517428 /* DataController.swift */; };
 		79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80882C0DA4A700517428 /* ReportViewController.swift */; };
 		BFC5170F2C0E9C730072A31D /* AddAmountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */; };
-		BFC517112C1476190072A31D /* TransactionEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC517102C1476190072A31D /* TransactionEntry.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +30,6 @@
 		79FE80852C0D9FA600517428 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		79FE80882C0DA4A700517428 /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
 		BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAmountViewController.swift; sourceTree = "<group>"; };
-		BFC517102C1476190072A31D /* TransactionEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +76,6 @@
 		79FE807F2C0D99CD00517428 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				BFC517102C1476190072A31D /* TransactionEntry.swift */,
 				79FE80832C0D9A5800517428 /* DataModel.swift */,
 			);
 			path = Model;
@@ -167,7 +164,6 @@
 			files = (
 				79FE80862C0D9FA600517428 /* DataController.swift in Sources */,
 				79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */,
-				BFC517112C1476190072A31D /* TransactionEntry.swift in Sources */,
 				7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */,
 				BFC5170F2C0E9C730072A31D /* AddAmountViewController.swift in Sources */,
 				79FE80842C0D9A5800517428 /* DataModel.swift in Sources */,
