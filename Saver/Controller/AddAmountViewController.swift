@@ -8,6 +8,7 @@
 import UIKit
 
 class AddAmountViewController: UIViewController {
+    let dbController = DBController.shared
     
     // MARK: - 뷰
     private lazy var mainContainer: UIStackView = {
@@ -156,7 +157,9 @@ class AddAmountViewController: UIViewController {
     // MARK: - 메소드
     // TODO: - 거래 내역 저장 메소드
     @objc func save() {
-        
+        guard let title = titleView.text, !title.isEmpty else {
+            return
+        }
     }
     
     @objc func cancle() {
