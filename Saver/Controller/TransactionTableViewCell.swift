@@ -109,6 +109,7 @@ class TransactionTableViewCell: UITableViewCell {
     }
     
     
+    
     //MARK: - 리스트 내역 없을경우의 셀 setup
     func setupNilLabel() {
         nilLabel.text = ""

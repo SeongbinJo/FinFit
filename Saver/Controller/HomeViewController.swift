@@ -32,6 +32,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     ]
     
     private var dateFormatter: DateFormatter = DateFormatter()
+    private var calendar: Calendar = Calendar.current
     
     private var scrollView: UIScrollView = UIScrollView()
     
@@ -54,6 +55,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     private var isToday: Bool = false
     private var calendarView: UIView = UIView()
     
+    var selectedDate: Date = Date()
     private var currentDayTitle: UILabel = UILabel()
     private var transactionTableView: UITableView = UITableView(frame: .zero, style: .plain)
     private var transactionTableViewHeightConstraint: NSLayoutConstraint!
@@ -385,6 +387,21 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     }
     
     
+    
+    
+    
+    
+    
+    //MARK: - 더미데이터 전용 메서드!!
+    private func filteredDummyData(date: Date) -> [SaverModel] {
+        let dateComponents = self.calendar.dateComponents([.year, .month, .day], from: date)
+        let changedDate = self.calendar.date(from: dateComponents)
+        let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == changedDate }
+        print(date)
+        print(filteredArray)
+        return filteredArray
+    }
+    
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -422,6 +439,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 self.dateFormatter.dateFormat = "yyyy년 M월 d일"
                 let dateString = self.yearMonthButtonLabel.text! + " \(String(days[indexPath.row]))일"
                 let date = self.dateFormatter.date(from: dateString) ?? Date()
+                self.selectedDate = date // 선택한 날짜를 저장 -> 테이블 뷰 리스트 불러올 때 사용!
+                self.transactionTableView.reloadData() // 날짜 선택할 때마다 테이블 뷰 리로드!
                 let weekDayNumber = CalendarManager.manager.weekOfDay(date: date)
                 var weekDayString = String(days[indexPath.row]) + "일"
                 switch weekDayNumber {
@@ -455,8 +474,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if HomeViewController.dummyData.count > 0 {
-            return HomeViewController.dummyData.count
+        if filteredDummyData(date: selectedDate).count > 0 {
+            return filteredDummyData(date: selectedDate).count
         }else {
             return 1
         }
@@ -464,8 +483,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
-        if HomeViewController.dummyData.count > 0 {
-            cell.configureCell(transaction: HomeViewController.dummyData[indexPath.row])
+        if filteredDummyData(date: selectedDate).count > 0 {
+            cell.configureCell(transaction: filteredDummyData(date: selectedDate)[indexPath.row])
             return cell
         }else {
             cell.configureNilCell()

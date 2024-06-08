@@ -75,7 +75,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     func configureCell(date: Date, day: String, isToday: Bool) {
         numberOfDayLabel.text = day
         if isToday && day == self.today {
-            contentView.backgroundColor = .red
+            contentView.backgroundColor = .systemCyan
         }
         switch day {
         case "":
