@@ -123,7 +123,7 @@ class AddAmountViewController: UIViewController {
         // 버튼 모양 화살표로 바꾸고 싶음
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
                                                            target: self,
-                                                           action: #selector(cancle))
+                                                           action: #selector(cancel))
         
         
         // MARK: - 뷰 붙이기
@@ -184,8 +184,8 @@ class AddAmountViewController: UIViewController {
         dismiss(animated: true)
     }
     
-    @objc func cancle() {
-        dismiss(animated: true)
+    @objc func cancel() {
+        navigationController?.popViewController(animated: true)
     }
     
     // TODO: - 시간나면: 키보드 올라가면 화면 올라가는 메소드(봐서 겹치면)
