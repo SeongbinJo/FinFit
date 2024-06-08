@@ -8,6 +8,8 @@
 import UIKit
 
 class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
+    static var dummy: [Int] = [1,1,1,1,1,1,1,1,1,1]
+    
     private var dateFormatter: DateFormatter = DateFormatter()
     
     private var scrollView: UIScrollView = UIScrollView()
@@ -26,13 +28,14 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     private var weekDayOfStackView: UIStackView = UIStackView()
     private var calendarCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-    private var calendarCollectionViewHeightContraint: NSLayoutConstraint!
+    private var calendarCollectionViewHeightConstraint: NSLayoutConstraint!
     private var todayString: String = ""
     private var isToday: Bool = false
     private var calendarView: UIView = UIView()
     
     private var currentDayTitle: UILabel = UILabel()
     private var transactionTableView: UITableView = UITableView(frame: .zero, style: .plain)
+    private var transactionTableViewHeightConstraint: NSLayoutConstraint!
     
     
     override func viewDidLoad() {
@@ -61,6 +64,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         super.viewDidLayoutSubviews()
         // 레이아웃이 완료된 후 높이 업데이트
         updateCollectionViewHeight()
+        updateTableViewHeight()
     }
     
     func checkToday() {
@@ -106,7 +110,9 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         addTransactionButton.setTitle("내역추가", for: .normal)
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
-            print("hi")
+            print("내역추가 버튼 클릭. (현재 테이블 뷰. 셀 관련 액션 테스트 중")
+            HomeViewController.dummy.removeLast()
+            self.transactionTableView.reloadData()
         }, for: .touchUpInside)
         addTransactionButton.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -278,8 +284,8 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             calendarCollectionView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor),
         ])
         
-        calendarCollectionViewHeightContraint = calendarCollectionView.heightAnchor.constraint(equalToConstant: 0)
-        calendarCollectionViewHeightContraint.isActive = true
+        calendarCollectionViewHeightConstraint = calendarCollectionView.heightAnchor.constraint(equalToConstant: 0)
+        calendarCollectionViewHeightConstraint.isActive = true
         
         scrollView.addSubview(calendarView)
         
@@ -291,13 +297,14 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
 
     }
     
+    //MARK: - 콜렉션 뷰 동적 높이 조절
     func updateCollectionViewHeight() {
         let numberOfItems = calendarCollectionView.numberOfItems(inSection: 0)
         let rows = ceil(Double(numberOfItems) / 7.0)
         let cellHeight = self.calendarView.frame.width / 7
         let newHeight = (CGFloat(rows) * cellHeight) + ((rows - 1) * 11)
         
-        calendarCollectionViewHeightContraint.constant = newHeight
+        calendarCollectionViewHeightConstraint.constant = newHeight
     }
     
     //MARK: - 날짜별 Transaction 테이블 뷰
@@ -326,12 +333,24 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             transactionTableView.topAnchor.constraint(equalTo: currentDayTitle.bottomAnchor, constant: 10),
             transactionTableView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
             transactionTableView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
-            transactionTableView.heightAnchor.constraint(equalToConstant: 500),
+//            transactionTableView.heightAnchor.constraint(equalToConstant: 100),
             transactionTableView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
+        
+        transactionTableViewHeightConstraint = transactionTableView.heightAnchor.constraint(equalToConstant: 0)
+        transactionTableViewHeightConstraint.isActive = true
     }
     
-    //MARK: - 기능 메서드
+    //MARK: - 테이블 뷰 높이 동적 조절
+    func updateTableViewHeight() {
+        let numberOfRows = transactionTableView.numberOfRows(inSection: 0)
+        let rowHeight = 80 // UITableView 델리겟의 row 높이와 맞춰줌
+        let newHeight = CGFloat(numberOfRows * rowHeight)
+        
+        transactionTableViewHeightConstraint.constant = newHeight
+    }
+    
+    //MARK: - 델리게이트 필수 메서드
     // CalendarPopUpViewControllerDelegate 필수 메서드
     func updateCalendar(date: Date) {
         CalendarManager.manager.configureCalendar(date: date)
@@ -413,7 +432,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        HomeViewController.dummy.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
