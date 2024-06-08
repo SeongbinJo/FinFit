@@ -37,6 +37,11 @@ class TransactionTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        // 셀 재사용시 이전 셀의 잔재가 있을경우 여기서 초기화 시켜준다!
+        nilLabel.text = ""
+    }
+    
     //MARK: - 리스트 셀
     func setupCategoryNameHStackView() {
         transactionCategory.text = "[테스트 카테고리]"
