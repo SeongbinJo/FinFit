@@ -28,7 +28,12 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         SaverModel(transactionName: "Internet Bill", spendingAmount: -40.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Utilities"),
         SaverModel(transactionName: "Concert Ticket", spendingAmount: -120.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Entertainment"),
         SaverModel(transactionName: "Bus Pass", spendingAmount: -70.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Transport"),
-        SaverModel(transactionName: "Water Bill", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 20).date!, name: "Utilities")
+        SaverModel(transactionName: "Water Bill", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 20).date!, name: "Utilities"),
+        SaverModel(transactionName: "Groceries", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Food"),
+        SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Housing"),
+        SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 5, day: 1).date!, name: "Income"),
+        SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Income"),
+        SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 12, day: 1).date!, name: "Utilities"),
     ]
     
     private var dateFormatter: DateFormatter = DateFormatter()
@@ -36,7 +41,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     private var scrollView: UIScrollView = UIScrollView()
     
-    private var currentSpendingAmountLabel: UILabel = UILabel()
+    private var monthTotalAmountLabel: UILabel = UILabel()
     private var addTransactionButton: UIButton = UIButton(type: .system)
     private var titleHStackView: UIStackView = UIStackView()
     
@@ -119,10 +124,13 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     //MARK: - 소비금액 타이틀 & 내역추가 버튼
     func setupTitleHStackView() {
         let currentSpendingAmountLabel = UILabel()
-        let dummyTitleAmount = UILabel()
-        dummyTitleAmount.text = "100,000,000"
+
+        if self.monthTotalAmountLabel.text?.first == "-" {
+            currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text!)원 입니다."
+        }else {
+            currentSpendingAmountLabel.text = "이번 달은 \n\(self.monthTotalAmountLabel.text!)원\n수익이 있습니다."
+        }
         
-        currentSpendingAmountLabel.text = "이번달 소비금액은\n\(dummyTitleAmount.text!)원 입니다."
         currentSpendingAmountLabel.font = UIFont.systemFont(ofSize: 24)
         currentSpendingAmountLabel.numberOfLines = 0
         currentSpendingAmountLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -207,6 +215,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             CalendarManager.manager.configureCalendar(date: CalendarManager.manager.calendarDate)
             CalendarManager.manager.updateDays()
             CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+            self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
             self.checkToday()
             // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
             self.ConfigurationChangeMonthButton()
@@ -218,6 +227,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             CalendarManager.manager.configureCalendar(date: CalendarManager.manager.calendarDate)
             CalendarManager.manager.updateDays()
             CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+            self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
             self.checkToday()
             self.ConfigurationChangeMonthButton()
             self.calendarCollectionView.reloadData()
@@ -227,6 +237,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             CalendarManager.manager.configureCalendar(date: Date())
             CalendarManager.manager.updateDays()
             CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+            self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
             self.checkToday()
             self.ConfigurationChangeMonthButton()
             self.calendarCollectionView.reloadData()
@@ -380,6 +391,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         CalendarManager.manager.configureCalendar(date: date)
         CalendarManager.manager.updateDays()
         CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+        self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
         self.checkToday()
         // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
         ConfigurationChangeMonthButton()
@@ -399,20 +411,20 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         let dateComponents = self.calendar.dateComponents([.year, .month, .day], from: date)
         let changedDate = self.calendar.date(from: dateComponents)
         let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == changedDate }
-        print(date)
-        print(filteredArray)
         return filteredArray
     }
     
     // 이번달의 내역 총 합계
-    private func totalAmountCurrentMonth(yearMonthString: String) -> Double {
-        let date = self.dateFormatter.date(from: yearMonthString)
-        var result: Double = 0.0
-        let array = HomeViewController.dummyData.filter { $0.transactionDate == date }
-        for i in array {
-            print(i.transactionDate)
-        }
-        return result
+    // yyyy년 M월을 갖다 비교하면 yyyy년 M월 1일로 비교가되기 때문에 1일과 말일의 사이를 범위로 줘야함.
+    // days를 가져와서 1일과 days.last를 범위로 지정!
+    private func totalAmountCurrentMonth(yearMonthString: String) {
+        let startDate = self.dateFormatter.date(from: yearMonthString) // 'yyyy년 M월' 형식이라 date 타입변환시 1일로 잡힘.
+        self.dateFormatter.dateFormat = "yyyy년 M월 d일"
+        let endDate = self.dateFormatter.date(from: yearMonthString + " \(CalendarManager.manager.getDays().last ?? "1")")
+        let arrayDate = HomeViewController.dummyData.filter { $0.transactionDate >= startDate! && $0.transactionDate <= endDate! }
+        let result: Double = arrayDate.reduce(0) { $0 + $1.spendingAmount}
+        
+        self.monthTotalAmountLabel.text = String(result)
     }
 }
 

@@ -46,6 +46,7 @@ class CalendarManager {
     // 달의 1일이 무슨 요일인지 파악 후, 달력의 날짜 요소들을 days에 업데이트
     func updateDays() {
         self.days.removeAll()
+        
         let weekOfFirstDay = self.weekOfFirstDay() // 1일이 무슨 요일인지?
         let countOfDay = self.countDayInMonth() // 이 달은 며칠인지?
         let countOfDayInMonth = weekOfFirstDay + countOfDay // 두 값을 더해 1일 이전의 요일들을 빈값으로 구성
