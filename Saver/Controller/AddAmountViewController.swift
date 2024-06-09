@@ -94,9 +94,8 @@ class AddAmountViewController: UIViewController {
         return stackView
     }()
     
-    // TODO: - 카테고리 목록 만들기(어디서 어떻게 받아오지..?)
-    // 테스트용 카테고리 목록
-    let testCategories: [String] = ["test1", "test2", "test3"]
+    // TODO: - 실제 카테고리 받아오기
+    var testCategories: [String] = ["test1", "test2", "test3"]
     
     private lazy var transactionCategory: UIStackView = {
         let stackView = UIStackView()
@@ -115,6 +114,54 @@ class AddAmountViewController: UIViewController {
         buttonView.alignment = .fill
         buttonView.distribution = .fillEqually
         buttonView.spacing = 20
+        
+        // 카테고리 추가 버튼
+        let categoryAddButton = UIButton(type: .system)
+        categoryAddButton.setTitle("추가", for: .normal)
+        categoryAddButton.addAction(UIAction { _ in
+            // TODO: - 입력창 만들기
+            let alertController = UIAlertController(title: "카테고리 추가", message: "새로 추가할 카테고리 이름을 입력해주세요.", preferredStyle: .alert)
+            // 입력창 추가
+            alertController.addTextField { textField in
+                textField.placeholder = "추가할 카테고리 이름"
+            }
+            // 입력창 취소
+            let alertCancle = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            // 입력창 저장
+            let addCategorySave = UIAlertAction(title: "추가", style: .default) { [self] action in
+                // 텍스트 필드에 입력된 값 변수에 담기
+                if let textField = alertController.textFields?.first, let newCategory = textField.text {
+                    self.testCategories.append(newCategory)
+                    
+                    // 기존 버튼 삭제
+                    buttonView.subviews.forEach { $0.removeFromSuperview() }
+                    
+                    // 버튼 다시 생성
+                    buttonView.addArrangedSubview(categoryAddButton)
+                    
+                    for category in self.testCategories {
+                        let button = UIButton(type: .system)
+                        button.setTitle(category, for: .normal)
+                        button.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
+                        buttonView.addArrangedSubview(button)
+                    }
+                    
+                    print(self.testCategories)
+                }
+            }
+            
+            // 취소 저장 버튼 입력창에 붙이기
+            alertController.addAction(alertCancle)
+            alertController.addAction(addCategorySave)
+            
+            // 버튼 누르면 입력창 띄우기
+            // keyWindow 안 쓰는 방법 찾아보기
+            if let viewController = UIApplication.shared.keyWindow?.rootViewController {
+                viewController.present(alertController, animated: true, completion: nil)
+            }
+        }, for: .touchUpInside)
+        
+        buttonView.addArrangedSubview(categoryAddButton)
         
         for category in testCategories {
             let button = UIButton(type: .system)
@@ -181,6 +228,7 @@ class AddAmountViewController: UIViewController {
         }
         
         // 데이터 유형 불일치 해결 위해 추가
+        // 카테고리 변환하는 코드 추가 필요
         guard let transactionName = transactionNameTextField.text,
               let spendingAmountText = spendingAmountTextField.text,
               let spendingAmount = Double(spendingAmountText) else {
@@ -206,7 +254,6 @@ class AddAmountViewController: UIViewController {
     }
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
-        // Handle button tap event
         if let category = sender.title(for: .normal) {
             print("Category button tapped: \(category)")
             // Do whatever you want when a category button is tapped
