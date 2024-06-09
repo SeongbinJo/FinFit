@@ -94,6 +94,10 @@ class AddAmountViewController: UIViewController {
         return stackView
     }()
     
+    // TODO: - 카테고리 목록 만들기(어디서 어떻게 받아오지..?)
+    // 테스트용 카테고리 목록
+    let testCategories: [String] = ["test1", "test2", "test3"]
+    
     private lazy var transactionCategory: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -105,9 +109,22 @@ class AddAmountViewController: UIViewController {
         title.text = "거래 카테고리"
         title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         
-        // TODO: - 카테고리 목록 만들기(어디서 어떻게 받아오지..?)
+        // 버튼 가로 정렬을 위한 뷰
+        let buttonView = UIStackView()
+        buttonView.axis = .horizontal
+        buttonView.alignment = .fill
+        buttonView.distribution = .fillEqually
+        buttonView.spacing = 20
+        
+        for category in testCategories {
+            let button = UIButton(type: .system)
+            button.setTitle(category, for: .normal)
+            button.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
+            buttonView.addArrangedSubview(button)
+        }
         
         stackView.addArrangedSubview(title)
+        stackView.addArrangedSubview(buttonView)
         
         return stackView
     }()
@@ -186,6 +203,14 @@ class AddAmountViewController: UIViewController {
     
     @objc func cancel() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func categoryButtonTapped(_ sender: UIButton) {
+        // Handle button tap event
+        if let category = sender.title(for: .normal) {
+            print("Category button tapped: \(category)")
+            // Do whatever you want when a category button is tapped
+        }
     }
     
     // TODO: - 시간나면: 키보드 올라가면 화면 올라가는 메소드(봐서 겹치면)
