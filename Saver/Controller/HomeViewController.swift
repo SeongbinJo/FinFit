@@ -42,6 +42,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     private var scrollView: UIScrollView = UIScrollView()
     
     private var monthTotalAmountLabel: UILabel = UILabel()
+    private var currentSpendingAmountLabel: UILabel = UILabel()
     private var addTransactionButton: UIButton = UIButton(type: .system)
     private var titleHStackView: UIStackView = UIStackView()
     
@@ -123,12 +124,10 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     //MARK: - 소비금액 타이틀 & 내역추가 버튼
     func setupTitleHStackView() {
-        let currentSpendingAmountLabel = UILabel()
-
         if self.monthTotalAmountLabel.text?.first == "-" {
-            currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text!)원 입니다."
+            currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text ?? "-")원 입니다."
         }else {
-            currentSpendingAmountLabel.text = "이번 달은 \n\(self.monthTotalAmountLabel.text!)원\n수익이 있습니다."
+            currentSpendingAmountLabel.text = "이번 달은 \n\(self.monthTotalAmountLabel.text ?? "-")원\n수익이 있습니다."
         }
         
         currentSpendingAmountLabel.font = UIFont.systemFont(ofSize: 24)
@@ -418,13 +417,26 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     // yyyy년 M월을 갖다 비교하면 yyyy년 M월 1일로 비교가되기 때문에 1일과 말일의 사이를 범위로 줘야함.
     // days를 가져와서 1일과 days.last를 범위로 지정!
     private func totalAmountCurrentMonth(yearMonthString: String) {
+        self.dateFormatter.dateFormat = "yyyy년 M월"
         let startDate = self.dateFormatter.date(from: yearMonthString) // 'yyyy년 M월' 형식이라 date 타입변환시 1일로 잡힘.
-        self.dateFormatter.dateFormat = "yyyy년 M월 d일"
+        print(yearMonthString)
+        print(startDate)
+        self.dateFormatter.dateFormat = "yyyy년 M월 d"
         let endDate = self.dateFormatter.date(from: yearMonthString + " \(CalendarManager.manager.getDays().last ?? "1")")
+        print(endDate)
         let arrayDate = HomeViewController.dummyData.filter { $0.transactionDate >= startDate! && $0.transactionDate <= endDate! }
-        let result: Double = arrayDate.reduce(0) { $0 + $1.spendingAmount}
-        
-        self.monthTotalAmountLabel.text = String(result)
+        if arrayDate.count > 0 {
+            let result: Double = arrayDate.reduce(0) { $0 + $1.spendingAmount}
+            print(result)
+            self.monthTotalAmountLabel.text = String(result)
+            if self.monthTotalAmountLabel.text?.first == "-" {
+                currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text ?? "-")원 입니다."
+            }else {
+                currentSpendingAmountLabel.text = "이번 달은 \n\(self.monthTotalAmountLabel.text ?? "-")원\n수익이 있습니다."
+            }
+        }else {
+            currentSpendingAmountLabel.text = "이번 달은\n내역이 존재하지 않습니다."
+        }
     }
 }
 
