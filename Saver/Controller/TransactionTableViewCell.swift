@@ -7,7 +7,17 @@
 
 import UIKit
 
+protocol TransactionTableViewButtonDelegate: NSObject {
+    func deleteTransaction(transaction: SaverModel) -> ()
+    func editTransaction() -> ()
+}
+
 class TransactionTableViewCell: UITableViewCell {
+    //MARK: - Delegate
+    weak var delegate: TransactionTableViewButtonDelegate?
+    
+    private var transaction: SaverModel?
+    
     //MARK: - 리스트 셀
     private var transactionAmount: UILabel = UILabel()
     
@@ -73,7 +83,8 @@ class TransactionTableViewCell: UITableViewCell {
             print("수정 클릭")
         }
         let removeMenu: UIAction = UIAction(title: "삭제", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
-            print("삭제 클릭")
+            self.delegate?.deleteTransaction(transaction: self.transaction ?? SaverModel(transactionName: "nil", spendingAmount: 0.0, transactionDate: Date(), name: "nil"))
+            print("clicked")
         }
         let menu: UIMenu = UIMenu(options: .displayInline, children: [editMenu, removeMenu])
         editMenuButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -112,6 +123,8 @@ class TransactionTableViewCell: UITableViewCell {
         
         transactionCategory.text = transaction.name
         transactionName.text = transaction.transactionName
+        
+        self.transaction = transaction
     }
     
     

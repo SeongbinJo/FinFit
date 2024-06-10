@@ -12,7 +12,7 @@ class CalendarManager {
     private let calendar = Calendar.current
     private let dateFormatter = DateFormatter()
     var calendarDate = Date()
-    private var days: [String]
+    private var days: [Int]
     
     private init() {
         days = []
@@ -54,9 +54,9 @@ class CalendarManager {
         for day in 0..<countOfDayInMonth {
             switch day {
             case ..<weekOfFirstDay:
-                self.days.append("")
+                self.days.append(0)
             default:
-                self.days.append(String(day - weekOfFirstDay + 1))
+                self.days.append(day - weekOfFirstDay + 1)
             }
         }
     }
@@ -68,7 +68,7 @@ class CalendarManager {
     }
     
     // days 전체를 반환
-    func getDays() -> [String] {
+    func getDays() -> [Int] {
         return self.days
     }
     

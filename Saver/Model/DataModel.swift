@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 //MARK: - Model
-//@Model
+@Model
 class SaverModel: Identifiable{
     var id: UUID = UUID() //티도 안나게 쪼~~~~~~~끔 빠름!(컴파일 시 -> 타입추론시간 절약)
     

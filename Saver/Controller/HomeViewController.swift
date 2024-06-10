@@ -7,34 +7,7 @@
 
 import UIKit
 
-class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
-    static var dummyData: [SaverModel] = [
-        SaverModel(transactionName: "Groceries", spendingAmount: 500000000000000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Food"),
-        SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Housing"),
-        SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Income"),
-        SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Income"),
-        SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Utilities"),
-        SaverModel(transactionName: "Dining Out", spendingAmount: -75.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Food"),
-        SaverModel(transactionName: "Subscription", spendingAmount: -15.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Entertainment"),
-        SaverModel(transactionName: "Insurance", spendingAmount: -200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Insurance"),
-        SaverModel(transactionName: "Car Payment", spendingAmount: -300.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Transport"),
-        SaverModel(transactionName: "Gym Membership", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Health"),
-        SaverModel(transactionName: "Gift", spendingAmount: -500000000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Other"),
-        SaverModel(transactionName: "Freelance", spendingAmount: 500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Income"),
-        SaverModel(transactionName: "Lottery", spendingAmount: 1000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Income"),
-        SaverModel(transactionName: "Books", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 15).date!, name: "Entertainment"),
-        SaverModel(transactionName: "Medicine", spendingAmount: -25.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 15).date!, name: "Health"),
-        SaverModel(transactionName: "Phone Bill", spendingAmount: -60.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 16).date!, name: "Utilities"),
-        SaverModel(transactionName: "Internet Bill", spendingAmount: -40.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Utilities"),
-        SaverModel(transactionName: "Concert Ticket", spendingAmount: -120.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Entertainment"),
-        SaverModel(transactionName: "Bus Pass", spendingAmount: -70.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Transport"),
-        SaverModel(transactionName: "Water Bill", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 20).date!, name: "Utilities"),
-        SaverModel(transactionName: "Groceries", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Food"),
-        SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Housing"),
-        SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 5, day: 1).date!, name: "Income"),
-        SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Income"),
-        SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 12, day: 1).date!, name: "Utilities"),
-    ]
+class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate, TransactionTableViewButtonDelegate {
     
     // 날짜 관련
     private var dateFormatter: DateFormatter = DateFormatter()
@@ -76,6 +49,13 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        // 앱 실행 후 데이터 fetch
+        ShareData.shared.loadSaverEntries()
+        // 앱 실행 후 오늘 날짜의 테이블 뷰 리스트 가져오기위함
+        let todayComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+        ShareData.shared.getYearMonthDaySaverEntries(year: todayComponents.year!, month: todayComponents.month!, day: todayComponents.day!)
+        
+        
         dateFormatter.dateFormat = "yyyy년 M월"
         todayString = dateFormatter.string(from: Date())
         
@@ -92,6 +72,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         setupCalendarView()
         setupPrevNextMonthStackView()
         setupTransactionTableView()
+    
     }
     
     override func viewDidLayoutSubviews() {
@@ -145,7 +126,6 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
             print("내역추가 버튼 클릭. (현재 테이블 뷰. 셀 관련 액션 테스트 중")
-            HomeViewController.dummyData.removeLast()
             self.transactionTableView.reloadData()
         }, for: .touchUpInside)
         addTransactionButton.setContentHuggingPriority(.required, for: .horizontal)
@@ -188,7 +168,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     //MARK: - changeMonthButton setup
     func setupchangeMonthButton() {
         ConfigurationChangeMonthButton()
-
+        
         changeMonthButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             let calendarPopUpViewController = CalendarPopUpViewController(nibName: nil, bundle: nil)
@@ -225,7 +205,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         todayButton.addAction(UIAction { _ in
             self.changeCalendarMethod(date: Date())
             self.changeCurrentDayTitleByTodayButton()
-            self.currentDayAmount.text = self.totalAmountOfDay(date: Date())
+            self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay())원"
         }, for: .touchUpInside)
         
         prevNextButtonStackView.axis = .horizontal
@@ -335,7 +315,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         currentDayTitle.backgroundColor = .brown
         currentDayTitle.translatesAutoresizingMaskIntoConstraints = false
         
-        currentDayAmount.text = totalAmountOfDay(date: Date())
+        currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay())원"
         currentDayAmount.backgroundColor = .brown
         currentDayAmount.font = UIFont.systemFont(ofSize: 25)
         currentDayAmount.translatesAutoresizingMaskIntoConstraints = false
@@ -379,12 +359,6 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         transactionTableViewHeightConstraint.constant = newHeight
     }
     
-//    //MARK: - selectedDate를 매월 1일로 변경
-//    // selectedDate를 매월 1일로 변경해서 달력이 변경될 때, 해당 월의 1일의 TransactionList를 보여주게끔 함.
-//    func setFirstDaySelectedDate() {
-//        
-//    }
-    
     //MARK: - Prev, Next, Today 버튼의 공통 메서드
     // 달력과 달력의 년/월을 나타내는 Label의 업데이트
     func changeCalendarMethod(date: Date) {
@@ -406,6 +380,26 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         self.transactionTableView.reloadData()
     }
     
+    
+    // 이번달의 내역 총 합계
+    // yyyy년 M월을 갖다 비교하면 yyyy년 M월 1일로 비교가되기 때문에 1일과 말일의 사이를 범위로 줘야함.
+    // days를 가져와서 1일과 days.last를 범위로 지정!
+    func totalAmountCurrentMonth(yearMonthString: String) {
+        let calendarComopnents = calendar.dateComponents([.year, .month], from: CalendarManager.manager.calendarDate)
+        ShareData.shared.getYearMonthSaverEntries(year: calendarComopnents.year ?? 2000, month: calendarComopnents.month ?? 1)
+        self.monthTotalAmountLabel.text = String(ShareData.shared.totalAmountInMonth())
+        if ShareData.shared.getYearMonthData().count > 0 {
+            if self.monthTotalAmountLabel.text?.first == "-" {
+                self.currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text ?? "-")원 입니다."
+            }else {
+                self.currentSpendingAmountLabel.text = "이번 달은 \n\(self.monthTotalAmountLabel.text ?? "-")원\n수익이 있습니다."
+            }
+        }else {
+            self.currentSpendingAmountLabel.text = "이번 달은\n내역이 존재하지 않습니다."
+        }
+
+    }
+    
     //MARK: - 델리게이트 필수 메서드
     // CalendarPopUpViewControllerDelegate 필수 메서드
     func updateCalendar(date: Date) {
@@ -420,64 +414,17 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         calendarCollectionView.reloadData()
     }
     
-    
-    
-    
-    
-    
-    
-    //MARK: - 더미데이터 전용 메서드!!
-    // 달력의 클릭한 날짜의 내역리스트
-    private func filteredDummyData(date: Date) -> [SaverModel] {
-        let dateComponents = self.calendar.dateComponents([.year, .month, .day], from: date)
-        let changedDate = self.calendar.date(from: dateComponents)
-        let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == changedDate }
-        return filteredArray
+    // TransactionTableViewButtonDelegate 필수 메서드
+    func deleteTransaction(transaction: SaverModel) {
+        ShareData.shared.dbController.deleteData(model: transaction)
+        transactionTableView.reloadData()
+        print("삭제 클릭")
     }
     
-    // 이번달의 내역 총 합계
-    // yyyy년 M월을 갖다 비교하면 yyyy년 M월 1일로 비교가되기 때문에 1일과 말일의 사이를 범위로 줘야함.
-    // days를 가져와서 1일과 days.last를 범위로 지정!
-    private func totalAmountCurrentMonth(yearMonthString: String) {
-        self.dateFormatter.dateFormat = "yyyy년 M월"
-        let startDate = self.dateFormatter.date(from: yearMonthString) // 'yyyy년 M월' 형식이라 date 타입변환시 1일로 잡힘.
-        self.dateFormatter.dateFormat = "yyyy년 M월 d"
-        let endDate = self.dateFormatter.date(from: yearMonthString + " \(CalendarManager.manager.getDays().last ?? "1")")
-        let arrayDate = HomeViewController.dummyData.filter { $0.transactionDate >= startDate! && $0.transactionDate <= endDate! }
-        if arrayDate.count > 0 {
-            let result: Double = arrayDate.reduce(0) { $0 + $1.spendingAmount}
-            print(result)
-            self.monthTotalAmountLabel.text = String(result)
-            if self.monthTotalAmountLabel.text?.first == "-" {
-                currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text ?? "-")원 입니다."
-            }else {
-                currentSpendingAmountLabel.text = "이번 달은 \n\(self.monthTotalAmountLabel.text ?? "-")원\n수익이 있습니다."
-            }
-        }else {
-            currentSpendingAmountLabel.text = "이번 달은\n내역이 존재하지 않습니다."
-        }
+    func editTransaction() {
+        print("Edit 누름")
     }
-    
-    // 선택한 날짜의 합계금액
-    private func totalAmountOfDay(date: Date) -> String {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day], from: date)
-        let changedDate = calendar.date(from: components)
-        let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == changedDate }
-        guard !filteredArray.isEmpty else {
-            return "" }
-        let result: Double = filteredArray.reduce(0) { $0 + $1.spendingAmount }
-        switch result {
-        case ..<0.0:
-            currentDayAmount.textColor = .red
-        case 0.0:
-            currentDayAmount.textColor = .black
-        default:
-            currentDayAmount.textColor = .blue
-        }
-        return "\(result)원"
-    }
-    
+
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -498,14 +445,20 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
         cell.backgroundColor = .clear
+        
         let days = CalendarManager.manager.getDays()
-        self.dateFormatter.dateFormat = "yyyy년 M월 d일"
-        let dateString = self.yearMonthButtonLabel.text! + " \(String(days[indexPath.row]))일"
-        let date = self.dateFormatter.date(from: dateString) ?? Date()
+        let yearMonthComponents = calendar.dateComponents([.year, .month], from: CalendarManager.manager.calendarDate)
+        let dateComponents = DateComponents(year: yearMonthComponents.year, month: yearMonthComponents.month, day: days[indexPath.row])
+        let date = calendar.date(from: dateComponents)
+        
+        ShareData.shared.getYearMonthDaySaverEntries(year: yearMonthComponents.year ?? 2000, month: yearMonthComponents.month ?? 1, day: days[indexPath.row])
+        
         if self.selectedDate == date {
             cell.backgroundColor = .green
         }
-        cell.configureCell(date: date, day: days[indexPath.row], isToday: self.isToday)
+        
+        cell.configureCell(date: date ?? Date(), day: days[indexPath.row], isToday: self.isToday)
+        
         return cell
     }
     
@@ -523,12 +476,19 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 cell.backgroundColor = .green
                 
                 let days = CalendarManager.manager.getDays()
-                self.dateFormatter.dateFormat = "yyyy년 M월 d일"
-                let dateString = self.yearMonthButtonLabel.text! + " \(String(days[indexPath.row]))일"
-                let date = self.dateFormatter.date(from: dateString) ?? Date()
+
+                
+                let yearMonthComponents = calendar.dateComponents([.year, .month], from: CalendarManager.manager.calendarDate)
+                let dateComponents = DateComponents(year: yearMonthComponents.year, month: yearMonthComponents.month, day: days[indexPath.row])
+                let date = calendar.date(from: dateComponents)
+                
+                ShareData.shared.getYearMonthDaySaverEntries(year: dateComponents.year ?? 2000, month: dateComponents.month ?? 1, day: days[indexPath.row])
+            
+                let totalAmountInDay = ShareData.shared.totalAmountIndDay()
+                self.currentDayAmount.text = "\(totalAmountInDay)원"
+                
                 self.dateFormatter.dateFormat = "M월 d일 E요일"
-                self.currentDayTitle.text = self.dateFormatter.string(from: date)
-                self.currentDayAmount.text = totalAmountOfDay(date: date)
+                self.currentDayTitle.text = self.dateFormatter.string(from: date ?? Date())
                 
                 self.selectedDate = date // 선택한 날짜를 저장 -> 테이블 뷰 리스트 불러올 때 사용!
                 self.transactionTableView.reloadData() // 날짜 선택할 때마다 테이블 뷰 리로드!
@@ -546,8 +506,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if filteredDummyData(date: selectedDate ?? Date()).count > 0 {
-            return filteredDummyData(date: selectedDate ?? Date()).count
+        if ShareData.shared.getYearMonthDayData().count > 0 {
+            return ShareData.shared.getYearMonthDayData().count
         }else {
             return 1
         }
@@ -555,11 +515,15 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
-        if filteredDummyData(date: selectedDate ?? Date()).count > 0 {
-            cell.configureCell(transaction: filteredDummyData(date: selectedDate ?? Date())[indexPath.row])
+        cell.delegate = self
+        if ShareData.shared.getYearMonthDayData().count > 0 {
+            let date = calendar.dateComponents([.year, .month, .day], from: selectedDate ?? Date())
+            ShareData.shared.getYearMonthDaySaverEntries(year: date.year!, month: date.month!, day: date.day!)
+            cell.configureCell(transaction: ShareData.shared.getYearMonthDayData()[indexPath.row])
             return cell
         }else {
             cell.configureNilCell()
+            self.currentDayAmount.text = ""
             return cell
         }
     }

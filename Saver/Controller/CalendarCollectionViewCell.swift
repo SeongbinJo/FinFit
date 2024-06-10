@@ -21,7 +21,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     
     lazy var amountOfDay: UILabel = {
         let amountLabel = UILabel()
-        amountLabel.text = "1,400,000"
+        amountLabel.text = "1,000"
         amountLabel.font = UIFont.systemFont(ofSize: 10, weight: .light)
         amountLabel.numberOfLines = 2
         amountLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -76,37 +76,36 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     // DataController의 함수들을 HomeViewController(테이블 뷰 extension 내부)에 선언된 델리겟 필수 메서드 안에서 사용하고,
     // configureCell() 내부에서 delegate.method()로 함수 실행.
     // 그럼 의존성 낮출 수 있나..? 유지보수나 재사용성을 보면 델리게이트 패턴을 사용하는게 옳다 -소혜 강사님-
-    func configureCell(date: Date, day: String, isToday: Bool) {
-        numberOfDayLabel.text = day
-        if isToday && day == self.today {
+    func configureCell(date: Date, day: Int, isToday: Bool) {
+        numberOfDayLabel.text = String(day)
+        if isToday && String(day) == self.today {
             contentView.backgroundColor = .systemCyan
         }
         switch day {
-        case "":
+        case 0:
+            numberOfDayLabel.text = ""
             amountOfDay.text = ""
         default:
-            amountOfDay.text = "\(totalAmountOfDayData(date: date))"
-            
+            amountOfDay.text = ShareData.shared.getYearMonthDayData().count > 0 ? "\(ShareData.shared.totalAmountIndDay())원" : "-"
         }
-    
     }
     
     //MARK: - 날짜별 spendingAmount 합계(더미데이터 전용)
     // 매개변수의 날짜를 필터링한 후, 내역이 존재하면 reduce로 합산
-    func totalAmountOfDayData(date: Date) -> String {
-        let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == date }
-
-        guard !filteredArray.isEmpty else { return "-" }
-        let result: Double = filteredArray.reduce(0) { $0 + $1.spendingAmount }
-        switch result {
-        case ..<0.0:
-            amountOfDay.textColor = .red
-        case 0.0:
-            amountOfDay.textColor = .black
-        default:
-            amountOfDay.textColor = .blue
-        }
-        return "\(result)원"
-    }
+//    func totalAmountOfDayData(date: Date) -> String {
+//        let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == date }
+//
+//        guard !filteredArray.isEmpty else { return "-" }
+//        let result: Double = filteredArray.reduce(0) { $0 + $1.spendingAmount }
+//        switch result {
+//        case ..<0.0:
+//            amountOfDay.textColor = .red
+//        case 0.0:
+//            amountOfDay.textColor = .black
+//        default:
+//            amountOfDay.textColor = .blue
+//        }
+//        return "\(result)원"
+//    }
     
 }
