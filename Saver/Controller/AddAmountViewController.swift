@@ -7,6 +7,15 @@
 
 import UIKit
 
+class CustomButton: UIButton {
+    var extraPadding: CGFloat = 20
+
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return CGSize(width: size.width + extraPadding, height: size.height + 10)
+    }
+}
+
 class AddAmountViewController: UIViewController {
     let dbController = DBController.shared
     
@@ -113,13 +122,59 @@ class AddAmountViewController: UIViewController {
         buttonView.axis = .horizontal
         buttonView.alignment = .fill
         buttonView.distribution = .fillEqually
-        buttonView.spacing = 20
+        buttonView.spacing = 10
+        
+        // 버튼 생성 함수
+        func categoryButtonCreated() {
+            for category in testCategories {
+                let button = CustomButton(type: .system)
+                button.setTitle(category, for: .normal)
+                
+                // 버튼 사이즈
+                let buttonSize = button.intrinsicContentSize
+                let buttonWidth = buttonSize.width + 40
+                let buttonHeight = buttonSize.height + 10
+                button.frame = CGRect(x: 0, y: 0, width: buttonWidth, height: buttonHeight)
+                
+                // 버튼 스타일
+                var defaultConfig = UIButton.Configuration.filled()
+                defaultConfig.baseBackgroundColor = .systemBlue
+                defaultConfig.baseForegroundColor = .white
+                defaultConfig.cornerStyle = .capsule
+                
+                button.configuration = defaultConfig
+                
+                // 버튼 동작
+                button.addAction(UIAction { _ in
+                    // TODO: - 기존 버튼 스타일 삭제하고 새 스타일 부여
+                }, for: .touchUpInside)
+                
+                buttonView.addArrangedSubview(button)
+            }
+        }
         
         // 카테고리 추가 버튼
         let categoryAddButton = UIButton(type: .system)
         categoryAddButton.setTitle("추가", for: .normal)
+        
+        // 카테고리 추가 버튼 사이즈
+        let buttonSize = categoryAddButton.intrinsicContentSize
+        let buttonWidth = buttonSize.width + 40
+        let buttonHeight = buttonSize.height + 10
+        categoryAddButton.frame = CGRect(x: 0, y: 0, width: buttonWidth, height: buttonHeight)
+        
+        // 카테고리 추가 버튼 스타일
+        var config = UIButton.Configuration.filled()
+        config.baseBackgroundColor = .white
+        config.baseForegroundColor = .systemBlue
+        config.background.strokeWidth = 1
+        config.background.strokeColor = .systemBlue
+        config.cornerStyle = .capsule
+        
+        categoryAddButton.configuration = config
+        
+        // 카테고리 추가 버튼 동작
         categoryAddButton.addAction(UIAction { _ in
-            // TODO: - 입력창 만들기
             let alertController = UIAlertController(title: "카테고리 추가", message: "새로 추가할 카테고리 이름을 입력해주세요.", preferredStyle: .alert)
             // 입력창 추가
             alertController.addTextField { textField in
@@ -138,15 +193,7 @@ class AddAmountViewController: UIViewController {
                     
                     // 버튼 다시 생성
                     buttonView.addArrangedSubview(categoryAddButton)
-                    
-                    for category in self.testCategories {
-                        let button = UIButton(type: .system)
-                        button.setTitle(category, for: .normal)
-                        button.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
-                        buttonView.addArrangedSubview(button)
-                    }
-                    
-                    print(self.testCategories)
+                    categoryButtonCreated()
                 }
             }
             
@@ -161,14 +208,9 @@ class AddAmountViewController: UIViewController {
             }
         }, for: .touchUpInside)
         
+        // 버튼 생성
         buttonView.addArrangedSubview(categoryAddButton)
-        
-        for category in testCategories {
-            let button = UIButton(type: .system)
-            button.setTitle(category, for: .normal)
-            button.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
-            buttonView.addArrangedSubview(button)
-        }
+        categoryButtonCreated()
         
         stackView.addArrangedSubview(title)
         stackView.addArrangedSubview(buttonView)
@@ -246,18 +288,11 @@ class AddAmountViewController: UIViewController {
         
         DBController.shared.insertData(data: addTransaction)
         
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     @objc func cancel() {
         navigationController?.popViewController(animated: true)
-    }
-    
-    @objc func categoryButtonTapped(_ sender: UIButton) {
-        if let category = sender.title(for: .normal) {
-            print("Category button tapped: \(category)")
-            // Do whatever you want when a category button is tapped
-        }
     }
     
     // TODO: - 시간나면: 키보드 올라가면 화면 올라가는 메소드(봐서 겹치면)
