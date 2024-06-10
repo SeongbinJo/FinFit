@@ -9,7 +9,7 @@ import UIKit
 
 class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate {
     static var dummyData: [SaverModel] = [
-        SaverModel(transactionName: "Groceries", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Food"),
+        SaverModel(transactionName: "Groceries", spendingAmount: 500000000000000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Food"),
         SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Housing"),
         SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Income"),
         SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Income"),
@@ -19,9 +19,9 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         SaverModel(transactionName: "Insurance", spendingAmount: -200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Insurance"),
         SaverModel(transactionName: "Car Payment", spendingAmount: -300.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Transport"),
         SaverModel(transactionName: "Gym Membership", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Health"),
-        SaverModel(transactionName: "Gift", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Other"),
+        SaverModel(transactionName: "Gift", spendingAmount: -500000000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Other"),
         SaverModel(transactionName: "Freelance", spendingAmount: 500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Income"),
-        SaverModel(transactionName: "Lottery", spendingAmount: 1000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 13).date!, name: "Income"),
+        SaverModel(transactionName: "Lottery", spendingAmount: 1000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Income"),
         SaverModel(transactionName: "Books", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 15).date!, name: "Entertainment"),
         SaverModel(transactionName: "Medicine", spendingAmount: -25.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 15).date!, name: "Health"),
         SaverModel(transactionName: "Phone Bill", spendingAmount: -60.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 16).date!, name: "Utilities"),
@@ -36,11 +36,14 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 12, day: 1).date!, name: "Utilities"),
     ]
     
+    // 날짜 관련
     private var dateFormatter: DateFormatter = DateFormatter()
     private var calendar: Calendar = Calendar.current
     
+    // 스크롤 뷰
     private var scrollView: UIScrollView = UIScrollView()
     
+    // 최상단 HStackView
     private var monthTotalAmountLabel: UILabel = UILabel()
     private var currentSpendingAmountLabel: UILabel = UILabel()
     private var addTransactionButton: UIButton = UIButton(type: .system)
@@ -59,10 +62,12 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     private var calendarCollectionViewHeightConstraint: NSLayoutConstraint!
     private var todayString: String = ""
     private var isToday: Bool = false
+    private var selectedIndexPath: IndexPath?
     private var calendarView: UIView = UIView()
     
-    var selectedDate: Date = Date()
+    private var selectedDate: Date?
     private var currentDayTitle: UILabel = UILabel()
+    private var currentDayAmount: UILabel = UILabel()
     private var transactionTableView: UITableView = UITableView(frame: .zero, style: .plain)
     private var transactionTableViewHeightConstraint: NSLayoutConstraint!
     
@@ -87,7 +92,6 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         setupCalendarView()
         setupPrevNextMonthStackView()
         setupTransactionTableView()
-
     }
     
     override func viewDidLayoutSubviews() {
@@ -108,7 +112,6 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     //MARK: - View 관련 Setup
     //MARK: - 스크롤 뷰
     func setupScrollView() {
-//        scrollView.backgroundColor = .blue
         scrollView.showsVerticalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -211,35 +214,18 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         prevMonthButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         prevMonthButton.addAction(UIAction { _ in
             CalendarManager.manager.prevMonth()
-            CalendarManager.manager.configureCalendar(date: CalendarManager.manager.calendarDate)
-            CalendarManager.manager.updateDays()
-            CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
-            self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
-            self.checkToday()
-            // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
-            self.ConfigurationChangeMonthButton()
-            self.calendarCollectionView.reloadData()
+            self.changeCalendarMethod(date: CalendarManager.manager.calendarDate)
         }, for: .touchUpInside)
         nextMonthButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
         nextMonthButton.addAction(UIAction { _ in
             CalendarManager.manager.nextMonth()
-            CalendarManager.manager.configureCalendar(date: CalendarManager.manager.calendarDate)
-            CalendarManager.manager.updateDays()
-            CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
-            self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
-            self.checkToday()
-            self.ConfigurationChangeMonthButton()
-            self.calendarCollectionView.reloadData()
+            self.changeCalendarMethod(date: CalendarManager.manager.calendarDate)
         }, for: .touchUpInside)
         todayButton.setTitle("Today", for: .normal)
         todayButton.addAction(UIAction { _ in
-            CalendarManager.manager.configureCalendar(date: Date())
-            CalendarManager.manager.updateDays()
-            CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
-            self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
-            self.checkToday()
-            self.ConfigurationChangeMonthButton()
-            self.calendarCollectionView.reloadData()
+            self.changeCalendarMethod(date: Date())
+            self.changeCurrentDayTitleByTodayButton()
+            self.currentDayAmount.text = self.totalAmountOfDay(date: Date())
         }, for: .touchUpInside)
         
         prevNextButtonStackView.axis = .horizontal
@@ -343,11 +329,16 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     
     //MARK: - 날짜별 Transaction 테이블 뷰
     func setupTransactionTableView() {
-        self.dateFormatter.dateFormat = "d일 E요일"
+        self.dateFormatter.dateFormat = "M월 d일 E요일"
         self.dateFormatter.locale = Locale(identifier: "ko-KR")
         currentDayTitle.text = self.dateFormatter.string(from: Date())
         currentDayTitle.backgroundColor = .brown
         currentDayTitle.translatesAutoresizingMaskIntoConstraints = false
+        
+        currentDayAmount.text = totalAmountOfDay(date: Date())
+        currentDayAmount.backgroundColor = .brown
+        currentDayAmount.font = UIFont.systemFont(ofSize: 25)
+        currentDayAmount.translatesAutoresizingMaskIntoConstraints = false
         
         transactionTableView.delegate = self
         transactionTableView.dataSource = self
@@ -358,13 +349,17 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
         transactionTableView.backgroundColor = .lightGray
         
         scrollView.addSubview(currentDayTitle)
+        scrollView.addSubview(currentDayAmount)
         scrollView.addSubview(transactionTableView)
         
         NSLayoutConstraint.activate([
             currentDayTitle.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: 15),
             currentDayTitle.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
             
-            transactionTableView.topAnchor.constraint(equalTo: currentDayTitle.bottomAnchor, constant: 10),
+            currentDayAmount.topAnchor.constraint(equalTo: currentDayTitle.bottomAnchor, constant: 5),
+            currentDayAmount.leadingAnchor.constraint(equalTo: currentDayTitle.leadingAnchor),
+            
+            transactionTableView.topAnchor.constraint(equalTo: currentDayAmount.bottomAnchor, constant: 10),
             transactionTableView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
             transactionTableView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
 //            transactionTableView.heightAnchor.constraint(equalToConstant: 100),
@@ -378,10 +373,37 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     //MARK: - 테이블 뷰 높이 동적 조절
     func updateTableViewHeight() {
         let numberOfRows = transactionTableView.numberOfRows(inSection: 0)
-        let rowHeight = 80 // UITableView 델리겟의 row 높이와 맞춰줌
+        let rowHeight = 70 // UITableView 델리겟의 row 높이와 맞춰줌
         let newHeight = CGFloat(numberOfRows * rowHeight)
         
         transactionTableViewHeightConstraint.constant = newHeight
+    }
+    
+//    //MARK: - selectedDate를 매월 1일로 변경
+//    // selectedDate를 매월 1일로 변경해서 달력이 변경될 때, 해당 월의 1일의 TransactionList를 보여주게끔 함.
+//    func setFirstDaySelectedDate() {
+//        
+//    }
+    
+    //MARK: - Prev, Next, Today 버튼의 공통 메서드
+    // 달력과 달력의 년/월을 나타내는 Label의 업데이트
+    func changeCalendarMethod(date: Date) {
+        CalendarManager.manager.configureCalendar(date: date)
+        CalendarManager.manager.updateDays()
+        CalendarManager.manager.updateYearMonthLabel(label: self.yearMonthButtonLabel)
+        self.totalAmountCurrentMonth(yearMonthString: self.yearMonthButtonLabel.text!)
+        self.checkToday()
+        // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
+        self.ConfigurationChangeMonthButton()
+        self.calendarCollectionView.reloadData()
+    }
+    
+    //MARK: - Today 버튼을 누르면 currentDayTitle.text 변경
+    func changeCurrentDayTitleByTodayButton() {
+        self.selectedDate = Date()
+        self.dateFormatter.dateFormat = "M월 d일 E요일"
+        self.currentDayTitle.text = self.dateFormatter.string(from: Date())
+        self.transactionTableView.reloadData()
     }
     
     //MARK: - 델리게이트 필수 메서드
@@ -419,11 +441,8 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
     private func totalAmountCurrentMonth(yearMonthString: String) {
         self.dateFormatter.dateFormat = "yyyy년 M월"
         let startDate = self.dateFormatter.date(from: yearMonthString) // 'yyyy년 M월' 형식이라 date 타입변환시 1일로 잡힘.
-        print(yearMonthString)
-        print(startDate)
         self.dateFormatter.dateFormat = "yyyy년 M월 d"
         let endDate = self.dateFormatter.date(from: yearMonthString + " \(CalendarManager.manager.getDays().last ?? "1")")
-        print(endDate)
         let arrayDate = HomeViewController.dummyData.filter { $0.transactionDate >= startDate! && $0.transactionDate <= endDate! }
         if arrayDate.count > 0 {
             let result: Double = arrayDate.reduce(0) { $0 + $1.spendingAmount}
@@ -438,6 +457,27 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate 
             currentSpendingAmountLabel.text = "이번 달은\n내역이 존재하지 않습니다."
         }
     }
+    
+    // 선택한 날짜의 합계금액
+    private func totalAmountOfDay(date: Date) -> String {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        let changedDate = calendar.date(from: components)
+        let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == changedDate }
+        guard !filteredArray.isEmpty else {
+            return "" }
+        let result: Double = filteredArray.reduce(0) { $0 + $1.spendingAmount }
+        switch result {
+        case ..<0.0:
+            currentDayAmount.textColor = .red
+        case 0.0:
+            currentDayAmount.textColor = .black
+        default:
+            currentDayAmount.textColor = .blue
+        }
+        return "\(result)원"
+    }
+    
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -457,47 +497,43 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarCell", for: indexPath) as! CalendarCollectionViewCell
+        cell.backgroundColor = .clear
         let days = CalendarManager.manager.getDays()
         self.dateFormatter.dateFormat = "yyyy년 M월 d일"
         let dateString = self.yearMonthButtonLabel.text! + " \(String(days[indexPath.row]))일"
         let date = self.dateFormatter.date(from: dateString) ?? Date()
+        if self.selectedDate == date {
+            cell.backgroundColor = .blue
+        }
         cell.configureCell(date: date, day: days[indexPath.row], isToday: self.isToday)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // 이전에 선택한 셀 초기화
+        if let previousIndexPath = self.selectedIndexPath {
+            let prevCell = collectionView.cellForItem(at: previousIndexPath) as? CalendarCollectionViewCell
+            prevCell?.backgroundColor = .clear
+        }
+        
         // 선택한 셀 불러오기
         if let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell {
-            if cell.numberOfDayLabel.text == "" {
-                print("잘못된 날짜 선택입니다.")
-            }else {
+            if cell.numberOfDayLabel.text != ""{
+                self.selectedIndexPath = indexPath
+                cell.backgroundColor = .blue
+                
                 let days = CalendarManager.manager.getDays()
                 self.dateFormatter.dateFormat = "yyyy년 M월 d일"
                 let dateString = self.yearMonthButtonLabel.text! + " \(String(days[indexPath.row]))일"
                 let date = self.dateFormatter.date(from: dateString) ?? Date()
+                self.dateFormatter.dateFormat = "M월 d일 E요일"
+                self.currentDayTitle.text = self.dateFormatter.string(from: date)
+                self.currentDayAmount.text = totalAmountOfDay(date: date)
+                
                 self.selectedDate = date // 선택한 날짜를 저장 -> 테이블 뷰 리스트 불러올 때 사용!
                 self.transactionTableView.reloadData() // 날짜 선택할 때마다 테이블 뷰 리로드!
-                let weekDayNumber = CalendarManager.manager.weekOfDay(date: date)
-                var weekDayString = String(days[indexPath.row]) + "일"
-                switch weekDayNumber {
-                case 0:
-                    weekDayString += " 일요일"
-                case 1:
-                    weekDayString += " 월요일"
-                case 2:
-                    weekDayString += " 화요일"
-                case 3:
-                    weekDayString += " 수요일"
-                case 4:
-                    weekDayString += " 목요일"
-                case 5:
-                    weekDayString += " 금요일"
-                case 6:
-                    weekDayString += " 토요일"
-                default:
-                    print("default: \(weekDayNumber)")
-                }
-                self.currentDayTitle.text = weekDayString
+            }else {
+                print("잘못된 날짜 선택입니다.")
             }
         }
     }
@@ -506,12 +542,12 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        80
+        70
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if filteredDummyData(date: selectedDate).count > 0 {
-            return filteredDummyData(date: selectedDate).count
+        if filteredDummyData(date: selectedDate ?? Date()).count > 0 {
+            return filteredDummyData(date: selectedDate ?? Date()).count
         }else {
             return 1
         }
@@ -519,8 +555,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
-        if filteredDummyData(date: selectedDate).count > 0 {
-            cell.configureCell(transaction: filteredDummyData(date: selectedDate)[indexPath.row])
+        if filteredDummyData(date: selectedDate ?? Date()).count > 0 {
+            cell.configureCell(transaction: filteredDummyData(date: selectedDate ?? Date())[indexPath.row])
             return cell
         }else {
             cell.configureNilCell()

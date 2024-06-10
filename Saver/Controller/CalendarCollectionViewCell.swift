@@ -23,7 +23,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         let amountLabel = UILabel()
         amountLabel.text = "1,400,000"
         amountLabel.font = UIFont.systemFont(ofSize: 10, weight: .light)
-        
+        amountLabel.numberOfLines = 2
         amountLabel.translatesAutoresizingMaskIntoConstraints = false
         return amountLabel
     }()
@@ -51,6 +51,8 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            stackView.widthAnchor.constraint(equalToConstant: contentView.frame.width),
+            stackView.heightAnchor.constraint(equalToConstant: contentView.frame.height)
         ])
     }
     
@@ -59,6 +61,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         contentView.backgroundColor = .clear
         amountOfDay.textColor = .black
         amountOfDay.text = "-"
@@ -82,7 +85,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         case "":
             amountOfDay.text = ""
         default:
-            amountOfDay.text = totalAmountOfDayData(date: date)
+            amountOfDay.text = "\(totalAmountOfDayData(date: date))"
             
         }
     
@@ -103,7 +106,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         default:
             amountOfDay.textColor = .blue
         }
-        return String(result)
+        return "\(result)원"
     }
     
 }
