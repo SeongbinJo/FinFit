@@ -11,27 +11,27 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
     
     //MARK: - Stack(카테고리별 거래명, 거래금액)
     //거래금액
-    private lazy var categoryTransactionAmountLabel: UILabel = {
+    private lazy var categoryTransactionDateLabel: UILabel = {
         let label = UILabel()
         label.text = "+19000원"
-        label.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     //거래명
-    private lazy var categoryTransactionNameLabel: UILabel = {
+    private lazy var categoryTransactionAmountLabel: UILabel = {
         let label = UILabel()
         label.text = "000에게 받음"
         label.numberOfLines = 2
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     //Stack(카테고리별 거래명, 금액)
     private lazy var categoryTransactionStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [categoryTransactionAmountLabel, categoryTransactionNameLabel])
+        let stackView = UIStackView(arrangedSubviews: [categoryTransactionDateLabel, categoryTransactionAmountLabel])
         stackView.axis = .vertical
         stackView.spacing = 5
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,8 +60,12 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
     }
     
     //MARK: - configureCell
-    func configureCell(entry: SaverModel){
-        categoryTransactionAmountLabel.text = "\(Int(entry.spendingAmount))원"
-        categoryTransactionNameLabel.text = entry.transactionName
+    func configureCell(entry: DailyData){
+        let foramtter = DateFormatter()
+        foramtter.dateFormat = "yyyy-MM-dd (E)"
+        foramtter.locale = Locale(identifier: "ko_KR")
+        
+        categoryTransactionDateLabel.text = "\(foramtter.string(from: entry.date))"
+        categoryTransactionAmountLabel.text = "\(Int(entry.totalAmount))원"
     }
 }

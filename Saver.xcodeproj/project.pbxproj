@@ -12,6 +12,9 @@
 		7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953E8062C0D508C0095AC36 /* HomeViewController.swift */; };
 		7953E80C2C0D508F0095AC36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7953E80B2C0D508F0095AC36 /* Assets.xcassets */; };
 		7953E80F2C0D508F0095AC36 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 7953E80E2C0D508F0095AC36 /* Base */; };
+		796B01232C167F5E00E7D972 /* ShareData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796B01222C167F5E00E7D972 /* ShareData.swift */; };
+		796B01252C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796B01242C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift */; };
+		796B012D2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796B012C2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift */; };
 		7981A5D32C10079900104450 /* CategoryExpenditureTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7981A5D22C10079900104450 /* CategoryExpenditureTableViewCell.swift */; };
 		79C945502C0F470F0027170F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 79C9454F2C0F470F0027170F /* DGCharts */; };
 		79FE80842C0D9A5800517428 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80832C0D9A5800517428 /* DataModel.swift */; };
@@ -27,6 +30,9 @@
 		7953E80B2C0D508F0095AC36 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7953E80E2C0D508F0095AC36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7953E8102C0D508F0095AC36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		796B01222C167F5E00E7D972 /* ShareData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareData.swift; sourceTree = "<group>"; };
+		796B01242C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCategoryTransactionAmoutViewController.swift; sourceTree = "<group>"; };
+		796B012C2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListDetailTableCellTableViewCell.swift; sourceTree = "<group>"; };
 		7981A5D22C10079900104450 /* CategoryExpenditureTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryExpenditureTableViewCell.swift; sourceTree = "<group>"; };
 		79FE80832C0D9A5800517428 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		79FE80852C0D9FA600517428 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
@@ -65,7 +71,6 @@
 			isa = PBXGroup;
 			children = (
 				79FE80872C0DA3BC00517428 /* Controller */,
-				79FE807F2C0D99CD00517428 /* Model */,
 				7953E8022C0D508C0095AC36 /* AppDelegate.swift */,
 				7953E8042C0D508C0095AC36 /* SceneDelegate.swift */,
 				7953E80B2C0D508F0095AC36 /* Assets.xcassets */,
@@ -75,10 +80,29 @@
 			path = Saver;
 			sourceTree = "<group>";
 		};
+		796B01282C16EBE400E7D972 /* Report */ = {
+			isa = PBXGroup;
+			children = (
+				79FE80882C0DA4A700517428 /* ReportViewController.swift */,
+				7981A5D22C10079900104450 /* CategoryExpenditureTableViewCell.swift */,
+			);
+			path = Report;
+			sourceTree = "<group>";
+		};
+		796B01292C16EBF200E7D972 /* CategoryDetail */ = {
+			isa = PBXGroup;
+			children = (
+				796B01242C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift */,
+				796B012C2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift */,
+			);
+			path = CategoryDetail;
+			sourceTree = "<group>";
+		};
 		79FE807F2C0D99CD00517428 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				79FE80832C0D9A5800517428 /* DataModel.swift */,
+				796B01222C167F5E00E7D972 /* ShareData.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -86,10 +110,11 @@
 		79FE80872C0DA3BC00517428 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				796B01292C16EBF200E7D972 /* CategoryDetail */,
+				796B01282C16EBE400E7D972 /* Report */,
 				7953E8062C0D508C0095AC36 /* HomeViewController.swift */,
-				79FE80882C0DA4A700517428 /* ReportViewController.swift */,
-				7981A5D22C10079900104450 /* CategoryExpenditureTableViewCell.swift */,
 				79FE80852C0D9FA600517428 /* DataController.swift */,
+				79FE807F2C0D99CD00517428 /* Model */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -172,11 +197,14 @@
 			files = (
 				79FE80862C0D9FA600517428 /* DataController.swift in Sources */,
 				7981A5D32C10079900104450 /* CategoryExpenditureTableViewCell.swift in Sources */,
+				796B01252C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift in Sources */,
 				79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */,
 				7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */,
+				796B012D2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift in Sources */,
 				79FE80842C0D9A5800517428 /* DataModel.swift in Sources */,
 				7953E8032C0D508C0095AC36 /* AppDelegate.swift in Sources */,
 				7953E8052C0D508C0095AC36 /* SceneDelegate.swift in Sources */,
+				796B01232C167F5E00E7D972 /* ShareData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,6 +346,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 643M6R9A8T;
@@ -334,6 +363,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lion.Saver;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -345,6 +375,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 643M6R9A8T;
@@ -361,6 +392,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lion.Saver;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
