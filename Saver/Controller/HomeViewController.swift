@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  Saver
-//
-//  Created by 이상민 on 6/3/24.
-//
-
 import UIKit
 
 class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate, TransactionTableViewButtonDelegate {
@@ -416,8 +409,10 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate,
     
     // TransactionTableViewButtonDelegate 필수 메서드
     func deleteTransaction(transaction: SaverModel) {
+        ShareData.shared.removeData(transaction: transaction)
         ShareData.shared.dbController.deleteData(model: transaction)
         transactionTableView.reloadData()
+//        calendarCollectionView.reloadData()
         print("삭제 클릭")
     }
     
@@ -516,10 +511,11 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
         cell.delegate = self
-        if ShareData.shared.getYearMonthDayData().count > 0 {
+        let data = ShareData.shared.getYearMonthDayData()
+        print(data.count)
+        if data.count > 0 {
             let date = calendar.dateComponents([.year, .month, .day], from: selectedDate ?? Date())
-            ShareData.shared.getYearMonthDaySaverEntries(year: date.year!, month: date.month!, day: date.day!)
-            cell.configureCell(transaction: ShareData.shared.getYearMonthDayData()[indexPath.row])
+            cell.configureCell(transaction: data[indexPath.row])
             return cell
         }else {
             cell.configureNilCell()

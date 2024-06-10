@@ -23,25 +23,6 @@ class ShareData{
             SaverModel(transactionName: "Bonus", spendingAmount: 1000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 13).date!, name: "Income"),
             SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Utilities"),
             SaverModel(transactionName: "Dining Out", spendingAmount: -75.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Food"),
-//            SaverModel(transactionName: "Subscription", spendingAmount: -15.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Entertainment"),
-//            SaverModel(transactionName: "Insurance", spendingAmount: -200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Insurance"),
-//            SaverModel(transactionName: "Car Payment", spendingAmount: -300.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Transport"),
-//            SaverModel(transactionName: "Gym Membership", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Health"),
-//            SaverModel(transactionName: "Gift", spendingAmount: -5000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Other"),
-//            SaverModel(transactionName: "Freelance", spendingAmount: 500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Income"),
-//            SaverModel(transactionName: "Lottery", spendingAmount: 1000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Income"),
-//            SaverModel(transactionName: "Books", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 15).date!, name: "Entertainment"),
-//            SaverModel(transactionName: "Medicine", spendingAmount: -25.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 15).date!, name: "Health"),
-//            SaverModel(transactionName: "Phone Bill", spendingAmount: -60.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 16).date!, name: "Utilities"),
-//            SaverModel(transactionName: "Internet Bill", spendingAmount: -40.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Utilities"),
-//            SaverModel(transactionName: "Concert Ticket", spendingAmount: -120.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Entertainment"),
-//            SaverModel(transactionName: "Bus Pass", spendingAmount: -70.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 18).date!, name: "Transport"),
-//            SaverModel(transactionName: "Water Bill", spendingAmount: -30.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 20).date!, name: "Utilities"),
-//            SaverModel(transactionName: "Groceries", spendingAmount: -50.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Food"),
-//            SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Housing"),
-//            SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 5, day: 1).date!, name: "Income"),
-//            SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Income"),
-//            SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 12, day: 1).date!, name: "Utilities"),
         ]
         yearMonthData = []
         yearMonthDayData = []
@@ -75,6 +56,7 @@ class ShareData{
             return components.year == year && components.month == month && components.day == day
         }
         self.yearMonthDayData = result
+
     }
     
     func getAllEntries() -> [SaverModel] {
@@ -107,6 +89,15 @@ class ShareData{
     
     // DataController에서 데이터를 삭제했을 때
     func removeData(transaction: SaverModel) {
-        self.yearMonthData
+        let number1 = self.yearMonthData.firstIndex(of: transaction)
+        let number2 = self.yearMonthDayData.firstIndex(of: transaction)
+        print("삭제 전")
+        print("yearMonthData \(self.yearMonthData)")
+        print("yearMonthDayData \(self.yearMonthDayData)")
+        self.yearMonthData.remove(at: number1!)
+        self.yearMonthDayData.remove(at: number2!)
+        print("삭제 후")
+        print("yearMonthData \(self.yearMonthData)")
+        print("yearMonthDayData \(self.yearMonthDayData)")
     }
 }
