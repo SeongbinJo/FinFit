@@ -503,7 +503,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let dateString = self.yearMonthButtonLabel.text! + " \(String(days[indexPath.row]))일"
         let date = self.dateFormatter.date(from: dateString) ?? Date()
         if self.selectedDate == date {
-            cell.backgroundColor = .blue
+            cell.backgroundColor = .green
         }
         cell.configureCell(date: date, day: days[indexPath.row], isToday: self.isToday)
         return cell
@@ -520,7 +520,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         if let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell {
             if cell.numberOfDayLabel.text != ""{
                 self.selectedIndexPath = indexPath
-                cell.backgroundColor = .blue
+                cell.backgroundColor = .green
                 
                 let days = CalendarManager.manager.getDays()
                 self.dateFormatter.dateFormat = "yyyy년 M월 d일"
