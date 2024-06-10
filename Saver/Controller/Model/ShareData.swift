@@ -7,14 +7,27 @@
 
 import Foundation
 
+typealias DataEntryType = [String: Category]
+
+struct Category{
+    var totalAmount: Double = 0
+    var dailyDatas: [DailyData] = []
+}
+
+struct DailyData{
+    var date: Date
+    var totalAmount: Double = 0
+    var saverModels: [SaverModel] = []
+}
+
 class ShareData{
     static let shared = ShareData()
     let dbController = DBController.shared
-    
     private var saverEntries: [SaverModel]
+    private var DataEntries: DataEntryType
     
     private init(){
-    saverEntries = [
+        saverEntries = [
             SaverModel(transactionName: "Groceries", spendingAmount: 5000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 5, day: 30).date!, name: "Food"),
             SaverModel(transactionName: "Rent", spendingAmount: -1200.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Housing"),
             SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Income"),
@@ -41,8 +54,9 @@ class ShareData{
             SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Income"),
             SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 12, day: 1).date!, name: "Utilities"),
         ]
+        DataEntries = [:]
     }
-    
+        
     //SwiftData 가져오기
     func loadSaverEntries(){
         dbController.fetchData { [weak self] (data, error) in
@@ -52,11 +66,42 @@ class ShareData{
         }
     }
     
+    //dataEnries를 가져오기
+    func getDataEntries() -> DataEntryType{
+        return DataEntries
+    }
+    
     //특정 달 data만 분류하기
-    func getMonthSaverEntries(month: Int) -> [SaverModel]{
-        saverEntries.filter{ data in
+    func getMonthSaverEntries(month: Int) -> DataEntryType{
+        loadSaverEntries()
+        
+        let filteredSaverEntries = saverEntries.filter{ data in
             let components = Calendar(identifier: .gregorian).dateComponents([.month], from: data.transactionDate)
             return components.month == month
         }
+        
+        var modelEntries = DataEntryType()
+        
+        for data in filteredSaverEntries{
+            if modelEntries[data.name] == nil {
+                modelEntries[data.name] = Category(totalAmount: 0, dailyDatas: [])
+            }
+            
+            var category = modelEntries[data.name]!
+            
+            category.totalAmount += data.spendingAmount
+            
+            if let index = category.dailyDatas.firstIndex(where: { Calendar.current.isDate($0.date, inSameDayAs: data.transactionDate) }) {
+                category.dailyDatas[index].totalAmount += data.spendingAmount
+                category.dailyDatas[index].saverModels.append(data)
+            } else {
+                let newDailyData = DailyData(date: data.transactionDate, totalAmount: data.spendingAmount, saverModels: [data])
+                category.dailyDatas.append(newDailyData)
+            }
+            
+            modelEntries[data.name] = category
+        }
+        print(modelEntries)
+        return modelEntries
     }
 }

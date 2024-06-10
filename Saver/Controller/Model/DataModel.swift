@@ -1,18 +1,6 @@
 import Foundation
 import SwiftData
 
-struct Category{
-    var totalAmount: Double = 0
-    var dailyDatas: [DailyData] = []
-}
-
-struct DailyData{
-    var date: Date
-    var totalAmount: Double = 0
-    var saverModels: [SaverModel] = []
-}
-
-
 //MARK: - Model
 @Model
 class SaverModel: Identifiable{

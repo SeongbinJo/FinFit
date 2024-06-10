@@ -11,11 +11,13 @@ import DGCharts //그래프를 그리기 위한 라이브러리
 class ReportViewController: UIViewController {
     //MARK: - property
     //그래프 작성을 위한 임시 데이터
-    private let fetchData = ShareData.shared.getMonthSaverEntries(month: 6)
+    let x = ShareData.shared
+    private var fetchData = ShareData.shared.getMonthSaverEntries(month: 6)
     private var myData: [String: Category] = [:]
     private var myPrice: [Double] = []
     private var selectedCategory: String?
-
+    private var month = 6
+    
     //스크롤뷰의 높이 설정
     private var tableViewHeightConstraint: NSLayoutConstraint? //TableView의 레이아웃 제약조건을 변경하기 위한 변수 선언
     private var tableViewHeight: CGFloat?
@@ -24,7 +26,7 @@ class ReportViewController: UIViewController {
     //지출금액이름
     private lazy var spendingAmountNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "5월 지출 금액"
+        label.text = "\(month)월 지출 금액"
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -34,7 +36,7 @@ class ReportViewController: UIViewController {
     //지출금액
     private lazy var spendingAmountLabel: UILabel = {
         let label = UILabel()
-        label.text = "900,000원"
+        label.text = "\(myData.map{$0.value.totalAmount}.reduce(0, +))원"
         label.font = UIFont.systemFont(ofSize: 26, weight: .bold)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -97,6 +99,26 @@ class ReportViewController: UIViewController {
         return stackView
     }()
     
+    //왼쪽 버튼
+    private lazy var beforeMonthButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(updateData(sender:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    //오른쪽 버튼
+    private lazy var afterMonthButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(updateData(sender:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     //MARK: - 3. stackView를 담을 UIView
     private lazy var spendindUIView: UIView = {
         let view = UIView()
@@ -104,7 +126,9 @@ class ReportViewController: UIViewController {
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(beforeMonthButton)
         view.addSubview(spendingReportStackView)
+        view.addSubview(afterMonthButton)
         return view
     }()
     
@@ -170,41 +194,56 @@ class ReportViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         setup()
-        print(myData.first!)
+        print(fetchData)
     }
 
     //MARK: - Methods
     
-    //카테고리 별 분류 함수
-    func categoryFilterSaverEntries(){
-        for data in fetchData{
-            if myData[data.name] == nil {
-                myData[data.name] = Category(totalAmount: 0, dailyDatas: [])
-            }
-               
-            var category = myData[data.name]!
-               
-           category.totalAmount += data.spendingAmount
-           
-           if let index = category.dailyDatas.firstIndex(where: { Calendar.current.isDate($0.date, inSameDayAs: data.transactionDate) }) {
-               category.dailyDatas[index].totalAmount += data.spendingAmount
-               category.dailyDatas[index].saverModels.append(data)
-           } else {
-               let newDailyData = DailyData(date: data.transactionDate, totalAmount: data.spendingAmount, saverModels: [data])
-               category.dailyDatas.append(newDailyData)
-           }
-           
-           myData[data.name] = category
+    @objc func updateData(sender: UIButton){
+        if sender == beforeMonthButton{
+            month -= 1
+            self.fetchData = ShareData.shared.getMonthSaverEntries(month: month)
+        }else if sender == afterMonthButton{
+            month += 1
+            self.fetchData = ShareData.shared.getMonthSaverEntries(month: month)
         }
+//        categoryFilterSaverEntries()
+        myPrice = myData.map{ $0.value.totalAmount }
+        setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myPrice))
     }
+    
+//    //카테고리 별 분류 함수
+//    func categoryFilterSaverEntries(){
+//        myData = [:]
+//        for data in fetchData{
+//            if myData[data.name] == nil {
+//                myData[data.name] = Category(totalAmount: 0, dailyDatas: [])
+//            }
+//               
+//            var category = myData[data.name]!
+//               
+//           category.totalAmount += data.spendingAmount
+//           
+//           if let index = category.dailyDatas.firstIndex(where: { Calendar.current.isDate($0.date, inSameDayAs: data.transactionDate) }) {
+//               category.dailyDatas[index].totalAmount += data.spendingAmount
+//               category.dailyDatas[index].saverModels.append(data)
+//           } else {
+//               let newDailyData = DailyData(date: data.transactionDate, totalAmount: data.spendingAmount, saverModels: [data])
+//               category.dailyDatas.append(newDailyData)
+//           }
+//           
+//           myData[data.name] = category
+//        }
+//    }
     
     func getSaverEntries(index: Int) -> [SaverModel]{
         return myData[self.selectedCategory!]!.dailyDatas[index].saverModels
     }
     
+    
     //최소설정 함수
     private func setup(){
-        categoryFilterSaverEntries()
+//        categoryFilterSaverEntries()
         myPrice = myData.map{ $0.value.totalAmount }
         
         
@@ -238,8 +277,8 @@ class ReportViewController: UIViewController {
             spendindUIView.bottomAnchor.constraint(equalTo: spendingReportStackView.bottomAnchor, constant: 20),
             
             //StackView(StackView(지출금액이름, 지출금액), 그래프)
-            spendingReportStackView.leadingAnchor.constraint(equalTo: spendindUIView.leadingAnchor, constant: 10),
-            spendingReportStackView.trailingAnchor.constraint(equalTo: spendindUIView.trailingAnchor, constant: -10),
+            spendingReportStackView.leadingAnchor.constraint(equalTo: spendindUIView.leadingAnchor, constant: 20),
+            spendingReportStackView.trailingAnchor.constraint(equalTo: spendindUIView.trailingAnchor, constant: -20),
             spendingReportStackView.topAnchor.constraint(equalTo: spendindUIView.topAnchor, constant: 20),
             
             //StackView(지출금액이름, 지출금액)
@@ -247,18 +286,30 @@ class ReportViewController: UIViewController {
             spendingAmountStackView.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
             
             //지출금액이름
-            spendingAmountNameLabel.leadingAnchor.constraint(equalTo: spendingAmountStackView.leadingAnchor, constant: 10),
-            spendingAmountNameLabel.trailingAnchor.constraint(equalTo: spendingAmountStackView.trailingAnchor, constant: -10),
+            spendingAmountNameLabel.leadingAnchor.constraint(equalTo: spendingAmountStackView.leadingAnchor),
+            spendingAmountNameLabel.trailingAnchor.constraint(equalTo: spendingAmountStackView.trailingAnchor),
             
             //지출금액
-            spendingAmountLabel.leadingAnchor.constraint(equalTo: spendingAmountStackView.leadingAnchor, constant: 10),
-            spendingAmountLabel.trailingAnchor.constraint(equalTo: spendingAmountStackView.trailingAnchor, constant: -10),
+            spendingAmountLabel.leadingAnchor.constraint(equalTo: spendingAmountStackView.leadingAnchor),
+            spendingAmountLabel.trailingAnchor.constraint(equalTo: spendingAmountStackView.trailingAnchor),
             
             //지출 그래프
             spendingReport.leadingAnchor.constraint(equalTo: spendingReportStackView
                 .leadingAnchor),
             spendingReport.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
             spendingReport.heightAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, multiplier: 0.5),
+            
+            //왼쪽 화살표
+            beforeMonthButton.leadingAnchor.constraint(equalTo: spendindUIView.leadingAnchor),
+            beforeMonthButton.trailingAnchor.constraint(equalTo: spendingReport.leadingAnchor),
+            beforeMonthButton.centerXAnchor.constraint(equalTo: beforeMonthButton.centerXAnchor),
+            beforeMonthButton.centerYAnchor.constraint(equalTo: spendindUIView.centerYAnchor),
+            
+            //오른쪽 화살표
+            afterMonthButton.leadingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
+            afterMonthButton.trailingAnchor.constraint(equalTo: spendindUIView.trailingAnchor),
+            afterMonthButton.centerXAnchor.constraint(equalTo: afterMonthButton.centerXAnchor),
+            afterMonthButton.centerYAnchor.constraint(equalTo: spendindUIView.centerYAnchor),
             
             //MARK: - 중간 카테고리 스크롤
             //legend 스크롤
@@ -280,7 +331,7 @@ class ReportViewController: UIViewController {
             categoryExpenditureTableView.topAnchor.constraint(equalTo: legendScrollView.bottomAnchor, constant: 10),
             categoryExpenditureTableView.bottomAnchor.constraint(equalTo: mainStackView.bottomAnchor),
             //변경해야함
-            categoryExpenditureTableView.heightAnchor.constraint(equalToConstant: 500)
+            categoryExpenditureTableView.heightAnchor.constraint(equalToConstant: 300)
         ])
     }
     

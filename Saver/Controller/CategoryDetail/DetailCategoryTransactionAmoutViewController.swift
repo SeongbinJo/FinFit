@@ -69,7 +69,7 @@ class DetailCategoryTransactionAmoutViewController: UIViewController{
 
 extension DetailCategoryTransactionAmoutViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        80
+        140
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
