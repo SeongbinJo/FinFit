@@ -167,7 +167,6 @@ class AddAmountViewController: UIViewController {
         scroll.showsHorizontalScrollIndicator = false
         scroll.translatesAutoresizingMaskIntoConstraints = false
         scroll.addSubview(transactionCategoryButton)
-        scroll.backgroundColor = .yellow
         
         return scroll
     }()
@@ -239,7 +238,7 @@ class AddAmountViewController: UIViewController {
             transactionCategoryViewTitle.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
             
             // MARK: - viewDidLoad > 오토 레이아웃 > transactionCategoryScroll
-            transactionCategoryScroll.topAnchor.constraint(equalTo: transactionCategoryViewTitle.bottomAnchor, constant: 10),
+            transactionCategoryScroll.topAnchor.constraint(equalTo: transactionCategoryViewTitle.bottomAnchor, constant: 16),
             transactionCategoryScroll.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             transactionCategoryScroll.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             transactionCategoryScroll.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
@@ -256,8 +255,32 @@ class AddAmountViewController: UIViewController {
     
     
     // MARK: - 메소드
-    // MARK: - 메소드(카테고리 버튼 생성)
+    // MARK: - 메소드 > 카테고리 버튼 생성
     func categoryButtonCreated(labels: [String]) {
+        // MARK: - 메소드 > 카테고리 버튼 생성 > 카테고리 추가 버튼 생서
+        // 카테고리 추가 버튼 생성
+        let categoryAddButton = UIButton(type: .system)
+        categoryAddButton.setTitle("추가", for: .normal)
+        
+        // 카테고리 추가 버튼 스타일
+        var categoryAddConfig = UIButton.Configuration.filled()
+        categoryAddConfig.baseBackgroundColor = .white
+        categoryAddConfig.baseForegroundColor = .systemCyan
+        categoryAddConfig.background.strokeColor = .systemBlue
+        categoryAddConfig.background.strokeWidth = 1
+        categoryAddConfig.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20)
+        categoryAddConfig.cornerStyle = .capsule
+        categoryAddConfig.buttonSize = .medium
+        
+        categoryAddButton.configuration = categoryAddConfig
+        
+        // 추가 버튼 동작
+        
+        
+        transactionCategoryButton.addArrangedSubview(categoryAddButton)
+        
+        // MARK: - 메소드 > 카테고리 버튼 생성 > 카테고리 버튼 생성
+        // 카테고리 버튼 생성
         for category in labels {
             let button = UIButton(type: .system)
             button.setTitle(category, for: .normal)
@@ -266,9 +289,12 @@ class AddAmountViewController: UIViewController {
             var defaultConfig = UIButton.Configuration.filled()
             defaultConfig.baseBackgroundColor = .systemBlue
             defaultConfig.baseForegroundColor = .white
+            defaultConfig.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20)
             defaultConfig.cornerStyle = .capsule
+            defaultConfig.buttonSize = .medium
             
             button.configuration = defaultConfig
+            
             transactionCategoryButton.addArrangedSubview(button)
             
             // 버튼 동작
