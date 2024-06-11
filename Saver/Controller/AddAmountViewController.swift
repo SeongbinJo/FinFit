@@ -155,7 +155,7 @@ class AddAmountViewController: UIViewController {
         stack.axis = .horizontal
         stack.alignment = .fill
         stack.distribution = .equalSpacing
-        stack.spacing = 20
+        stack.spacing = 16
         stack.translatesAutoresizingMaskIntoConstraints = false
         
         return stack
@@ -275,11 +275,47 @@ class AddAmountViewController: UIViewController {
         categoryAddButton.configuration = categoryAddConfig
         
         // 추가 버튼 동작
+        categoryAddButton.addAction(UIAction { _ in
+            // 알림창 생성
+            let categoryAddAlert = UIAlertController(title: "카테고리 추가", message: "새로 추가할 카테고리를 입력해주세요.", preferredStyle: .alert)
+            
+            // 입력창 추가
+            categoryAddAlert.addTextField { textField in
+                textField.placeholder = "추가할 카테고리 이름"
+            }
+            
+            // 입력창 취소
+            let categoryAddCancle = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            
+            // 카테고리 추가
+            let categoryAddSave = UIAlertAction(title: "추가", style: .default) { save in
+                // 입력된 값 변수에 담기
+                if let alertTextField = categoryAddAlert.textFields?.first,
+                   let newCategory = alertTextField.text {
+                    // 배열에 값 추가
+                    self.testCategories.append(newCategory)
+                    
+                    // 기존 버튼 삭제
+                    self.transactionCategoryButton.arrangedSubviews.forEach { $0.removeFromSuperview() }
+                    
+                    // 버튼 리로드
+                    self.categoryButtonCreated(labels: self.testCategories)
+                }
+            }
+            
+            // 취소/추가 버튼 입력창에 추가하기
+            categoryAddAlert.addAction(categoryAddCancle)
+            categoryAddAlert.addAction(categoryAddSave)
+            
+            self.present(categoryAddAlert, animated: true, completion: nil)
+        }, for: .touchUpInside)
         
         
         transactionCategoryButton.addArrangedSubview(categoryAddButton)
         
         // MARK: - 메소드 > 카테고리 버튼 생성 > 카테고리 버튼 생성
+        var buttons: [UIButton] = [] // 버튼 배열 생성, 아래 for-in으로 생성된 버튼을 담을 배열
+        
         // 카테고리 버튼 생성
         for category in labels {
             let button = UIButton(type: .system)
@@ -296,10 +332,18 @@ class AddAmountViewController: UIViewController {
             button.configuration = defaultConfig
             
             transactionCategoryButton.addArrangedSubview(button)
+            buttons.append(button)
             
             // 버튼 동작
             button.addAction(UIAction { _ in
-                // TODO: - 기존 버튼 스타일 삭제하고 새 스타일 부여
+                // 선택된 버튼만 색상 변경되도록
+                for btn in buttons {
+                    btn.configuration?.baseBackgroundColor = .systemBlue
+                    btn.configuration?.baseForegroundColor = .white
+                }
+                // 선택된 버튼 스타일 변경
+                button.configuration?.baseBackgroundColor = .systemRed
+                button.configuration?.baseForegroundColor = .white
             }, for: .touchUpInside)
             
         }
@@ -330,5 +374,6 @@ class AddAmountViewController: UIViewController {
         
         DBController.shared.insertData(data: addTransaction)
         dismiss(animated: true)
+        print(addTransaction)
     }
 }
