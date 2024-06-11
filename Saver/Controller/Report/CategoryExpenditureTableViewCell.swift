@@ -66,6 +66,6 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
         foramtter.locale = Locale(identifier: "ko_KR")
         
         categoryTransactionDateLabel.text = "\(foramtter.string(from: entry.date))"
-        categoryTransactionAmountLabel.text = "\(Int(entry.totalAmount))원"
+        categoryTransactionAmountLabel.text = "\(Double(entry.totalAmount))원"
     }
 }

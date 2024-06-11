@@ -54,6 +54,8 @@ class ShareData{
             SaverModel(transactionName: "Bonus", spendingAmount: 100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 7, day: 1).date!, name: "Income"),
             SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 12, day: 1).date!, name: "Utilities"),
             SaverModel(transactionName: "medical", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 4, day: 1).date!, name: "hospitial"),
+            SaverModel(transactionName: "medical", spendingAmount: 0.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 4, day: 2).date!, name: "hospitial"),
+            SaverModel(transactionName: "buy Books", spendingAmount: -0.1, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 4, day: 3).date!, name: "bookStore"),
         ]
     }
         
