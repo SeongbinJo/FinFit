@@ -115,12 +115,12 @@
 		79FE80872C0DA3BC00517428 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */,
 				796B01292C16EBF200E7D972 /* CategoryDetail */,
 				796B01282C16EBE400E7D972 /* Report */,
 				7953E8062C0D508C0095AC36 /* HomeViewController.swift */,
 				79FE80852C0D9FA600517428 /* DataController.swift */,
 				79FE807F2C0D99CD00517428 /* Model */,
-				BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";

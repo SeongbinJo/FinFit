@@ -11,17 +11,12 @@ import DGCharts //그래프를 그리기 위한 라이브러리
 class ReportViewController: UIViewController {
     //MARK: - property
     //그래프 작성을 위한 임시 데이터
-    private var fetchData = ShareData.shared.getMonthSaverEntries(month: 6)
+    private var fetchData = [SaverModel]()
     private var myData: [String: Category] = [:]
     private var selectedCategory: String?
     private var currentMonth = Calendar.current.component(.month, from: Date())
     private var month = Calendar.current.component(.month, from: Date())
-    
-    //mainStackView 높이 설정
-    private var mainStackViewTop: NSLayoutConstraint? //위쪽 여백
-    private var mainStackViewBottom: NSLayoutConstraint? //아래쪽 여백
-    private var mainStackViewCenter: NSLayoutConstraint? //중앙 정렬
-    
+        
     //MARK: - 1. Stack(지출금액이름, 지출금액)
     //지출금액이름
     private lazy var spendingAmountNameLabel: UILabel = {
@@ -108,11 +103,7 @@ class ReportViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         button.tintColor = .white
-        button.addAction(UIAction { [weak self] action in
-            if let sender = action.sender as? UIButton{
-                self?.updateData(sender: sender)
-            }
-        }, for: .touchUpInside)
+        button.addTarget(self, action: #selector(updateData(sender:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -122,11 +113,7 @@ class ReportViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
         button.tintColor = .white
-        button.addAction(UIAction { [weak self] action in
-            if let sender = action.sender as? UIButton{
-                self?.updateData(sender: sender)
-            }
-        }, for: .touchUpInside)
+        button.addTarget(self, action: #selector(updateData(sender:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -192,25 +179,21 @@ class ReportViewController: UIViewController {
     
     
     //MARK: - Life Cycle
+    
     //view처음 로드될 때
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        ShareData.shared.loadSaverEntries()
+        fetchData = ShareData.shared.getMonthSaverEntries(month: month)
         setup()
-    }
-    
-    //view 사라질때
-    override func viewDidDisappear(_ animated: Bool) {
-//        beforeMonthButton.removeAction(identifiedBy: nil, for: UIButton.self)
-//        afterMonthButton.removeAction(self, for: .touchUpInside)
     }
     
     //MARK: - Methods
     //최초설정 함수
     private func setup(){
         categoryFilterSaverEntries()
-        
         //불러온 데이터가 하나라도 존재하면 그 중 첫 번째 키를 selectedCategory에 저장한다.
         self.selectedCategory = myData.first?.key
         
@@ -227,6 +210,7 @@ class ReportViewController: UIViewController {
             //            mainScrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             //            mainScrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             
+            mainStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
             mainStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
             mainStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
             //            mainStackView.widthAnchor.constraint(equalTo: safeArea.widthAnchor, constant: -20),
@@ -293,14 +277,6 @@ class ReportViewController: UIViewController {
             categoryExpenditureTableView.topAnchor.constraint(equalTo: legendScrollView.bottomAnchor, constant: 10),
             categoryExpenditureTableView.bottomAnchor.constraint(equalTo: mainStackView.bottomAnchor),
         ])
-        
-        mainStackViewTop = mainStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10)
-        mainStackViewBottom = mainStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10)
-        mainStackViewCenter = mainStackView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor)
-        mainStackViewTop?.isActive = true
-        mainStackViewBottom?.isActive = true
-        mainStackViewCenter?.isActive = false
-        
     }
     
     //MARK: - 그래프 생성
@@ -425,18 +401,12 @@ class ReportViewController: UIViewController {
             selectedCategory = nil
             legendScrollView.removeFromSuperview()
             categoryExpenditureTableView.removeFromSuperview()
-            self.mainStackViewTop?.isActive = false
-            self.mainStackViewBottom?.isActive = false
-            self.mainStackViewCenter?.isActive = true
         }else{
             selectedCategory = myData.first?.key
             setupLegendScrollView(labels: myData.map{$0.key})
             mainStackView.addArrangedSubview(legendScrollView)
             mainStackView.addArrangedSubview(categoryExpenditureTableView)
             categoryExpenditureTableView.reloadData()
-            self.mainStackViewTop?.isActive = true
-            self.mainStackViewBottom?.isActive = true
-            self.mainStackViewCenter?.isActive = false
         }
         
         spendingAmountNameLabel.text = "\(month)월 지출 금액"
