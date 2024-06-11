@@ -153,9 +153,10 @@ class AddAmountViewController: UIViewController {
     private lazy var transactionCategoryButton: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
+        stack.alignment = .fill
+        stack.distribution = .equalSpacing
         stack.spacing = 20
         stack.translatesAutoresizingMaskIntoConstraints = false
-
         
         return stack
     }()
@@ -234,17 +235,17 @@ class AddAmountViewController: UIViewController {
             transactionCategoryViewTitle.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
             
             // MARK: - viewDidLoad > 오토 레이아웃 > transactionCategoryScroll
-            transactionCategoryScroll.topAnchor.constraint(equalTo: transactionCategoryViewTitle.bottomAnchor, constant: 20),
-            transactionCategoryScroll.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            transactionCategoryScroll.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            transactionCategoryScroll.topAnchor.constraint(equalTo: transactionCategoryViewTitle.bottomAnchor, constant: 10),
+            transactionCategoryScroll.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            transactionCategoryScroll.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             transactionCategoryScroll.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
-            transactionCategoryScroll.heightAnchor.constraint(equalTo: transactionCategoryButton.heightAnchor, constant: 50),
+            transactionCategoryScroll.heightAnchor.constraint(equalToConstant: 40),
             
             // MARK: - viewDidLoad > 오토 레이아웃 > transactionCategoryButton
-            transactionCategoryButton.topAnchor.constraint(equalTo: transactionCategoryScroll.topAnchor), // 수정
-            transactionCategoryButton.leadingAnchor.constraint(equalTo: transactionCategoryScroll.leadingAnchor), // 수정
-            transactionCategoryButton.trailingAnchor.constraint(equalTo: transactionCategoryScroll.trailingAnchor), // 수정
-            transactionCategoryButton.widthAnchor.constraint(equalTo: transactionCategoryScroll.widthAnchor),
+            transactionCategoryButton.topAnchor.constraint(equalTo: transactionCategoryScroll.topAnchor),
+            transactionCategoryButton.leadingAnchor.constraint(equalTo: transactionCategoryScroll.leadingAnchor, constant: 24),
+            transactionCategoryButton.trailingAnchor.constraint(equalTo: transactionCategoryScroll.trailingAnchor),
+            transactionCategoryButton.bottomAnchor.constraint(equalTo: transactionCategoryScroll.bottomAnchor),
             transactionCategoryButton.heightAnchor.constraint(equalTo: transactionCategoryScroll.heightAnchor)
         ])
     }
@@ -258,24 +259,22 @@ class AddAmountViewController: UIViewController {
             button.setTitle(category, for: .normal)
             
             let buttonWidth = button.intrinsicContentSize.width
-            button.layer.frame = CGRect(x: 0, y: 0, width: buttonWidth + 20, height: 30)
+            button.frame = CGRect(x: 0, y: 0, width: buttonWidth + 100, height: 10)
         
             // 버튼 스타일
             var defaultConfig = UIButton.Configuration.filled()
             defaultConfig.baseBackgroundColor = .systemBlue
             defaultConfig.baseForegroundColor = .white
             defaultConfig.cornerStyle = .capsule
-            defaultConfig.background.strokeWidth = 1
-            defaultConfig.background.strokeColor = .black
             
             button.configuration = defaultConfig
+            transactionCategoryButton.addArrangedSubview(button)
             
             // 버튼 동작
             button.addAction(UIAction { _ in
                 // TODO: - 기존 버튼 스타일 삭제하고 새 스타일 부여
             }, for: .touchUpInside)
             
-            transactionCategoryButton.addArrangedSubview(button)
         }
         
     }
