@@ -20,6 +20,8 @@
 		79FE80842C0D9A5800517428 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80832C0D9A5800517428 /* DataModel.swift */; };
 		79FE80862C0D9FA600517428 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80852C0D9FA600517428 /* DataController.swift */; };
 		79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80882C0DA4A700517428 /* ReportViewController.swift */; };
+		BF6AAC932C15758500873654 /* +AddAmountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6AAC922C15758500873654 /* +AddAmountViewController.swift */; };
+		BFC5170F2C0E9C730072A31D /* AddAmountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		79FE80832C0D9A5800517428 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		79FE80852C0D9FA600517428 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		79FE80882C0DA4A700517428 /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
+		BF6AAC922C15758500873654 /* +AddAmountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+AddAmountViewController.swift"; sourceTree = "<group>"; };
+		BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAmountViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +74,7 @@
 		7953E8012C0D508C0095AC36 /* Saver */ = {
 			isa = PBXGroup;
 			children = (
+				BF6AAC942C15759700873654 /* Extention */,
 				79FE80872C0DA3BC00517428 /* Controller */,
 				7953E8022C0D508C0095AC36 /* AppDelegate.swift */,
 				7953E8042C0D508C0095AC36 /* SceneDelegate.swift */,
@@ -115,8 +120,17 @@
 				7953E8062C0D508C0095AC36 /* HomeViewController.swift */,
 				79FE80852C0D9FA600517428 /* DataController.swift */,
 				79FE807F2C0D99CD00517428 /* Model */,
+				BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		BF6AAC942C15759700873654 /* Extention */ = {
+			isa = PBXGroup;
+			children = (
+				BF6AAC922C15758500873654 /* +AddAmountViewController.swift */,
+			);
+			name = Extention;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -195,12 +209,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF6AAC932C15758500873654 /* +AddAmountViewController.swift in Sources */,
 				79FE80862C0D9FA600517428 /* DataController.swift in Sources */,
 				7981A5D32C10079900104450 /* CategoryExpenditureTableViewCell.swift in Sources */,
 				796B01252C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift in Sources */,
 				79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */,
 				7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */,
 				796B012D2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift in Sources */,
+				BFC5170F2C0E9C730072A31D /* AddAmountViewController.swift in Sources */,
 				79FE80842C0D9A5800517428 /* DataModel.swift in Sources */,
 				7953E8032C0D508C0095AC36 /* AppDelegate.swift in Sources */,
 				7953E8052C0D508C0095AC36 /* SceneDelegate.swift in Sources */,
@@ -274,7 +290,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.3;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -331,7 +347,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.3;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
