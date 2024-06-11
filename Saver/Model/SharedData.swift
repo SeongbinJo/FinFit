@@ -21,12 +21,12 @@ class ShareData{
             SaverModel(transactionName: "Rent", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Housing"),
             SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 13).date!, name: "Income"),
             SaverModel(transactionName: "Bonus", spendingAmount: 1000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 13).date!, name: "Income"),
-            SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Utilities"),
-            SaverModel(transactionName: "Dining Out", spendingAmount: -75.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 10).date!, name: "Food"),
+            SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Utilities"),
+            SaverModel(transactionName: "Dining Out", spendingAmount: -75.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Food"),
         ]
         yearMonthData = []
         yearMonthDayData = []
-//        dbController.insertData(data: saverEntries)
+//                dbController.insertData(data: saverEntries)
     }
     
     //SwiftData 가져오기
@@ -40,23 +40,23 @@ class ShareData{
     
     //특정 달 data만 분류하기
     func getYearMonthSaverEntries(year: Int, month: Int) {
+        loadSaverEntries()
         self.yearMonthData.removeAll()
         let result = saverEntries.filter { data in
             let components = Calendar(identifier: .gregorian).dateComponents([.year, .month], from: data.transactionDate)
             return components.year == year && components.month == month
         }
         self.yearMonthData = result
+        print("이번달 내역들 : \(self.yearMonthData)")
     }
     
-    //특정 달의 날짜 data 분류
-    func getYearMonthDaySaverEntries(year: Int, month: Int, day: Int) {
-        self.yearMonthDayData.removeAll()
-        let result = saverEntries.filter { data in
-            let components = Calendar(identifier: .gregorian).dateComponents([.year, .month, .day], from: data.transactionDate)
-            return components.year == year && components.month == month && components.day == day
+    // yearMonthData에서 day를 매개변수로 받아서 해당 날짜의 내역들을 리턴하는 메서드
+    func getTransactionListOfDay(day: Int) -> [SaverModel] {
+        let transactionList = self.yearMonthData.filter { data in
+            let components = Calendar(identifier: .gregorian).dateComponents([.day], from: data.transactionDate)
+            return components.day == day
         }
-        self.yearMonthDayData = result
-
+        return transactionList
     }
     
     func getAllEntries() -> [SaverModel] {
@@ -82,22 +82,22 @@ class ShareData{
     }
     
     // 특정 날짜의 합계금액
-    func totalAmountIndDay() -> Double {
-        let totalAmount = self.yearMonthDayData.reduce(0) { $0 + $1.spendingAmount }
+    func totalAmountIndDay(day: Int) -> Double {
+        let totalAmount = self.getTransactionListOfDay(day: day).reduce(0) { $0 + $1.spendingAmount }
         return totalAmount
     }
     
     // DataController에서 데이터를 삭제했을 때
     func removeData(transaction: SaverModel) {
-        let number1 = self.yearMonthData.firstIndex(of: transaction)
-        let number2 = self.yearMonthDayData.firstIndex(of: transaction)
         print("삭제 전")
         print("yearMonthData \(self.yearMonthData)")
-        print("yearMonthDayData \(self.yearMonthDayData)")
-        self.yearMonthData.remove(at: number1!)
-        self.yearMonthDayData.remove(at: number2!)
+
+        if let number1 = self.yearMonthData.firstIndex(of: transaction) {
+            self.yearMonthData.remove(at: number1)
+        }
         print("삭제 후")
         print("yearMonthData \(self.yearMonthData)")
-        print("yearMonthDayData \(self.yearMonthDayData)")
+
+        dbController.deleteData(model: transaction)
     }
 }

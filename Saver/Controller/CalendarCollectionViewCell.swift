@@ -78,6 +78,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     // 그럼 의존성 낮출 수 있나..? 유지보수나 재사용성을 보면 델리게이트 패턴을 사용하는게 옳다 -소혜 강사님-
     func configureCell(date: Date, day: Int, isToday: Bool) {
         numberOfDayLabel.text = String(day)
+        amountOfDayLabelColor(day: day)
         if isToday && String(day) == self.today {
             contentView.backgroundColor = .systemCyan
         }
@@ -86,7 +87,19 @@ class CalendarCollectionViewCell: UICollectionViewCell {
             numberOfDayLabel.text = ""
             amountOfDay.text = ""
         default:
-            amountOfDay.text = ShareData.shared.getYearMonthDayData().count > 0 ? "\(ShareData.shared.totalAmountIndDay())원" : "-"
+            amountOfDay.text = ShareData.shared.getTransactionListOfDay(day: day).count > 0 ? "\(ShareData.shared.totalAmountIndDay(day: day))원" : "-"
+        }
+    }
+    
+    func amountOfDayLabelColor(day: Int) {
+        let amount = ShareData.shared.totalAmountIndDay(day: day)
+        switch amount {
+        case ..<0.0:
+            amountOfDay.textColor = .red
+        case 0.0:
+            amountOfDay.textColor = .black
+        default:
+            amountOfDay.textColor = .blue
         }
     }
     
