@@ -9,6 +9,9 @@ import UIKit
 
 class AddAmountViewController: UIViewController {
     
+    //MARK: - 저장되어있는 내역의 수정 버튼을 눌러 들어온 경우
+    var transaction: SaverModel?
+    
     // MARK: - 변수
     let dbController = DBController.shared
     var testCategories: [String] = ["test1", "test2", "test3", "test4", "test5", "test6"]
@@ -375,17 +378,18 @@ class AddAmountViewController: UIViewController {
             return
         }
         
-        let addTransaction = SaverModel(transactionName: transactionName, // 거래명
+        let addTransaction = [SaverModel(transactionName: transactionName, // 거래명
                                         spendingAmount: spendingAmount, // 거래금액
                                         transactionDate: transactionDate, // 거래날짜
                                         name: selectCategoryName ?? "") // 카테고리
+                              ]
         
         DBController.shared.insertData(data: addTransaction)
         dismiss(animated: true)
-        print(addTransaction.transactionName)
-        print(addTransaction.spendingAmount)
-        print(addTransaction.transactionDate)
-        print(addTransaction.name)
+//        print(addTransaction.transactionName)
+//        print(addTransaction.spendingAmount)
+//        print(addTransaction.transactionDate)
+//        print(addTransaction.name)
     }
     
     // TODO: - 키보드 올라오면 텍스트 입력창 올라가도록 하기

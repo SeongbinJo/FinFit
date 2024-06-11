@@ -100,7 +100,7 @@ class ShareData{
     }
     
     // DataController insert 테스트
-    func insertTestEntries() {
-        dbController.insertData(data: self.addTestEntries)
-    }
+//    func insertTestEntries() {
+//        dbController.insertData(data: self.addTestEntries)
+//    }
 }

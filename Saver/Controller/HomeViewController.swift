@@ -1,6 +1,6 @@
 import UIKit
 
-class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate, TransactionTableViewButtonDelegate {
+class HomeViewController: UIViewController {
     // 데이터 관련
 //    private var yearMonthData: [SaverModel] = []
     
@@ -119,7 +119,7 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate,
             print("내역추가 버튼 클릭. (현재 테이블 뷰. 셀 관련 액션 테스트 중")
 //            let todayComponents = self.calendar.dateComponents([.day], from: transaction.transactionDate)
 //            self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!))원"
-            ShareData.shared.insertTestEntries()
+//            ShareData.shared.insertTestEntries()
             self.totalAmountCurrentMonth() // 내역 삭제할 때마다 월별 합계금액 타이틀 변경
             self.updateTableViewHeight()
             self.transactionTableView.reloadData()
@@ -403,6 +403,13 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate,
 
     }
     
+    
+    
+
+
+}
+
+extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTableViewButtonDelegate {
     //MARK: - 델리게이트 필수 메서드
     // CalendarPopUpViewControllerDelegate 필수 메서드
     func updateCalendar(date: Date) {
@@ -433,10 +440,12 @@ class HomeViewController: UIViewController, CalendarPopUpViewControllerDelegate,
         print("삭제 클릭")
     }
     
-    func editTransaction() {
-        print("Edit 누름")
+    func editTransaction(transaction: SaverModel) {
+        let addAmountViewController = AddAmountViewController()
+        addAmountViewController.transaction = transaction
+        navigationController?.pushViewController(addAmountViewController, animated: true)
+        print("해위")
     }
-
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

@@ -9,7 +9,7 @@ import UIKit
 
 protocol TransactionTableViewButtonDelegate: NSObject {
     func deleteTransaction(transaction: SaverModel) -> ()
-    func editTransaction() -> ()
+    func editTransaction(transaction: SaverModel) -> ()
 }
 
 class TransactionTableViewCell: UITableViewCell {
@@ -80,11 +80,12 @@ class TransactionTableViewCell: UITableViewCell {
     
     func setupTransactionHStackView() {
         let editMenu: UIAction = UIAction(title: "수정", image: UIImage(systemName: "pencil")) { action in
+            self.delegate?.editTransaction(transaction: self.transaction ?? SaverModel(transactionName: "nil", spendingAmount: 0.0, transactionDate: Date(), name: "nil"))
             print("수정 클릭")
         }
         let removeMenu: UIAction = UIAction(title: "삭제", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
             self.delegate?.deleteTransaction(transaction: self.transaction ?? SaverModel(transactionName: "nil", spendingAmount: 0.0, transactionDate: Date(), name: "nil"))
-            print("clicked")
+            print("삭제 클릭")
         }
         let menu: UIMenu = UIMenu(options: .displayInline, children: [editMenu, removeMenu])
         editMenuButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
