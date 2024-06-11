@@ -12,6 +12,7 @@ class AddAmountViewController: UIViewController {
     // MARK: - 변수
     let dbController = DBController.shared
     var testCategories: [String] = ["test1", "test2", "test3", "test4", "test5", "test6"]
+    var selectCategoryName: String?
     
     
     // MARK: - view(뷰 타이틀)
@@ -178,6 +179,8 @@ class AddAmountViewController: UIViewController {
         
         view.backgroundColor = .white
         
+        // TODO: - 정보 다 입력하기 전에 버튼 비활성화 되도록
+        // TODO: - 채우지 않은 항목 있으면 경고창 뜨도록
         // save 버튼
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save,
                                                             target: self,
@@ -257,7 +260,8 @@ class AddAmountViewController: UIViewController {
     // MARK: - 메소드
     // MARK: - 메소드 > 카테고리 버튼 생성
     func categoryButtonCreated(labels: [String]) {
-        // MARK: - 메소드 > 카테고리 버튼 생성 > 카테고리 추가 버튼 생서
+        // MARK: - 메소드 > 카테고리 버튼 생성 > 카테고리 추가 버튼 생성
+        // TODO: - 중복 버튼 추가 안되도록
         // 카테고리 추가 버튼 생성
         let categoryAddButton = UIButton(type: .system)
         categoryAddButton.setTitle("추가", for: .normal)
@@ -336,14 +340,18 @@ class AddAmountViewController: UIViewController {
             
             // 버튼 동작
             button.addAction(UIAction { _ in
-                // 선택된 버튼만 색상 변경되도록
+                // 모든 버튼 색상 초기화
                 for btn in buttons {
                     btn.configuration?.baseBackgroundColor = .systemBlue
                     btn.configuration?.baseForegroundColor = .white
                 }
-                // 선택된 버튼 스타일 변경
+                // 모든 버튼 색상 초기화 후 선택된 버튼만 색상 변경
                 button.configuration?.baseBackgroundColor = .systemRed
                 button.configuration?.baseForegroundColor = .white
+                
+                // 선택된 버튼 이름 저장
+                self.selectCategoryName = ""
+                self.selectCategoryName = button.titleLabel?.text
             }, for: .touchUpInside)
             
         }
@@ -370,10 +378,16 @@ class AddAmountViewController: UIViewController {
         let addTransaction = SaverModel(transactionName: transactionName, // 거래명
                                         spendingAmount: spendingAmount, // 거래금액
                                         transactionDate: transactionDate, // 거래날짜
-                                        name: "") // 카테고리
+                                        name: selectCategoryName ?? "") // 카테고리
         
         DBController.shared.insertData(data: addTransaction)
         dismiss(animated: true)
-        print(addTransaction)
+        print(addTransaction.transactionName)
+        print(addTransaction.spendingAmount)
+        print(addTransaction.transactionDate)
+        print(addTransaction.name)
     }
+    
+    // TODO: - 키보드 올라오면 텍스트 입력창 올라가도록 하기
+    // TODO: - 화면 아무곳이나 터치하면 키보드 내려가게 하기
 }
