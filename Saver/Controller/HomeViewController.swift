@@ -43,7 +43,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
+        print("hello world")
         // 앱 실행 후 데이터 fetch
         ShareData.shared.loadSaverEntries()
         // 앱 실행 후 오늘 날짜의 테이블 뷰 리스트 가져오기위함
@@ -117,9 +117,10 @@ class HomeViewController: UIViewController {
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
             print("내역추가 버튼 클릭. (현재 테이블 뷰. 셀 관련 액션 테스트 중")
-//            let todayComponents = self.calendar.dateComponents([.day], from: transaction.transactionDate)
-//            self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!))원"
-//            ShareData.shared.insertTestEntries()
+            let addAmountViewController = AddAmountViewController()
+            addAmountViewController.delegate = self
+            self.navigationController?.pushViewController(addAmountViewController, animated: true)
+
             self.totalAmountCurrentMonth() // 내역 삭제할 때마다 월별 합계금액 타이틀 변경
             self.updateTableViewHeight()
             self.transactionTableView.reloadData()
@@ -428,6 +429,7 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
         calendarCollectionView.reloadData()
     }
     
+    
     // TransactionTableViewButtonDelegate 필수 메서드
     func deleteTransaction(transaction: SaverModel) {
         ShareData.shared.removeData(transaction: transaction)
@@ -442,10 +444,23 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
     
     func editTransaction(transaction: SaverModel) {
         let addAmountViewController = AddAmountViewController()
+        addAmountViewController.delegate = self
         addAmountViewController.transaction = transaction
         navigationController?.pushViewController(addAmountViewController, animated: true)
-        print("해위")
     }
+    
+    func saveTransaction(transaction: SaverModel) {
+        ShareData.shared.dbController.insertData(data: transaction)
+        let components = self.calendar.dateComponents([.year, .month], from: self.selectedDate ?? Date())
+        ShareData.shared.getYearMonthTransactionData(year: components.year!, month: components.month!)
+        let todayComponents = self.calendar.dateComponents([.day], from: transaction.transactionDate)
+        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!)) 원"
+        self.totalAmountCurrentMonth() // 내역 추가할 때마다 월별 합계금액 타이틀 변경
+        self.transactionTableView.reloadData()
+        self.calendarCollectionView.reloadData()
+        print("저장 일단 완료.")
+    }
+    
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -537,7 +552,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let selectedDateComponents = self.calendar.dateComponents([.day], from: self.selectedDate ?? Date())
         let data = ShareData.shared.getTransactionListOfDay(day: selectedDateComponents.day ?? 1)
         if data.count > 0 {
-            let date = calendar.dateComponents([.year, .month, .day], from: selectedDate ?? Date())
+//            let date = calendar.dateComponents([.year, .month, .day], from: selectedDate ?? Date())
             cell.configureCell(transaction: data[indexPath.row])
             return cell
         }else {

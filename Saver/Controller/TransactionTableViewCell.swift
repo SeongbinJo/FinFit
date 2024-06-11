@@ -7,9 +7,12 @@
 
 import UIKit
 
+
 protocol TransactionTableViewButtonDelegate: NSObject {
     func deleteTransaction(transaction: SaverModel) -> ()
     func editTransaction(transaction: SaverModel) -> ()
+    
+    func saveTransaction(transaction: SaverModel) -> ()
 }
 
 class TransactionTableViewCell: UITableViewCell {
