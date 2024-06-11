@@ -179,6 +179,10 @@ class AddAmountViewController: UIViewController {
         
         view.backgroundColor = .white
         
+        // save 버튼
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save,
+                                                            target: self,
+                                                            action: #selector(save))
         
         // MARK: - viewDidLoad > 오토 레이아웃 허가
         titleView.translatesAutoresizingMaskIntoConstraints = false
@@ -257,9 +261,6 @@ class AddAmountViewController: UIViewController {
         for category in labels {
             let button = UIButton(type: .system)
             button.setTitle(category, for: .normal)
-            
-            let buttonWidth = button.intrinsicContentSize.width
-            button.frame = CGRect(x: 0, y: 0, width: buttonWidth + 100, height: 10)
         
             // 버튼 스타일
             var defaultConfig = UIButton.Configuration.filled()
@@ -277,5 +278,31 @@ class AddAmountViewController: UIViewController {
             
         }
         
+    }
+    
+    @objc func save() {
+        guard let transactionName = transactionNameViewTextField.text, // 거래명 담을 변수
+              let spendingAmountTextField = transactionAmountViewTextField.text // 거래금액 담을 변수
+        /*나중에 카테고리 받아온걸로 변경 let transactionCategory = transactionCategory*/ else {
+            return
+        }
+        
+        // 데이터 유형 불일치 해결 위해 추가
+        // 카테고리 변환하는 코드 추가 필요
+        guard let spendingAmount = Double(spendingAmountTextField) else { // text로 받아온 값의 데이터 유형 변경
+            return
+        }
+        
+        guard let transactionDate = dateView.subviews.compactMap({ $0 as? UIDatePicker }).first?.date else {
+            return
+        }
+        
+        let addTransaction = SaverModel(transactionName: transactionName, // 거래명
+                                        spendingAmount: spendingAmount, // 거래금액
+                                        transactionDate: transactionDate, // 거래날짜
+                                        name: "") // 카테고리
+        
+        DBController.shared.insertData(data: addTransaction)
+        dismiss(animated: true)
     }
 }
