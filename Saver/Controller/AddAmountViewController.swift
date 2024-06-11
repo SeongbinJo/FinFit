@@ -193,7 +193,9 @@ class AddAmountViewController: UIViewController {
         // TODO: - 정보 다 입력하기 전에 버튼 비활성화 되도록
         // TODO: - 채우지 않은 항목 있으면 경고창 뜨도록
         // save 버튼
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save,
+        let barButtonSystemItem: UIBarButtonItem.SystemItem = (transaction != nil) ? .edit : .save
+        
+        navigationItem.rightBarButtonItem =  UIBarButtonItem(barButtonSystemItem: barButtonSystemItem,
                                                             target: self,
                                                             action: #selector(save))
         
@@ -370,11 +372,17 @@ class AddAmountViewController: UIViewController {
     }
     
     @objc func save() {
-        // 사용자가 작성한 내역
+        // 사용자가 작성한 내역(newTransaction)
         let transaction: SaverModel = SaverModel(transactionName: self.transactionNameViewTextField.text ?? "", spendingAmount: Double(self.transactionAmountViewTextField.text ?? "0") ?? 0, transactionDate: self.dateViewDateSelect.date, name: self.selectCategoryName ?? "")
         
-        // 델리게이트 패턴으로 save
-        self.delegate?.saveTransaction(transaction: transaction)
+        // 델리게이트 패턴으로 save/edit
+        if self.transaction != nil {
+            // self.transaction에 값이 있으면 edit(update)
+            self.delegate?.editTransactionInAddView(oldTransactoin: self.transaction!, newTransaction: transaction)
+        }else {
+            self.delegate?.saveTransactionInAddView(transaction: transaction)
+        }
+        
         navigationController?.popViewController(animated: true)
 //        guard let transactionName = transactionNameViewTextField.text, // 거래명 담을 변수
 //              let spendingAmountTextField = transactionAmountViewTextField.text // 거래금액 담을 변수

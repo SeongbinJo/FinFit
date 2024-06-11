@@ -12,7 +12,8 @@ protocol TransactionTableViewButtonDelegate: NSObject {
     func deleteTransaction(transaction: SaverModel) -> ()
     func editTransaction(transaction: SaverModel) -> ()
     
-    func saveTransaction(transaction: SaverModel) -> ()
+    func saveTransactionInAddView(transaction: SaverModel) -> ()
+    func editTransactionInAddView(oldTransactoin: SaverModel, newTransaction: SaverModel) -> ()
 }
 
 class TransactionTableViewCell: UITableViewCell {

@@ -449,16 +449,28 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
         navigationController?.pushViewController(addAmountViewController, animated: true)
     }
     
-    func saveTransaction(transaction: SaverModel) {
+    func saveTransactionInAddView(transaction: SaverModel) {
         ShareData.shared.dbController.insertData(data: transaction)
         let components = self.calendar.dateComponents([.year, .month], from: self.selectedDate ?? Date())
         ShareData.shared.getYearMonthTransactionData(year: components.year!, month: components.month!)
-        let todayComponents = self.calendar.dateComponents([.day], from: transaction.transactionDate)
-        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!)) 원"
+        let dateComponents = self.calendar.dateComponents([.day], from: transaction.transactionDate)
+        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: dateComponents.day!)) 원"
         self.totalAmountCurrentMonth() // 내역 추가할 때마다 월별 합계금액 타이틀 변경
         self.transactionTableView.reloadData()
         self.calendarCollectionView.reloadData()
         print("저장 일단 완료.")
+    }
+    
+    func editTransactionInAddView(oldTransactoin: SaverModel, newTransaction: SaverModel) {
+        ShareData.shared.dbController.updateData(model: oldTransactoin, data: newTransaction)
+        let components = self.calendar.dateComponents([.year, .month], from: self.selectedDate ?? Date())
+        ShareData.shared.getYearMonthTransactionData(year: components.year!, month: components.month!)
+        let dateComponents = self.calendar.dateComponents([.day], from: oldTransactoin.transactionDate)
+        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: dateComponents.day!)) 원"
+        self.totalAmountCurrentMonth() // 내역 추가할 때마다 월별 합계금액 타이틀 변경
+        self.transactionTableView.reloadData()
+        self.calendarCollectionView.reloadData()
+        print("업뎃 일단 완료.")
     }
     
 }
