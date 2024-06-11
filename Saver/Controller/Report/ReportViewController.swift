@@ -11,16 +11,15 @@ import DGCharts //그래프를 그리기 위한 라이브러리
 class ReportViewController: UIViewController {
     //MARK: - property
     //그래프 작성을 위한 임시 데이터
-    let x = ShareData.shared
     private var fetchData = ShareData.shared.getMonthSaverEntries(month: 6)
     private var myData: [String: Category] = [:]
-    private var myPrice: [Double] = []
+//    private var myPrice: [Double] = []
     private var selectedCategory: String?
-    private var month = 6
+    private var currentMonth = Calendar.current.component(.month, from: Date())
+    private var month = Calendar.current.component(.month, from: Date())
     
-    //스크롤뷰의 높이 설정
-    private var tableViewHeightConstraint: NSLayoutConstraint? //TableView의 레이아웃 제약조건을 변경하기 위한 변수 선언
-    private var tableViewHeight: CGFloat?
+    //mainStackView 높이 설정
+    private var mainStackViewHeight: NSLayoutConstraint? //TableView의 레이아웃 제약조건을 변경하기 위한 변수 선언
     
     //MARK: - 1. Stack(지출금액이름, 지출금액)
     //지출금액이름
@@ -36,7 +35,7 @@ class ReportViewController: UIViewController {
     //지출금액
     private lazy var spendingAmountLabel: UILabel = {
         let label = UILabel()
-        label.text = "\(myData.map{$0.value.totalAmount}.reduce(0, +))원"
+        label.text = "\(myData.map{ $0.value.totalAmount }.reduce(0, +))원"
         label.font = UIFont.systemFont(ofSize: 26, weight: .bold)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -56,9 +55,10 @@ class ReportViewController: UIViewController {
     //지출금액 그래프
     private lazy var spendingReport: BarChartView = {
        let view = BarChartView()
-        view.noDataText = "데이터가 없습니다." //데이터가 없을 시 Text
+        view.noDataText = "데이터가 존재하지 않습니다." //데이터가 없을 시 Text
         view.noDataFont = UIFont.systemFont(ofSize: 20) //데이터가 없을 시 textFont 설정
         view.noDataTextColor = .white //데이터가 없을 시 textColor
+        
         view.backgroundColor = .darkGray //배경화면 색 설정
         view.isUserInteractionEnabled = false //사용자가 해당 view는 상호작요을 못하게 한다.
         
@@ -81,7 +81,7 @@ class ReportViewController: UIViewController {
         rightAxis.drawLabelsEnabled = false //오른쪽 Y축 라벨 제거
         
         //그래프를 그려주는 함수 실행
-        setBarData(barChartView: view, barChartDataEntries: entryData(values: myPrice)) //금액을 기준으로 그래프를 만들기 때문에 금액변수를 넘긴다.
+        setBarData(barChartView: view, barChartDataEntries: entryData(values: myData.map{ $0.value.totalAmount })) //금액을 기준으로 그래프를 만들기 때문에 금액변수를 넘긴다.
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -188,64 +188,96 @@ class ReportViewController: UIViewController {
         return scrollView
     }()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         setup()
-        print(fetchData)
+//        print(myData.first!)
     }
 
     //MARK: - Methods
     
     @objc func updateData(sender: UIButton){
         if sender == beforeMonthButton{
-            month -= 1
-            self.fetchData = ShareData.shared.getMonthSaverEntries(month: month)
+            if month > 1{
+                month -= 1
+                fetchData = ShareData.shared.getMonthSaverEntries(month: month)
+                reloadViewUpdate()
+            }
         }else if sender == afterMonthButton{
-            month += 1
-            self.fetchData = ShareData.shared.getMonthSaverEntries(month: month)
+            if month < currentMonth{
+                month += 1
+                fetchData = ShareData.shared.getMonthSaverEntries(month: month)
+                reloadViewUpdate()
+            }
         }
-//        categoryFilterSaverEntries()
-        myPrice = myData.map{ $0.value.totalAmount }
-        setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myPrice))
     }
     
-//    //카테고리 별 분류 함수
-//    func categoryFilterSaverEntries(){
-//        myData = [:]
-//        for data in fetchData{
-//            if myData[data.name] == nil {
-//                myData[data.name] = Category(totalAmount: 0, dailyDatas: [])
-//            }
-//               
-//            var category = myData[data.name]!
-//               
-//           category.totalAmount += data.spendingAmount
-//           
-//           if let index = category.dailyDatas.firstIndex(where: { Calendar.current.isDate($0.date, inSameDayAs: data.transactionDate) }) {
-//               category.dailyDatas[index].totalAmount += data.spendingAmount
-//               category.dailyDatas[index].saverModels.append(data)
-//           } else {
-//               let newDailyData = DailyData(date: data.transactionDate, totalAmount: data.spendingAmount, saverModels: [data])
-//               category.dailyDatas.append(newDailyData)
-//           }
-//           
-//           myData[data.name] = category
-//        }
-//    }
+    //달을 변경했을 때 뷰를 업데이트하는 함수
+    func reloadViewUpdate(){
+        categoryFilterSaverEntries()
+        setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{$0.value.totalAmount}))
+        legendStackView.subviews.forEach{ $0.removeFromSuperview() }
+        if myData.isEmpty{
+            selectedCategory = nil
+            legendScrollView.removeFromSuperview()
+            categoryExpenditureTableView.removeFromSuperview()
+            self.mainStackViewTop?.isActive = false
+            self.mainStackViewBottom?.isActive = false
+            self.mainStackViewCenter?.isActive = true
+        }else{
+            selectedCategory = myData.first?.key
+            setupLegendScrollView(labels: myData.map{$0.key})
+            mainStackView.addArrangedSubview(legendScrollView)
+            mainStackView.addArrangedSubview(categoryExpenditureTableView)
+            categoryExpenditureTableView.reloadData()
+            self.mainStackViewTop?.isActive = true
+            self.mainStackViewBottom?.isActive = true
+            self.mainStackViewCenter?.isActive = false
+        }
+        
+        spendingAmountNameLabel.text = "\(month)월 지출 금액"
+        spendingAmountLabel.text = "\(abs(myData.map{ $0.value.totalAmount }.reduce(0, +)))원"
+    }
+    
+    //카테고리 별 분류 함수
+    func categoryFilterSaverEntries(){
+        myData = [:]
+        for data in fetchData{
+            if data.spendingAmount <= 0{
+                if myData[data.name] == nil {
+                    myData[data.name] = Category(totalAmount: 0, dailyDatas: [])
+                }
+                   
+                var category = myData[data.name]!
+               
+            
+                category.totalAmount -= data.spendingAmount
+            
+           
+               if let index = category.dailyDatas.firstIndex(where: { Calendar.current.isDate($0.date, inSameDayAs: data.transactionDate) }) {
+                   category.dailyDatas[index].totalAmount += data.spendingAmount
+                   category.dailyDatas[index].saverModels.append(data)
+               } else {
+                   let newDailyData = DailyData(date: data.transactionDate, totalAmount: data.spendingAmount, saverModels: [data])
+                   category.dailyDatas.append(newDailyData)
+               }
+               
+               myData[data.name] = category
+            }
+        }
+    }
     
     func getSaverEntries(index: Int) -> [SaverModel]{
         return myData[self.selectedCategory!]!.dailyDatas[index].saverModels
     }
-    
-    
+    private var mainStackViewTop: NSLayoutConstraint?
+    private var mainStackViewBottom: NSLayoutConstraint?
+    private var mainStackViewCenter: NSLayoutConstraint?
     //최소설정 함수
     private func setup(){
-//        categoryFilterSaverEntries()
-        myPrice = myData.map{ $0.value.totalAmount }
-        
+        categoryFilterSaverEntries()
         
         //불러온 데이터가 하나라도 존재하면 그 중 첫 번째 키를 selectedCategory에 저장한다.
         self.selectedCategory = myData.first?.key
@@ -263,10 +295,8 @@ class ReportViewController: UIViewController {
             mainScrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             mainScrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             
-            mainStackView.topAnchor.constraint(equalTo: mainScrollView.topAnchor, constant: 10),
             mainStackView.leadingAnchor.constraint(equalTo: mainScrollView.leadingAnchor, constant: 10),
             mainStackView.trailingAnchor.constraint(equalTo: mainScrollView.trailingAnchor, constant: -10),
-            mainStackView.bottomAnchor.constraint(equalTo: mainScrollView.bottomAnchor, constant: -10),
             mainStackView.widthAnchor.constraint(equalTo: mainScrollView.widthAnchor, constant: -20),
             
             //MARK: - 상단 Report
@@ -331,9 +361,18 @@ class ReportViewController: UIViewController {
             categoryExpenditureTableView.topAnchor.constraint(equalTo: legendScrollView.bottomAnchor, constant: 10),
             categoryExpenditureTableView.bottomAnchor.constraint(equalTo: mainStackView.bottomAnchor),
             //변경해야함
-            categoryExpenditureTableView.heightAnchor.constraint(equalToConstant: 300)
+            categoryExpenditureTableView.heightAnchor.constraint(equalToConstant: 500)
         ])
+        
+        mainStackViewTop = mainStackView.topAnchor.constraint(equalTo: mainScrollView.topAnchor, constant: 10)
+        mainStackViewBottom = mainStackView.bottomAnchor.constraint(equalTo: mainScrollView.bottomAnchor, constant: -10)
+        mainStackViewCenter = mainStackView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor)
+        mainStackViewTop?.isActive = true
+        mainStackViewBottom?.isActive = true
+        mainStackViewCenter?.isActive = false
+
     }
+
     
     //그래프의 데이터를
     private func setBarData(barChartView: BarChartView, barChartDataEntries: [BarChartDataEntry]) {
@@ -344,10 +383,15 @@ class ReportViewController: UIViewController {
         
         //위에서 만든 데이터들로 차트를 생성한다.
         let barChartData = BarChartData(dataSet: barChartdataSet)
+        barChartData.barWidth = 0.5
         
-        //차트뷰의 해당 데이터는 위에서만들 차트이다.
-        barChartView.data = barChartData
-        
+        if barChartDataEntries.isEmpty{
+            barChartView.data = nil
+        }else{
+            //차트뷰의 해당 데이터는 위에서만들 차트이다.
+            barChartView.data = barChartData
+        }
+        barChartView.notifyDataSetChanged()
         //Legend설정
         barChartView.legend.enabled = false
     }
@@ -355,7 +399,7 @@ class ReportViewController: UIViewController {
     //차트데이터를 만드는데 필요한 개체(BarChartDataEntry 타입)를 만들어 주는 함수
     private func entryData(values: [Double]) -> [BarChartDataEntry] {
         var barDataEntries: [BarChartDataEntry] = []
-        for i in 0 ..< values.count {
+        for i in 0..<values.count {
             //개체를 만들어서 리턴해야하는 개체 배열에 추가한다.
             barDataEntries.append(BarChartDataEntry(x: Double(i), y: values[i]))
         }

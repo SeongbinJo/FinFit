@@ -18,6 +18,7 @@ class DetailCategoryTransactionAmoutViewController: UIViewController{
         view.delegate = self
         view.dataSource = self
         view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
         view.register(CategoryListDetailTableCellTableViewCell.self, forCellReuseIdentifier: "categoryCell")
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
