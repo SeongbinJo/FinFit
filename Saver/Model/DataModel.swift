@@ -1,6 +1,17 @@
 import Foundation
 import SwiftData
 
+func formatNumber(_ value: Double, maximumFractionDigits: Int = 2) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.minimumFractionDigits = 0
+    formatter.maximumFractionDigits = maximumFractionDigits
+    
+    return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
+}
+
+
+
 //MARK: - Model
 @Model
 class SaverModel: Identifiable{

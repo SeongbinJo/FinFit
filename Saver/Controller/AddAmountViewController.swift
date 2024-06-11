@@ -8,6 +8,10 @@
 import UIKit
 
 class AddAmountViewController: UIViewController {
+    weak var delegate: TransactionTableViewButtonDelegate?
+    
+    //MARK: - 저장되어있는 내역의 수정 버튼을 눌러 들어온 경우
+    var transaction: SaverModel?
     
     // MARK: - 변수
     let dbController = DBController.shared
@@ -57,6 +61,7 @@ class AddAmountViewController: UIViewController {
         let date = UIDatePicker()
         date.locale = Locale(identifier: "ko_kr")
         date.datePickerMode = .date
+        date.date = transaction?.transactionDate ?? Date()
         date.translatesAutoresizingMaskIntoConstraints = false
         
         return date
@@ -96,6 +101,7 @@ class AddAmountViewController: UIViewController {
     private lazy var transactionNameViewTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "거래 내역을 입력해주세요."
+        field.text = transaction?.transactionName ?? ""
         field.translatesAutoresizingMaskIntoConstraints = false
         
         return field
@@ -132,6 +138,11 @@ class AddAmountViewController: UIViewController {
     private lazy var transactionAmountViewTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "거래 금액을 입력해주세요."
+        if let spendingAmount = transaction?.spendingAmount {
+            field.text = String(spendingAmount)
+        } else {
+            field.text = ""
+        }
         field.keyboardType = .numberPad
         field.translatesAutoresizingMaskIntoConstraints = false
         
@@ -182,7 +193,9 @@ class AddAmountViewController: UIViewController {
         // TODO: - 정보 다 입력하기 전에 버튼 비활성화 되도록
         // TODO: - 채우지 않은 항목 있으면 경고창 뜨도록
         // save 버튼
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save,
+        let barButtonSystemItem: UIBarButtonItem.SystemItem = (transaction != nil) ? .edit : .save
+        
+        navigationItem.rightBarButtonItem =  UIBarButtonItem(barButtonSystemItem: barButtonSystemItem,
                                                             target: self,
                                                             action: #selector(save))
         
@@ -359,33 +372,45 @@ class AddAmountViewController: UIViewController {
     }
     
     @objc func save() {
-        guard let transactionName = transactionNameViewTextField.text, // 거래명 담을 변수
-              let spendingAmountTextField = transactionAmountViewTextField.text // 거래금액 담을 변수
-        /*나중에 카테고리 받아온걸로 변경 let transactionCategory = transactionCategory*/ else {
-            return
+        // 사용자가 작성한 내역(newTransaction)
+        let transaction: SaverModel = SaverModel(transactionName: self.transactionNameViewTextField.text ?? "", spendingAmount: Double(self.transactionAmountViewTextField.text ?? "0") ?? 0, transactionDate: self.dateViewDateSelect.date, name: self.selectCategoryName ?? "")
+        
+        // 델리게이트 패턴으로 save/edit
+        if self.transaction != nil {
+            // self.transaction에 값이 있으면 edit(update)
+            self.delegate?.editTransactionInAddView(oldTransactoin: self.transaction!, newTransaction: transaction)
+        }else {
+            self.delegate?.saveTransactionInAddView(transaction: transaction)
         }
+        
+        navigationController?.popViewController(animated: true)
+//        guard let transactionName = transactionNameViewTextField.text, // 거래명 담을 변수
+//              let spendingAmountTextField = transactionAmountViewTextField.text // 거래금액 담을 변수
+//        /*나중에 카테고리 받아온걸로 변경 let transactionCategory = transactionCategory*/ else {
+//            return
+//        }
         
         // 데이터 유형 불일치 해결 위해 추가
         // 카테고리 변환하는 코드 추가 필요
-        guard let spendingAmount = Double(spendingAmountTextField) else { // text로 받아온 값의 데이터 유형 변경
-            return
-        }
+//        guard let spendingAmount = Double(spendingAmountTextField) else { // text로 받아온 값의 데이터 유형 변경
+//            return
+//        }
         
-        guard let transactionDate = dateView.subviews.compactMap({ $0 as? UIDatePicker }).first?.date else {
-            return
-        }
+//        guard let transactionDate = dateView.subviews.compactMap({ $0 as? UIDatePicker }).first?.date else {
+//            return
+//        }
         
-        let addTransaction = SaverModel(transactionName: transactionName, // 거래명
-                                        spendingAmount: spendingAmount, // 거래금액
-                                        transactionDate: transactionDate, // 거래날짜
-                                        name: selectCategoryName ?? "") // 카테고리
+//        let addTransaction = [SaverModel(transactionName: transactionName, // 거래명
+//                                        spendingAmount: spendingAmount, // 거래금액
+//                                        transactionDate: transactionDate, // 거래날짜
+//                                        name: selectCategoryName ?? "") // 카테고리
+//                              ]
         
-        DBController.shared.insertData(data: addTransaction)
-        dismiss(animated: true)
-        print(addTransaction.transactionName)
-        print(addTransaction.spendingAmount)
-        print(addTransaction.transactionDate)
-        print(addTransaction.name)
+//        DBController.shared.insertData(data: addTransaction)
+//        print(addTransaction.transactionName)
+//        print(addTransaction.spendingAmount)
+//        print(addTransaction.transactionDate)
+//        print(addTransaction.name)
     }
     
     // TODO: - 키보드 올라오면 텍스트 입력창 올라가도록 하기
