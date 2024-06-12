@@ -93,7 +93,7 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
         foramtter.locale = Locale(identifier: "ko_KR")
         
         categoryTransactionDateLabel.text = "\(foramtter.string(from: entry.date))"
-        categoryTransactionAmountLabel.text = "\(Double(entry.totalAmount))원"
+        categoryTransactionAmountLabel.text = "\(ShareData.shared.formatNumber(Double(entry.totalAmount)))원"
         categoryLabel.text = entry.saverModels.first?.name
         categoryTransactionAmountLabel.applySmallSuffixFontStyle()
     }

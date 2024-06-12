@@ -563,6 +563,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
         cell.delegate = self
         cell.backgroundColor = .clear
+        cell.selectionStyle = .none
         let selectedDateComponents = self.calendar.dateComponents([.day], from: self.selectedDate ?? Date())
         let data = ShareData.shared.getTransactionListOfDay(day: selectedDateComponents.day ?? 1)
         if data.count > 0 {

@@ -19,6 +19,8 @@ class DetailCategoryTransactionAmoutViewController: UIViewController{
         view.dataSource = self
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
+        view.backgroundColor = .saverBackground
+        view.separatorStyle = .none
         view.register(CategoryListDetailTableCellTableViewCell.self, forCellReuseIdentifier: "categoryCell")
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -48,9 +50,9 @@ class DetailCategoryTransactionAmoutViewController: UIViewController{
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            categoryListTableView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
-            categoryListTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
-            categoryListTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
+            categoryListTableView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
+            categoryListTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 24),
+            categoryListTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -24),
             categoryListTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -69,17 +71,36 @@ class DetailCategoryTransactionAmoutViewController: UIViewController{
 }
 
 extension DetailCategoryTransactionAmoutViewController: UITableViewDelegate, UITableViewDataSource{
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        140
+    //MARK: - sections설정
+    //섹션의 개수
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return saverEntries.count
     }
     
+    
+    //MARK: - row, cell 설정
+    //섹션의 포함되는 행의 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        saverEntries.count
+        1
+    }
+    
+    
+    //섹션하단에 넣을 뷰 높이 지정
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return section == (tableView.numberOfSections - 1) ? 0.0 : 20.0 //마지막 셀의 하단 제거
+    }
+    
+    //섹션하단에 넣을 뷰
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView()
+        footerView.backgroundColor = .clear //투명한 배경
+        return footerView
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = categoryListTableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath) as! CategoryListDetailTableCellTableViewCell
-        cell.configureCell(entry: saverEntries[indexPath.row])
+        cell.selectionStyle = .none
+        cell.configureCell(entry: saverEntries[indexPath.section])
         return cell
     }
 }
