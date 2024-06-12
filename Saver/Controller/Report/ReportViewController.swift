@@ -261,7 +261,7 @@ class ReportViewController: UIViewController {
             //위에서 만든 데이터들로 차트를 생성한다.
             let barChartData = BarChartData(dataSet: barChartdataSet)
             
-//            barChartData.barWidth = 1
+            barChartData.barWidth = 0.6
             
             //차트뷰의 해당 데이터는 위에서만들 차트이다.
             barChartView.data = barChartData
@@ -275,24 +275,27 @@ class ReportViewController: UIViewController {
     //차트데이터를 만드는데 필요한 개체(BarChartDataEntry 타입)를 만들어 주는 함수
     private func entryData(values: [Double]) -> [BarChartDataEntry] {
         var barDataEntries: [BarChartDataEntry] = []
+
         let count = values.count
         guard count > 0 else { return barDataEntries }
         
-        let offset = 1.0
+        var condensedData = [Double]()
         
-//        let maxValue = values.max()!
-        
-        for i in 0..<max(10, count) {
-            if i < count {
-                let value = values[i]
-                let logScaledValue = log10(value + offset)
-                let finalValue = value
-                barDataEntries.append(BarChartDataEntry(x: Double(i), y: finalValue))
-            } else {
-                // 빈 데이터를 채워 넣음
-                barDataEntries.append(BarChartDataEntry(x: Double(i), y: 0))
-            }
+        if values.count > 4{
+            condensedData += values[0...2]
+            condensedData.append(values[3...values.count-1].reduce(0, +))
+        }else{
+            condensedData = values
         }
+        
+        print("갯숫 파악: \(condensedData.count)")
+        for i in 0..<condensedData.count{
+            let value = values[i]
+            let logScaledValue = log10(value + 1.0)
+            let finalValue = logScaledValue > 0 ? logScaledValue : value
+            barDataEntries.append(BarChartDataEntry(x: Double(i), y: finalValue))
+        }
+        
         return barDataEntries
     }
     
@@ -457,7 +460,6 @@ class ReportViewController: UIViewController {
                 }
             }
         }
-        print(myData)
         // 정렬
             myData.sort { $0.1.totalAmount > $1.1.totalAmount }
             for index in 0..<myData.count {
@@ -465,9 +467,6 @@ class ReportViewController: UIViewController {
                 category.dailyDatas.sort { $0.date < $1.date }
                 myData[index] = (myData[index].0, category)
             }
-
-        print("FSDFDSFDAS")
-        print(myData)
     }
     
     //MARK: - CustomCell로 데이터 넘겨주기
