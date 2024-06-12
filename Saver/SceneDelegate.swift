@@ -24,10 +24,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let secondNavigationController = UINavigationController(rootViewController: reportViewController)
         
         // HomeViewController가 나타난 후 자동으로 AddAmountViewController로 전환
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//            let addAmountViewController = AddAmountViewController()
-//            homeViewController.navigationController?.pushViewController(addAmountViewController, animated: true)
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            let addAmountViewController = AddAmountViewController()
+            homeViewController.navigationController?.pushViewController(addAmountViewController, animated: true)
+        }
         
         firstNavigationController.tabBarItem = UITabBarItem(title: "가계부", image: UIImage(systemName: "calendar"), tag: 0)
         secondNavigationController.tabBarItem = UITabBarItem(title: "리포트", image: UIImage(systemName: "chart.bar"), selectedImage: UIImage(systemName: "chart.bar.fill"))
