@@ -7,6 +7,19 @@
 
 import Foundation
 
+typealias DataEntryType = [String: Category]
+
+struct Category{
+    var totalAmount: Double = 0
+    var dailyDatas: [DailyData] = []
+}
+
+struct DailyData{
+    var date: Date
+    var totalAmount: Double = 0
+    var saverModels: [SaverModel] = []
+}
+
 class ShareData{
     static let shared = ShareData()
     let dbController = DBController.shared
@@ -50,6 +63,14 @@ class ShareData{
         }
         self.monthTransactionData = result
         print("이번달 내역들 : \(self.monthTransactionData)")
+    }
+    
+    //특정 달 data만 분류하기 -report-
+    func getMonthSaverEntries(month: Int) -> [SaverModel]{
+        saverEntries.filter{ data in
+            let components = Calendar(identifier: .gregorian).dateComponents([.month], from: data.transactionDate)
+            return components.month == month
+        }
     }
     
     // yearMonthData에서 day를 매개변수로 받아서 해당 날짜의 내역들을 리턴하는 메서드

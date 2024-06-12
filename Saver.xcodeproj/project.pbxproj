@@ -17,6 +17,10 @@
 		7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953E8062C0D508C0095AC36 /* HomeViewController.swift */; };
 		7953E80C2C0D508F0095AC36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7953E80B2C0D508F0095AC36 /* Assets.xcassets */; };
 		7953E80F2C0D508F0095AC36 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 7953E80E2C0D508F0095AC36 /* Base */; };
+		796B01252C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796B01242C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift */; };
+		796B012D2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796B012C2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift */; };
+		7981A5D32C10079900104450 /* CategoryExpenditureTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7981A5D22C10079900104450 /* CategoryExpenditureTableViewCell.swift */; };
+		79C945502C0F470F0027170F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 79C9454F2C0F470F0027170F /* DGCharts */; };
 		79FE80842C0D9A5800517428 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80832C0D9A5800517428 /* DataModel.swift */; };
 		79FE80862C0D9FA600517428 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80852C0D9FA600517428 /* DataController.swift */; };
 		79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE80882C0DA4A700517428 /* ReportViewController.swift */; };
@@ -37,6 +41,9 @@
 		7953E80B2C0D508F0095AC36 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7953E80E2C0D508F0095AC36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7953E8102C0D508F0095AC36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		796B01242C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCategoryTransactionAmoutViewController.swift; sourceTree = "<group>"; };
+		796B012C2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListDetailTableCellTableViewCell.swift; sourceTree = "<group>"; };
+		7981A5D22C10079900104450 /* CategoryExpenditureTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryExpenditureTableViewCell.swift; sourceTree = "<group>"; };
 		79FE80832C0D9A5800517428 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		79FE80852C0D9FA600517428 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		79FE80882C0DA4A700517428 /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
@@ -49,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79C945502C0F470F0027170F /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,7 +84,6 @@
 			children = (
 				BF6AAC942C15759700873654 /* Extention */,
 				79FE80872C0DA3BC00517428 /* Controller */,
-				79FE807F2C0D99CD00517428 /* Model */,
 				7953E8022C0D508C0095AC36 /* AppDelegate.swift */,
 				7953E8042C0D508C0095AC36 /* SceneDelegate.swift */,
 				7953E80B2C0D508F0095AC36 /* Assets.xcassets */,
@@ -84,6 +91,24 @@
 				7953E8102C0D508F0095AC36 /* Info.plist */,
 			);
 			path = Saver;
+			sourceTree = "<group>";
+		};
+		796B01282C16EBE400E7D972 /* Report */ = {
+			isa = PBXGroup;
+			children = (
+				79FE80882C0DA4A700517428 /* ReportViewController.swift */,
+				7981A5D22C10079900104450 /* CategoryExpenditureTableViewCell.swift */,
+			);
+			path = Report;
+			sourceTree = "<group>";
+		};
+		796B01292C16EBF200E7D972 /* CategoryDetail */ = {
+			isa = PBXGroup;
+			children = (
+				796B01242C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift */,
+				796B012C2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift */,
+			);
+			path = CategoryDetail;
 			sourceTree = "<group>";
 		};
 		79FE807F2C0D99CD00517428 /* Model */ = {
@@ -98,14 +123,16 @@
 		79FE80872C0DA3BC00517428 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */,
+				796B01292C16EBF200E7D972 /* CategoryDetail */,
+				796B01282C16EBE400E7D972 /* Report */,
 				7953E8062C0D508C0095AC36 /* HomeViewController.swift */,
 				5837A6D82C11BB5D0036E654 /* TransactionTableViewCell.swift */,
-				79FE80882C0DA4A700517428 /* ReportViewController.swift */,
 				79FE80852C0D9FA600517428 /* DataController.swift */,
 				58FAB1612C0ECA63005251EB /* CalendarManager.swift */,
 				58FAB1632C0ED0F5005251EB /* CalendarCollectionViewCell.swift */,
 				58F099D92C0F6DC4008B4289 /* CalendarPopUpViewController.swift */,
-				BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */,
+				79FE807F2C0D99CD00517428 /* Model */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -134,6 +161,9 @@
 			dependencies = (
 			);
 			name = Saver;
+			packageProductDependencies = (
+				79C9454F2C0F470F0027170F /* DGCharts */,
+			);
 			productName = Saver;
 			productReference = 7953E7FF2C0D508C0095AC36 /* Saver.app */;
 			productType = "com.apple.product-type.application";
@@ -162,6 +192,9 @@
 				Base,
 			);
 			mainGroup = 7953E7F62C0D508C0095AC36;
+			packageReferences = (
+				79C9454E2C0F470F0027170F /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			productRefGroup = 7953E8002C0D508C0095AC36 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -190,10 +223,13 @@
 			files = (
 				58FAB1642C0ED0F5005251EB /* CalendarCollectionViewCell.swift in Sources */,
 				79FE80862C0D9FA600517428 /* DataController.swift in Sources */,
+				7981A5D32C10079900104450 /* CategoryExpenditureTableViewCell.swift in Sources */,
+				796B01252C16D52B00E7D972 /* DetailCategoryTransactionAmoutViewController.swift in Sources */,
 				79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */,
 				7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */,
 				58FAB1622C0ECA63005251EB /* CalendarManager.swift in Sources */,
 				BF6AAC932C15758500873654 /* +AddAmountViewController.swift in Sources */,
+				796B012D2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift in Sources */,
 				BFC5170F2C0E9C730072A31D /* AddAmountViewController.swift in Sources */,
 				79FE80842C0D9A5800517428 /* DataModel.swift in Sources */,
 				5837A6D92C11BB5D0036E654 /* TransactionTableViewCell.swift in Sources */,
@@ -342,9 +378,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = P95R3MRRWK;
+				DEVELOPMENT_TEAM = 643M6R9A8T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Saver/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -358,6 +395,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lion.Saver;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -369,9 +407,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = P95R3MRRWK;
+				DEVELOPMENT_TEAM = 643M6R9A8T;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Saver/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -385,6 +424,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lion.Saver;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -413,6 +453,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		79C9454E2C0F470F0027170F /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		79C9454F2C0F470F0027170F /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79C9454E2C0F470F0027170F /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7953E7F72C0D508C0095AC36 /* Project object */;
 }
