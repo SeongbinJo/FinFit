@@ -327,7 +327,6 @@ class HomeViewController: UIViewController {
         transactionTableView.delegate = self
         transactionTableView.dataSource = self
         transactionTableView.register(TransactionTableViewCell.self, forCellReuseIdentifier: "TransactionCell")
-        transactionTableView.backgroundColor = .clear
         transactionTableView.showsVerticalScrollIndicator = false
         transactionTableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -496,8 +495,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let date = calendar.date(from: dateComponents)
         
         if self.selectedDate == date {
-            cell.contentView.layer.cornerRadius = 5
             cell.contentView.layer.borderWidth = 1
+            cell.contentView.layer.borderColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0.7)
         }
         
         cell.configureCell(date: date ?? Date(), day: days[indexPath.row], isToday: self.isToday)
@@ -518,8 +517,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         if let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell {
             if cell.numberOfDayLabel.text != ""{
                 self.selectedIndexPath = indexPath
-                cell.contentView.layer.cornerRadius = 5
                 cell.contentView.layer.borderWidth = 1
+                cell.contentView.layer.borderColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0.7)
 //                cell.contentView.layer.borderColor = d
                 
                 let days = CalendarManager.manager.getDays()
@@ -566,6 +565,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let data = ShareData.shared.getTransactionListOfDay(day: selectedDateComponents.day ?? 1)
         if data.count > 0 {
             cell.configureCell(transaction: data[indexPath.row])
+            cell.contentView.backgroundColor = .clear
             return cell
         }else {
             cell.configureNilCell()

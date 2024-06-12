@@ -28,12 +28,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //            let addAmountViewController = AddAmountViewController()
 //            homeViewController.navigationController?.pushViewController(addAmountViewController, animated: true)
 //        }
-        
+
         firstNavigationController.tabBarItem = UITabBarItem(title: "가계부", image: UIImage(systemName: "calendar"), tag: 0)
         secondNavigationController.tabBarItem = UITabBarItem(title: "리포트", image: UIImage(systemName: "chart.bar"), selectedImage: UIImage(systemName: "chart.bar.fill"))
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [firstNavigationController, secondNavigationController]
+        tabBarController.tabBar.unselectedItemTintColor = .neutral20
         
         self.window?.rootViewController = tabBarController
         self.window?.makeKeyAndVisible()

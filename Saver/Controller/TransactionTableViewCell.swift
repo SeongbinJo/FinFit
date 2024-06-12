@@ -39,7 +39,6 @@ class TransactionTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         setupCategoryNameHStackView()
         setupLabelVStackView()
         setupTransactionHStackView()
@@ -143,7 +142,6 @@ class TransactionTableViewCell: UITableViewCell {
         nilLabel.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.addSubview(nilLabel)
-        
         NSLayoutConstraint.activate([
             nilLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             nilLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -155,7 +153,6 @@ class TransactionTableViewCell: UITableViewCell {
         transactionAmount.text = ""
         transactionCategory.text = ""
         editMenuButton.setImage(nil, for: .normal)
-        contentView.backgroundColor = .clear
         nilLabel.text = "내역이 존재하지 않습니다."
     }
     
