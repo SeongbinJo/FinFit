@@ -24,6 +24,9 @@ class HomeViewController: UIViewController {
     private var todayButton: UIButton = UIButton(type: .system)
     private var prevNextButtonStackView: UIStackView = UIStackView()
     
+    // 달력 뷰를 위 아래로 감싸는 선
+    private var topLineView: UIView = UIView()
+    private var bottomLineView: UIView = UIView()
     
     // 달력 관련 뷰
     private var weekDayOfStackView: UIStackView = UIStackView()
@@ -236,8 +239,12 @@ class HomeViewController: UIViewController {
         ])
     }
     
+    
     //MARK: - 일~토 요일 스택뷰
     func setupWeekDayOfStackView() {
+        topLineView.backgroundColor = .neutral20
+        topLineView.translatesAutoresizingMaskIntoConstraints = false
+        
         weekDayOfStackView.axis = .horizontal
         weekDayOfStackView.distribution = .fillEqually
         weekDayOfStackView.alignment = .center
@@ -265,18 +272,26 @@ class HomeViewController: UIViewController {
         
         weekDayOfStackView.translatesAutoresizingMaskIntoConstraints = false
         
+        calendarView.addSubview(topLineView)
         calendarView.addSubview(weekDayOfStackView)
         
         NSLayoutConstraint.activate([
-            weekDayOfStackView.topAnchor.constraint(equalTo: calendarView.topAnchor),
-            weekDayOfStackView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
-            weekDayOfStackView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor)
+            topLineView.topAnchor.constraint(equalTo: calendarView.topAnchor),
+            topLineView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
+            topLineView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
+            topLineView.heightAnchor.constraint(equalToConstant: 0.5),
+            
+            weekDayOfStackView.topAnchor.constraint(equalTo: topLineView.bottomAnchor, constant: 10),
+            weekDayOfStackView.leadingAnchor.constraint(equalTo: topLineView.leadingAnchor),
+            weekDayOfStackView.trailingAnchor.constraint(equalTo: topLineView.trailingAnchor)
         ])
     }
     
+
+    
     //MARK: - 캘린더 뷰 setup
     func setupCalendarView() {
-
+        // 달력 콜렉션 뷰
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
         calendarCollectionView.register(CalendarCollectionViewCell.self, forCellWithReuseIdentifier: "CalendarCell")
@@ -286,11 +301,23 @@ class HomeViewController: UIViewController {
         calendarView.translatesAutoresizingMaskIntoConstraints = false
         calendarView.addSubview(calendarCollectionView)
         
+        // 달력 아래 라인
+        bottomLineView.backgroundColor = .neutral20
+        bottomLineView.translatesAutoresizingMaskIntoConstraints = false
+        
+        calendarView.addSubview(bottomLineView)
+        
+        
         NSLayoutConstraint.activate([
             calendarCollectionView.topAnchor.constraint(equalTo: weekDayOfStackView.bottomAnchor, constant: 5),
             calendarCollectionView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
             calendarCollectionView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
-            calendarCollectionView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor),
+            
+            bottomLineView.topAnchor.constraint(equalTo: calendarCollectionView.bottomAnchor),
+            bottomLineView.leadingAnchor.constraint(equalTo: calendarCollectionView.leadingAnchor),
+            bottomLineView.trailingAnchor.constraint(equalTo: calendarCollectionView.trailingAnchor),
+            bottomLineView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor),
+            bottomLineView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
         
         calendarCollectionViewHeightConstraint = calendarCollectionView.heightAnchor.constraint(equalToConstant: 0)
