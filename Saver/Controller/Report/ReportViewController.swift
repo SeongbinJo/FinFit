@@ -335,13 +335,24 @@ class ReportViewController: UIViewController {
             capsuleView.addGestureRecognizer(tapGesture)
             capsuleView.accessibilityIdentifier = label
             capsuleView.isUserInteractionEnabled = true
+            
+            
         }
     }
     
     //legend를 Tap했을 때 발생하는 액션함수
     @objc func legendTapped(_ getsture: UITapGestureRecognizer){
         guard let selectedView = getsture.view else { return }
+        
+        //이전의 선택되었던 카테고리의 색상을 원래대로 되돌림
+        if let selectedCategory = selectedCategory, let previousSelectedView = legendStackView.arrangedSubviews.first(where: { $0.accessibilityIdentifier == selectedCategory }) {
+               previousSelectedView.backgroundColor = .neutral80
+           }
         selectedCategory = selectedView.accessibilityIdentifier
+        
+        //클릭된 카테고리의 색상을 변경
+        selectedView.backgroundColor = .incomeAmount
+        
         categoryExpenditureTableView.reloadData()
     }
     
