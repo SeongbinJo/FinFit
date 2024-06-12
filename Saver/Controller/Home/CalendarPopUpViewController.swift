@@ -16,11 +16,9 @@ class MonthCollectionVieCell: UICollectionViewCell {
     
     func configureCell(monthNumber: Int) {
         monthLabel.text = "\(monthNumber)월"
-        monthLabel.font = UIFont.systemFont(ofSize: 13, weight: .light)
+        monthLabel.textColor = .white
+        monthLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         monthLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        contentView.layer.cornerRadius = 5
-        contentView.layer.borderWidth = 0.5
 
         contentView.addSubview(monthLabel)
         
@@ -59,12 +57,14 @@ class CalendarPopUpViewController: UIViewController {
     //MARK: - backgroundView 설정
     func setupBackgroundView() {
         // backgroundView
-        backgroundView.backgroundColor = .white
+        backgroundView.backgroundColor = .neutral80
         backgroundView.layer.cornerRadius = 10
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
         // yearLabel.text의 초기화
         yearLabel.text = self.dateFormatter.string(from: self.currentMonth )
+        yearLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        yearLabel.textColor = .white
         
         // 이전년도 버튼
         prevButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
@@ -86,6 +86,7 @@ class CalendarPopUpViewController: UIViewController {
         hStackView.axis = .horizontal
         hStackView.distribution = .fillEqually
         hStackView.alignment = .center
+        hStackView.tintColor = .white
         
         hStackView.addArrangedSubview(prevButton)
         hStackView.addArrangedSubview(yearLabel)
@@ -95,11 +96,12 @@ class CalendarPopUpViewController: UIViewController {
         
         
         var config = UIButton.Configuration.plain()
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+//        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         var container = AttributeContainer()
         container.font = UIFont.systemFont(ofSize: 15, weight: .light)
         config.attributedTitle = AttributedString("닫기", attributes: container)
         cancelButton.configuration = config
+        cancelButton.tintColor = .white
         cancelButton.addAction(UIAction { [weak self] _ in
             self?.dismiss(animated: false)
         }, for: .touchUpInside)
@@ -109,7 +111,7 @@ class CalendarPopUpViewController: UIViewController {
         monthCollectionView.dataSource = self
         monthCollectionView.register(MonthCollectionVieCell.self, forCellWithReuseIdentifier: "MonthCell")
         monthCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        monthCollectionView.backgroundColor = .white
+        monthCollectionView.backgroundColor = .clear
         
         backgroundView.addSubview(hStackView)
         backgroundView.addSubview(cancelButton)
@@ -121,8 +123,8 @@ class CalendarPopUpViewController: UIViewController {
             hStackView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 15),
             hStackView.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
             
-            cancelButton.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 10),
-            cancelButton.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 10),
+            cancelButton.centerYAnchor.constraint(equalTo: hStackView.centerYAnchor),
+            cancelButton.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 5),
             
             monthCollectionView.topAnchor.constraint(equalTo: hStackView.bottomAnchor, constant: 10),
             monthCollectionView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 10),
