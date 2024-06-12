@@ -170,11 +170,14 @@ class ReportViewController: UIViewController {
         ShareData.shared.loadSaverEntries()
         fetchData = ShareData.shared.getMonthSaverEntries(month: month)
         setup()
-        print(fetchData)
-        print("AAAAAAA")
-        print(myData)
     }
     
+//    override func viewWillAppear(_ animated: Bool) {
+//        ShareData.shared.loadSaverEntries()
+//        fetchData = ShareData.shared.getMonthSaverEntries(month: month)
+//        setup()
+//    }
+//    
     //MARK: - Life Cycle
     //view처음 로드될 때
     override func viewDidLoad() {
@@ -194,6 +197,7 @@ class ReportViewController: UIViewController {
             addViewWithConstraints([legendScrollView, categoryExpenditureTableView], to: view)
             setupLegendScrollView(labels: myData.map{$0.key})
             setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{ $0.value.totalAmount }))
+            spendingAmountLabel.text = "\(myData.map{$0.value.totalAmount}.reduce(0, +))원"
         }
         
         //오토레이아웃 설정
@@ -276,12 +280,12 @@ class ReportViewController: UIViewController {
         
         let offset = 1.0
         
-        let maxValue = values.max()!
+//        let maxValue = values.max()!
         
         for i in 0..<max(10, count) {
             if i < count {
                 let value = values[i]
-                let logScaledValue = log10(value) / log10(maxValue)
+                let logScaledValue = log10(value + offset)
                 let finalValue = logScaledValue > 0 ? logScaledValue : value
                 barDataEntries.append(BarChartDataEntry(x: Double(i), y: finalValue))
             } else {
@@ -405,7 +409,7 @@ class ReportViewController: UIViewController {
         }
         
         spendingAmountNameLabel.text = "\(month)월 지출 금액"
-        spendingAmountLabel.text = "\(abs(myData.map{ $0.value.totalAmount }.reduce(0, +)))원"
+        spendingAmountLabel.text = "\(myData.map{ $0.value.totalAmount }.reduce(0, +))원"
         spendingAmountLabel.applySmallSuffixFontStyle()
     }
     
