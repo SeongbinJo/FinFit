@@ -226,7 +226,7 @@ class ReportViewController: UIViewController {
             spendingReport.leadingAnchor.constraint(equalTo: spendingReportStackView
                 .leadingAnchor),
             spendingReport.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-            spendingReport.heightAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, multiplier: 0.5),
+            spendingReport.heightAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, multiplier: 0.4),
             
             //왼쪽 화살표
             beforeMonthButton.leadingAnchor.constraint(equalTo: spendingUIStackView.leadingAnchor),
@@ -273,6 +273,8 @@ class ReportViewController: UIViewController {
         var barDataEntries: [BarChartDataEntry] = []
         let count = values.count
         guard count > 0 else { return barDataEntries }
+        
+        let offset = 1.0
         
         let maxValue = values.max()!
         
@@ -486,8 +488,29 @@ extension UILabel{
         // label의 text를 기반으로 기존의 문자열을 변경할 수 있게 NSMutableAttributedString을 생성합니다
         let attributedText = NSMutableAttributedString(string: text)
         //지정된 범위에 대해 속성을 설정
-        attributedText.setAttributes([.font: UIFont.systemFont(ofSize: 20, weight: .semibold),], range: NSRange(location: text.count - 1, length: 1))
+        attributedText.setAttributes([.font: UIFont.systemFont(ofSize: self.font.pointSize - 6, weight: .semibold),], range: NSRange(location: text.count - 1, length: 1))
         //속성 적용
         self.attributedText = attributedText
     }
+}
+
+//MARK: - UIFont 커스텀
+extension UIFont{
+    //Title
+    static let saverTitleBold = UIFont.systemFont(ofSize: 25, weight: .bold)
+    static let saverTitleRegular = UIFont.systemFont(ofSize: 25, weight: .regular)
+    
+    //SubTitle
+    static let saverSubTitleSemibold = UIFont.systemFont(ofSize: 20, weight: .semibold)
+    static let saverSubTitleRegular = UIFont.systemFont(ofSize: 20, weight: .regular)
+    
+    //Body
+    static let saverBody1Semibold = UIFont.systemFont(ofSize: 16, weight: .semibold)
+    static let saverBody1Regurlar = UIFont.systemFont(ofSize: 16, weight: .regular)
+    static let saverBody2Semibold = UIFont.systemFont(ofSize: 14, weight: .semibold)
+    static let saverBody2Regurlar = UIFont.systemFont(ofSize: 14, weight: .regular)
+    
+    //Caption
+    static let saverCaption1Regular = UIFont.systemFont(ofSize: 12, weight: .regular)
+    static let saverCaption2Regular = UIFont.systemFont(ofSize: 10, weight: .regular)
 }
