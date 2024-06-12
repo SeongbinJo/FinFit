@@ -21,7 +21,7 @@ class MonthCollectionVieCell: UICollectionViewCell {
         
         contentView.layer.cornerRadius = 5
         contentView.layer.borderWidth = 0.5
-        contentView.backgroundColor = .red
+
         contentView.addSubview(monthLabel)
         
         NSLayoutConstraint.activate([
@@ -59,7 +59,7 @@ class CalendarPopUpViewController: UIViewController {
     //MARK: - backgroundView 설정
     func setupBackgroundView() {
         // backgroundView
-        backgroundView.backgroundColor = .green
+        backgroundView.backgroundColor = .white
         backgroundView.layer.cornerRadius = 10
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -109,7 +109,7 @@ class CalendarPopUpViewController: UIViewController {
         monthCollectionView.dataSource = self
         monthCollectionView.register(MonthCollectionVieCell.self, forCellWithReuseIdentifier: "MonthCell")
         monthCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        monthCollectionView.backgroundColor = .lightGray
+        monthCollectionView.backgroundColor = .white
         
         backgroundView.addSubview(hStackView)
         backgroundView.addSubview(cancelButton)

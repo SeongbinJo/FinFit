@@ -155,7 +155,7 @@ class TransactionTableViewCell: UITableViewCell {
         transactionAmount.text = ""
         transactionCategory.text = ""
         editMenuButton.setImage(nil, for: .normal)
-        
+        contentView.backgroundColor = .clear
         nilLabel.text = "내역이 존재하지 않습니다."
     }
     

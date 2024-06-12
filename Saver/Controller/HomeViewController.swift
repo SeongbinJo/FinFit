@@ -42,8 +42,7 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        print("hello world")
+        view.backgroundColor = .saverBackground
         // 앱 실행 후 데이터 fetch
         ShareData.shared.loadSaverEntries()
         // 앱 실행 후 오늘 날짜의 테이블 뷰 리스트 가져오기위함
@@ -107,13 +106,14 @@ class HomeViewController: UIViewController {
     func setupTitleHStackView() {
         currentSpendingAmountLabel.font = UIFont.systemFont(ofSize: 24)
         currentSpendingAmountLabel.numberOfLines = 0
+        currentSpendingAmountLabel.textColor = .white
         currentSpendingAmountLabel.translatesAutoresizingMaskIntoConstraints = false
-        currentSpendingAmountLabel.backgroundColor = .red
         
         
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         addTransactionButton.setTitle("내역추가", for: .normal)
+        addTransactionButton.tintColor = .white
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
             print("내역추가 버튼 클릭. (현재 테이블 뷰. 셀 관련 액션 테스트 중")
@@ -129,7 +129,6 @@ class HomeViewController: UIViewController {
         addTransactionButton.setContentHuggingPriority(.required, for: .horizontal)
 
         addTransactionButton.translatesAutoresizingMaskIntoConstraints = false
-        addTransactionButton.backgroundColor = .blue
 
         titleHStackView.axis = .horizontal
         titleHStackView.distribution = .fill
@@ -137,7 +136,6 @@ class HomeViewController: UIViewController {
         titleHStackView.addArrangedSubview(currentSpendingAmountLabel)
         titleHStackView.addArrangedSubview(addTransactionButton)
         titleHStackView.translatesAutoresizingMaskIntoConstraints = false
-        titleHStackView.backgroundColor = .yellow
         
         view.addSubview(titleHStackView)
         
@@ -160,6 +158,7 @@ class HomeViewController: UIViewController {
         config.attributedTitle = AttributedString(yearMonthButtonLabel.text ?? "정보없음", attributes: container)
         
         changeMonthButton.setImage(UIImage(systemName: "calendar"), for: .normal)
+        changeMonthButton.tintColor = .neutral20
         changeMonthButton.configuration = config
     }
     
@@ -176,8 +175,6 @@ class HomeViewController: UIViewController {
         }, for: .touchUpInside)
         
         changeMonthButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        changeMonthButton.backgroundColor = .yellow
         
         scrollView.addSubview(changeMonthButton)
         
@@ -217,6 +214,7 @@ class HomeViewController: UIViewController {
         prevNextButtonStackView.axis = .horizontal
         prevNextButtonStackView.alignment = .center
         prevNextButtonStackView.spacing = 20
+        prevNextButtonStackView.tintColor = .neutral20
         
         prevNextButtonStackView.addArrangedSubview(prevMonthButton)
         prevNextButtonStackView.addArrangedSubview(todayButton)
@@ -237,6 +235,7 @@ class HomeViewController: UIViewController {
         weekDayOfStackView.axis = .horizontal
         weekDayOfStackView.distribution = .fillEqually
         weekDayOfStackView.alignment = .center
+
         
         let weekOfDay: [String] = ["일", "월", "화", "수", "목", "금", "토"]
         
@@ -244,22 +243,21 @@ class HomeViewController: UIViewController {
             let weekLabel: UILabel = UILabel()
             weekLabel.text = day
             weekLabel.textAlignment = .center
-            
             switch day {
             case "일":
-                weekLabel.textColor = .red
+                weekLabel.textColor = .spendingAmount
             case "토":
-                weekLabel.textColor = .blue
+                weekLabel.textColor = .primaryBlue80
             default:
-                weekLabel.textColor = .black
+                weekLabel.textColor = .neutral20
             }
             
             weekDayOfStackView.addArrangedSubview(weekLabel)
         }
         
-        weekDayOfStackView.translatesAutoresizingMaskIntoConstraints = false
+        weekDayOfStackView.tintColor = .neutral20
         
-        weekDayOfStackView.backgroundColor = .green
+        weekDayOfStackView.translatesAutoresizingMaskIntoConstraints = false
         
         calendarView.addSubview(weekDayOfStackView)
         
@@ -276,11 +274,10 @@ class HomeViewController: UIViewController {
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
         calendarCollectionView.register(CalendarCollectionViewCell.self, forCellWithReuseIdentifier: "CalendarCell")
+        calendarCollectionView.backgroundColor = .clear
         calendarCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        calendarCollectionView.backgroundColor = .lightGray
         
         calendarView.translatesAutoresizingMaskIntoConstraints = false
-        calendarView.backgroundColor = .yellow
         calendarView.addSubview(calendarCollectionView)
         
         NSLayoutConstraint.activate([
@@ -318,22 +315,21 @@ class HomeViewController: UIViewController {
         self.dateFormatter.dateFormat = "M월 d일 E요일"
         self.dateFormatter.locale = Locale(identifier: "ko-KR")
         currentDayTitle.text = self.dateFormatter.string(from: Date())
-        currentDayTitle.backgroundColor = .brown
+        currentDayTitle.textColor = .neutral20
         currentDayTitle.translatesAutoresizingMaskIntoConstraints = false
         
         let todayComponents = self.calendar.dateComponents([.day], from: Date())
         currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!)) 원"
-        currentDayAmount.backgroundColor = .brown
+        currentDayAmount.textColor = .neutral20
         currentDayAmount.font = UIFont.systemFont(ofSize: 25)
         currentDayAmount.translatesAutoresizingMaskIntoConstraints = false
         
         transactionTableView.delegate = self
         transactionTableView.dataSource = self
         transactionTableView.register(TransactionTableViewCell.self, forCellReuseIdentifier: "TransactionCell")
+        transactionTableView.backgroundColor = .clear
         transactionTableView.showsVerticalScrollIndicator = false
         transactionTableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        transactionTableView.backgroundColor = .lightGray
         
         scrollView.addSubview(currentDayTitle)
         scrollView.addSubview(currentDayAmount)
@@ -500,7 +496,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let date = calendar.date(from: dateComponents)
         
         if self.selectedDate == date {
-            cell.backgroundColor = .green
+            cell.contentView.layer.cornerRadius = 5
+            cell.contentView.layer.borderWidth = 1
         }
         
         cell.configureCell(date: date ?? Date(), day: days[indexPath.row], isToday: self.isToday)
@@ -523,6 +520,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 self.selectedIndexPath = indexPath
                 cell.contentView.layer.cornerRadius = 5
                 cell.contentView.layer.borderWidth = 1
+//                cell.contentView.layer.borderColor = d
                 
                 let days = CalendarManager.manager.getDays()
                 
@@ -571,6 +569,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         }else {
             cell.configureNilCell()
+            cell.contentView.backgroundColor = .clear
             self.currentDayAmount.text = ""
             return cell
         }
