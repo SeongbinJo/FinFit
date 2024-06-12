@@ -198,6 +198,7 @@ class ReportViewController: UIViewController {
             setupLegendScrollView(labels: myData.map{$0.key})
             setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{ $0.value.totalAmount }))
             spendingAmountLabel.text = "\(myData.map{$0.value.totalAmount}.reduce(0, +))원"
+            spendingAmountLabel.applySmallSuffixFontStyle()
         }
         
         //오토레이아웃 설정

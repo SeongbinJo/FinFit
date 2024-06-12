@@ -39,7 +39,6 @@ class TransactionTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         setupCategoryNameHStackView()
         setupLabelVStackView()
         setupTransactionHStackView()
@@ -60,7 +59,9 @@ class TransactionTableViewCell: UITableViewCell {
     //MARK: - 리스트 셀
     func setupCategoryNameHStackView() {
         transactionCategory.text = "[테스트 카테고리]"
+        transactionCategory.textColor = .neutral20
         transactionName.text = "테스트 내역 1"
+        transactionName.textColor = .neutral20
         
         categoryNameHStackView.axis = .horizontal
         categoryNameHStackView.distribution = .equalSpacing
@@ -121,10 +122,10 @@ class TransactionTableViewCell: UITableViewCell {
         switch amount {
         case ..<0:
             transactionAmount.text = "\(amountString) 원"
-//            transactionAmount.textColor = .red
+            transactionAmount.textColor = .spendingAmount
         case 1..<Double.infinity:
             transactionAmount.text = "+\(amountString) 원"
-//            transactionAmount.textColor = .blue
+            transactionAmount.textColor = .primaryBlue80
         default:
             transactionAmount.text = "0 원"
         }
@@ -143,7 +144,6 @@ class TransactionTableViewCell: UITableViewCell {
         nilLabel.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.addSubview(nilLabel)
-        
         NSLayoutConstraint.activate([
             nilLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             nilLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -155,8 +155,8 @@ class TransactionTableViewCell: UITableViewCell {
         transactionAmount.text = ""
         transactionCategory.text = ""
         editMenuButton.setImage(nil, for: .normal)
-        contentView.backgroundColor = .clear
         nilLabel.text = "내역이 존재하지 않습니다."
+        nilLabel.textColor = .neutral20
     }
     
     //MARK: - 테이블 뷰 셀 표현 테스트용 메서드
