@@ -79,7 +79,7 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     //MARK: - configureCell
     func configureCell(entry: SaverModel){
         let foramtter = DateFormatter()
-        foramtter.dateFormat = "yyyy-MM-dd (E)"
+        foramtter.dateFormat = "M월 d일 (E)"
         foramtter.locale = Locale(identifier: "ko_KR")
         
         dateLabl.text = "\(foramtter.string(from: entry.transactionDate))"

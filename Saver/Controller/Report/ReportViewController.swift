@@ -16,7 +16,9 @@ class ReportViewController: UIViewController {
     private var selectedCategory: String?
     private var currentMonth = Calendar.current.component(.month, from: Date())
     private var month = Calendar.current.component(.month, from: Date())
-        
+    private let mainLR: CGFloat = 24
+    private let viewPadding: CGFloat = 20
+    
     //MARK: - 1. Stack(지출금액이름, 지출금액)
     //지출금액이름
     private lazy var spendingAmountNameLabel: UILabel = {
@@ -44,6 +46,7 @@ class ReportViewController: UIViewController {
         let stackView = UIStackView(arrangedSubviews: [spendingAmountNameLabel, spendingAmountLabel])
         stackView.axis = .vertical
         stackView.alignment = .center
+        stackView.spacing = 5
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -91,7 +94,7 @@ class ReportViewController: UIViewController {
         let stackView = UIStackView(arrangedSubviews: [spendingAmountStackView, spendingReport])
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.spacing = 10
+        stackView.spacing = 20
         stackView.layer.cornerRadius = 10
         stackView.layer.masksToBounds = true
         stackView.backgroundColor = .darkGray
@@ -157,7 +160,7 @@ class ReportViewController: UIViewController {
         tableView.delegate = self
         tableView.layer.cornerRadius = 10
         tableView.layer.masksToBounds = true
-        tableView.backgroundColor = .darkGray
+        tableView.backgroundColor = .saverBackground
 //        tableView.separatorStyle = .none //insetline 없애기
         //셀 만드는 거 - GOD성빈님(역시 에이스...)
         tableView.register(CategoryExpenditureTableViewCell.self, forCellReuseIdentifier: "cell")
@@ -172,12 +175,6 @@ class ReportViewController: UIViewController {
         setup()
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        ShareData.shared.loadSaverEntries()
-//        fetchData = ShareData.shared.getMonthSaverEntries(month: month)
-//        setup()
-//    }
-//    
     //MARK: - Life Cycle
     //view처음 로드될 때
     override func viewDidLoad() {
@@ -191,7 +188,7 @@ class ReportViewController: UIViewController {
         categoryFilterSaverEntries()
         //불러온 데이터가 하나라도 존재하면 그 중 첫 번째 키를 selectedCategory에 저장한다.
         self.selectedCategory = myData.first?.key
-        
+        view.backgroundColor = .saverBackground
         view.addSubview(spendingUIStackView)
         if !myData.isEmpty{
             addViewWithConstraints([legendScrollView, categoryExpenditureTableView], to: view)
@@ -206,19 +203,20 @@ class ReportViewController: UIViewController {
         NSLayoutConstraint.activate([
             //MARK: - 상단 Report
             //stackView를 담는 UIView
-            spendingUIStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
-            spendingUIStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
-            spendingUIStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
+            spendingUIStackView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            spendingUIStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: mainLR),
+            spendingUIStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -mainLR),
+            spendingUIStackView.heightAnchor.constraint(equalToConstant: 350),
             
             //StackView(StackView(지출금액이름, 지출금액), 그래프)
-            spendingReportStackView.leadingAnchor.constraint(equalTo: spendingUIStackView.leadingAnchor, constant: 20),
-            spendingReportStackView.trailingAnchor.constraint(equalTo: spendingUIStackView.trailingAnchor, constant: -20),
-            spendingReportStackView.topAnchor.constraint(equalTo: spendingUIStackView.topAnchor, constant: 20),
+            spendingReportStackView.leadingAnchor.constraint(equalTo: spendingUIStackView.leadingAnchor, constant: viewPadding),
+            spendingReportStackView.trailingAnchor.constraint(equalTo: spendingUIStackView.trailingAnchor, constant: -viewPadding),
+            spendingReportStackView.topAnchor.constraint(equalTo: spendingUIStackView.topAnchor, constant: viewPadding),
             
             //StackView(지출금액이름, 지출금액)
             spendingAmountStackView.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
             spendingAmountStackView.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-            //
+            
             //지출금액이름
             spendingAmountNameLabel.leadingAnchor.constraint(equalTo: spendingAmountStackView.leadingAnchor),
             spendingAmountNameLabel.trailingAnchor.constraint(equalTo: spendingAmountStackView.trailingAnchor),
@@ -305,14 +303,15 @@ class ReportViewController: UIViewController {
             //모양
             let capsuleView = UIView()
             capsuleView.backgroundColor = .systemPink
-            capsuleView.layer.cornerRadius = 15
+            capsuleView.layer.cornerRadius = 20
             capsuleView.layer.masksToBounds = true
             capsuleView.translatesAutoresizingMaskIntoConstraints = false
+            capsuleView.backgroundColor = .neutral80
             
             //텍스트
             let labelView = UILabel()
             labelView.text = label
-            labelView.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            labelView.font = .saverBody1Regurlar
             labelView.textAlignment = .center
             labelView.textColor = .white
             labelView.translatesAutoresizingMaskIntoConstraints = false
@@ -322,13 +321,13 @@ class ReportViewController: UIViewController {
             
             NSLayoutConstraint.activate([
                 //캡슐뷰
-                capsuleView.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
+//                capsuleView.widthAnchor.constraint(),
                 
                 //라벨뷰
-                labelView.leadingAnchor.constraint(equalTo: capsuleView.leadingAnchor, constant: 8),
-                labelView.trailingAnchor.constraint(equalTo: capsuleView.trailingAnchor, constant: -8),
-                labelView.topAnchor.constraint(equalTo: capsuleView.topAnchor),
-                labelView.bottomAnchor.constraint(equalTo: capsuleView.bottomAnchor)
+                labelView.leadingAnchor.constraint(equalTo: capsuleView.leadingAnchor, constant: 20),
+                labelView.trailingAnchor.constraint(equalTo: capsuleView.trailingAnchor, constant: -20),
+                labelView.topAnchor.constraint(equalTo: capsuleView.topAnchor, constant: 10),
+                labelView.bottomAnchor.constraint(equalTo: capsuleView.bottomAnchor, constant: -10)
             ])
             
             //각 legend 항목에 대한 TapGesture 추가
@@ -372,24 +371,24 @@ class ReportViewController: UIViewController {
         NSLayoutConstraint.activate([
             //MARK: - 중간 카테고리 스크롤
             //legend 스크롤
-            view[0].leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
-            view[0].trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
-            view[0].topAnchor.constraint(equalTo: spendingUIStackView.bottomAnchor, constant: 10),
-            view[0].heightAnchor.constraint(equalToConstant: 30),
+            view[0].leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: mainLR),
+            view[0].trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -mainLR),
+            view[0].topAnchor.constraint(equalTo: spendingUIStackView.bottomAnchor, constant: 40),
+            view[0].heightAnchor.constraint(equalTo: legendStackView.heightAnchor),
 
             //legend 스택
             legendStackView.leadingAnchor.constraint(equalTo: legendScrollView.leadingAnchor),
             legendStackView.trailingAnchor.constraint(equalTo: legendScrollView.trailingAnchor),
             legendStackView.topAnchor.constraint(equalTo: legendScrollView.topAnchor),
             legendStackView.bottomAnchor.constraint(equalTo: legendScrollView.bottomAnchor),
-            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor),
+//            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor),
             
             //MARK: - 하단 카테고리별 지출내역 테이블뷰
             //카테고리별 지출 내역 Table
-            view[1].leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
-            view[1].trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
-            view[1].topAnchor.constraint(equalTo: legendScrollView.bottomAnchor, constant: 10),
-            view[1].bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10),
+            view[1].leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: mainLR),
+            view[1].trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -mainLR),
+            view[1].topAnchor.constraint(equalTo: legendScrollView.bottomAnchor, constant: viewPadding),
+            view[1].bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
     }
     
@@ -453,22 +452,42 @@ class ReportViewController: UIViewController {
 //MARK: - Delegate
 //UITableView
 extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
-    //MARK: - row, cell 설정
-    //행의 개수
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    //MARK: - sections설정
+    //섹션의 개수
+    func numberOfSections(in tableView: UITableView) -> Int {
         guard let selectedCategory = self.selectedCategory else { return 0 }
-        if let selectedCategoryData = myData[selectedCategory]{
-            return selectedCategoryData.dailyDatas.count
-        }
-        return 0
+        return myData[selectedCategory]?.dailyDatas.count ?? 0
+    }
+    
+    
+    //MARK: - row, cell 설정
+    //섹션의 포함되는 행의 개수
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        1
     }
     
     //cell생성
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CategoryExpenditureTableViewCell
         guard let selectedCategory = self.selectedCategory else { return cell }
-        cell.configureCell(entry: myData[selectedCategory]!.dailyDatas[indexPath.row])
+        
+        if let entry = myData[selectedCategory]?.dailyDatas[indexPath.section]{
+            cell.configureCell(entry: entry)
+        }
         return cell
+    }
+    
+    //섹션하단에 넣을 뷰 높이 지정
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return section == (tableView.numberOfSections - 1) ? 0.0 : 20.0 //마지막 셀의 하단 제거
+    }
+    
+    //섹션하단에 넣을 뷰
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView()
+        footerView.backgroundColor = .clear //투명한 배경
+        return footerView
     }
     
     //셀이 선택됬을 때
@@ -478,10 +497,7 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
         present(detailCateogryTransactionViewController, animated: true)
     }
     
-    //높이설정
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        80
-    }
+//    updatedata
 }
 
 //MARK: - '원' 글씨크기 작게 만들기
