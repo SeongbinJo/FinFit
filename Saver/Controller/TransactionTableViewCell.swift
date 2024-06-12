@@ -117,16 +117,19 @@ class TransactionTableViewCell: UITableViewCell {
     //MARK: - SwiftData가 정상 적용되었을 경우 사용할 Cell 초기화 메서드(현재 더미데이터 사용)
     func configureCell(transaction: SaverModel) {
         let amount = transaction.spendingAmount
+        let amountString = ShareData.shared.formatNumber(amount)
         switch amount {
         case ..<0:
-            transactionAmount.text = "\(amount) 원"
+            transactionAmount.text = "\(amountString) 원"
+//            transactionAmount.textColor = .red
         case 1..<Double.infinity:
-            transactionAmount.text = "+\(amount) 원"
+            transactionAmount.text = "+\(amountString) 원"
+//            transactionAmount.textColor = .blue
         default:
             transactionAmount.text = "0 원"
         }
         
-        transactionCategory.text = transaction.name
+        transactionCategory.text = transaction.name != "" ? "[\(transaction.name)]" : "[Empty]"
         transactionName.text = transaction.transactionName
         
         self.transaction = transaction
@@ -152,7 +155,7 @@ class TransactionTableViewCell: UITableViewCell {
         transactionAmount.text = ""
         transactionCategory.text = ""
         editMenuButton.setImage(nil, for: .normal)
-        
+        contentView.backgroundColor = .clear
         nilLabel.text = "내역이 존재하지 않습니다."
     }
     

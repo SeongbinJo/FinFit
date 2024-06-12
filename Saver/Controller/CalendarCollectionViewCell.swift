@@ -65,6 +65,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = .clear
         amountOfDay.textColor = .black
         amountOfDay.text = "-"
+        contentView.layer.borderWidth = 0
     }
     
     // day = 1~31 중 하나의 문자열
@@ -78,28 +79,30 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     // 그럼 의존성 낮출 수 있나..? 유지보수나 재사용성을 보면 델리게이트 패턴을 사용하는게 옳다 -소혜 강사님-
     func configureCell(date: Date, day: Int, isToday: Bool) {
         numberOfDayLabel.text = String(day)
+        numberOfDayLabel.textColor = .neutral20
         amountOfDayLabelColor(day: day)
         if isToday && String(day) == self.today {
-            contentView.backgroundColor = .systemCyan
+            contentView.layer.cornerRadius = 5
+            contentView.backgroundColor = .neutral40
         }
         switch day {
         case 0:
             numberOfDayLabel.text = ""
             amountOfDay.text = ""
         default:
-            amountOfDay.text = ShareData.shared.getTransactionListOfDay(day: day).count > 0 ? "\(ShareData.shared.totalAmountIndDay(day: day))원" : "-"
+            amountOfDay.text = ShareData.shared.getTransactionListOfDay(day: day).count > 0 ? "\(ShareData.shared.totalAmountIndDay(day: day))" : "-"
         }
     }
     
     func amountOfDayLabelColor(day: Int) {
         let amount = ShareData.shared.totalAmountIndDay(day: day)
-        switch amount {
-        case ..<0.0:
-            amountOfDay.textColor = .red
-        case 0.0:
-            amountOfDay.textColor = .black
+        switch amount.first {
+        case "-":
+            amountOfDay.textColor = .spendingAmount
+        case "0":
+            amountOfDay.textColor = .neutral20
         default:
-            amountOfDay.textColor = .blue
+            amountOfDay.textColor = .incomeAmount
         }
     }
     
