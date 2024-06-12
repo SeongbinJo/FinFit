@@ -18,6 +18,7 @@ class ReportViewController: UIViewController {
     private var month = Calendar.current.component(.month, from: Date())
     private let mainLR: CGFloat = 24
     private let viewPadding: CGFloat = 20
+    private let colors: [UIColor] = [.incomeAmount, .primaryBlue80, .primaryBlue60, .primaryBlue40]
     
     //MARK: - 1. Stack(지출금액이름, 지출금액)
     //지출금액이름
@@ -41,15 +42,15 @@ class ReportViewController: UIViewController {
         return label
     }()
     
-//    //지출금액이름, 지출금액을 담는 Stack
-//    private lazy var spendingAmountStackView: UIStackView = {
-//        let stackView = UIStackView(arrangedSubviews: [spendingAmountNameLabel, spendingAmountLabel])
-//        stackView.axis = .vertical
-//        stackView.alignment = .center
-//        stackView.spacing = 5
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        return stackView
-//    }()
+    //    //지출금액이름, 지출금액을 담는 Stack
+    //    private lazy var spendingAmountStackView: UIStackView = {
+    //        let stackView = UIStackView(arrangedSubviews: [spendingAmountNameLabel, spendingAmountLabel])
+    //        stackView.axis = .vertical
+    //        stackView.alignment = .center
+    //        stackView.spacing = 5
+    //        stackView.translatesAutoresizingMaskIntoConstraints = false
+    //        return stackView
+    //    }()
     
     //MARK: - 2. Stack(stack(지출금액이름, 지출금액), 그래프)
     //지출금액 그래프
@@ -59,7 +60,7 @@ class ReportViewController: UIViewController {
         view.noDataTextAlignment = .center
         view.noDataFont = UIFont.systemFont(ofSize: 20, weight: .semibold) //데이터가 없을 시 textFont 설정
         view.noDataTextColor = .white //데이터가 없을 시 textColor
-    
+        
         view.isUserInteractionEnabled = false //사용자가 해당 view는 상호작요을 못하게 한다.
         view.minOffset = 0 //내부 여백 설정
         
@@ -211,9 +212,9 @@ class ReportViewController: UIViewController {
             spendingReportStackView.trailingAnchor.constraint(equalTo: spendingUIStackView.trailingAnchor, constant: -viewPadding),
             spendingReportStackView.topAnchor.constraint(equalTo: spendingUIStackView.topAnchor, constant: viewPadding),
             
-//            //StackView(지출금액이름, 지출금액)
-//            spendingAmountStackView.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
-//            spendingAmountStackView.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
+            //            //StackView(지출금액이름, 지출금액)
+            //            spendingAmountStackView.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
+            //            spendingAmountStackView.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
             
             //지출금액이름
             spendingAmountNameLabel.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
@@ -230,7 +231,7 @@ class ReportViewController: UIViewController {
             spendingReport.leadingAnchor.constraint(equalTo: spendingReportStackView
                 .leadingAnchor),
             spendingReport.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-//            spendingReport.heightAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, multiplier: 0.4),
+            //            spendingReport.heightAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, multiplier: 0.4),
             
             //왼쪽 화살표
             beforeMonthButton.leadingAnchor.constraint(equalTo: spendingUIStackView.leadingAnchor),
@@ -258,8 +259,19 @@ class ReportViewController: UIViewController {
             //각 데이터마다 위의 값이 나타는데 제거 시켜준다.
             barChartdataSet.valueTextColor = .clear
             
+            //폰트크기 설정
+            //            barChartdataSet.valueFont = .saverBody1Regurlar
+            
+            //색상 설정
+            barChartdataSet.colors = self.colors
+            
             //위에서 만든 데이터들로 차트를 생성한다.
             let barChartData = BarChartData(dataSet: barChartdataSet)
+            
+            //차트뷰의 해당 데이터는 위에서만들 차트이다.
+            barChartView.data = barChartData
+            barChartView.animate(yAxisDuration: 0.5, easingOption: .easeInOutQuad) // 애니메이션 활성화 및 지속 시간 설정
+            
             
             barChartData.barWidth = 0.6
             
@@ -275,7 +287,7 @@ class ReportViewController: UIViewController {
     //차트데이터를 만드는데 필요한 개체(BarChartDataEntry 타입)를 만들어 주는 함수
     private func entryData(values: [Double]) -> [BarChartDataEntry] {
         var barDataEntries: [BarChartDataEntry] = []
-
+        
         let count = values.count
         guard count > 0 else { return barDataEntries }
         
@@ -286,12 +298,12 @@ class ReportViewController: UIViewController {
             condensedData.append(values[3...values.count-1].reduce(0, +))
         }else{
             condensedData = values
+            condensedData += [Double](repeating: 0.0, count: 4-values.count)
         }
         
-        print("갯숫 파악: \(condensedData.count)")
         for i in 0..<condensedData.count{
-            let value = values[i]
-            let logScaledValue = log10(value + 1.0)
+            let value = condensedData[i]
+            let logScaledValue = log10(value) + 1.0
             let finalValue = logScaledValue > 0 ? logScaledValue : value
             barDataEntries.append(BarChartDataEntry(x: Double(i), y: finalValue))
         }
@@ -328,7 +340,7 @@ class ReportViewController: UIViewController {
             
             NSLayoutConstraint.activate([
                 //캡슐뷰
-//                capsuleView.widthAnchor.constraint(),
+                //                capsuleView.widthAnchor.constraint(),
                 
                 //라벨뷰
                 labelView.leadingAnchor.constraint(equalTo: capsuleView.leadingAnchor, constant: 20),
@@ -353,8 +365,8 @@ class ReportViewController: UIViewController {
         
         //이전의 선택되었던 카테고리의 색상을 원래대로 되돌림
         if let selectedCategory = selectedCategory, let previousSelectedView = legendStackView.arrangedSubviews.first(where: { $0.accessibilityIdentifier == selectedCategory }) {
-               previousSelectedView.backgroundColor = .neutral80
-           }
+            previousSelectedView.backgroundColor = .neutral80
+        }
         selectedCategory = selectedView.accessibilityIdentifier
         
         //클릭된 카테고리의 색상을 변경
@@ -394,13 +406,13 @@ class ReportViewController: UIViewController {
             view[0].trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -mainLR),
             view[0].topAnchor.constraint(equalTo: spendingUIStackView.bottomAnchor, constant: 40),
             view[0].heightAnchor.constraint(equalTo: legendStackView.heightAnchor),
-
+            
             //legend 스택
             legendStackView.leadingAnchor.constraint(equalTo: legendScrollView.leadingAnchor),
             legendStackView.trailingAnchor.constraint(equalTo: legendScrollView.trailingAnchor),
             legendStackView.topAnchor.constraint(equalTo: legendScrollView.topAnchor),
             legendStackView.bottomAnchor.constraint(equalTo: legendScrollView.bottomAnchor),
-//            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor),
+            //            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor),
             
             //MARK: - 하단 카테고리별 지출내역 테이블뷰
             //카테고리별 지출 내역 Table
@@ -461,12 +473,12 @@ class ReportViewController: UIViewController {
             }
         }
         // 정렬
-            myData.sort { $0.1.totalAmount > $1.1.totalAmount }
-            for index in 0..<myData.count {
-                var category = myData[index].1
-                category.dailyDatas.sort { $0.date < $1.date }
-                myData[index] = (myData[index].0, category)
-            }
+        myData.sort { $0.1.totalAmount > $1.1.totalAmount }
+        for index in 0..<myData.count {
+            var category = myData[index].1
+            category.dailyDatas.sort { $0.date < $1.date }
+            myData[index] = (myData[index].0, category)
+        }
     }
     
     //MARK: - CustomCell로 데이터 넘겨주기
@@ -477,10 +489,10 @@ class ReportViewController: UIViewController {
               index < myData[categoryIndex].1.dailyDatas.count else {
             return []
         }
-
+        
         return myData[categoryIndex].1.dailyDatas[index].saverModels
     }
-
+    
 }
 
 //MARK: - Delegate
@@ -494,10 +506,10 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
               let categoryIndex = myData.firstIndex(where: { $0.0 == selectedCategory }) else {
             return 0
         }
-
+        
         return myData[categoryIndex].1.dailyDatas.count
     }
-
+    
     
     
     //MARK: - row, cell 설정
@@ -510,22 +522,22 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CategoryExpenditureTableViewCell
         cell.selectionStyle = .none
-
+        
         guard let selectedCategory = self.selectedCategory,
               let categoryIndex = myData.firstIndex(where: { $0.0 == selectedCategory }) else {
             return cell
         }
-
+        
         let dailyDatas = myData[categoryIndex].1.dailyDatas
         guard indexPath.section < dailyDatas.count else {
             return cell
         }
-
+        
         let entry = dailyDatas[indexPath.section]
         cell.configureCell(entry: entry)
         return cell
     }
-
+    
     
     //섹션하단에 넣을 뷰 높이 지정
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
