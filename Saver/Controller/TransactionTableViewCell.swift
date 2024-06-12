@@ -156,6 +156,7 @@ class TransactionTableViewCell: UITableViewCell {
         transactionCategory.text = ""
         editMenuButton.setImage(nil, for: .normal)
         nilLabel.text = "내역이 존재하지 않습니다."
+        nilLabel.textColor = .neutral20
     }
     
     //MARK: - 테이블 뷰 셀 표현 테스트용 메서드
