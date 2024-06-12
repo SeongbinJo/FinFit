@@ -36,12 +36,11 @@ class DBController {
     //insert data
     //데이터 등록
     func insertData(data: DataModelType) { //추가할 데이터를 매개변수로 받는다
-        //변수에 저장을 하고
-        let dataToBeInserted = data
         //데이터를 저장할 폴더가 존재하는지 확인
         if let context = self.context {
             //폴더(context)안에 넘겨받은 파일(data)을 넣는다.
-            context.insert(dataToBeInserted)
+                context.insert(data)
+            print("데이터 저장완료")
         }
     }
     
