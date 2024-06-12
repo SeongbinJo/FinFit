@@ -513,13 +513,16 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         if let previousIndexPath = self.selectedIndexPath {
             let prevCell = collectionView.cellForItem(at: previousIndexPath) as? CalendarCollectionViewCell
             prevCell?.backgroundColor = .clear
+            prevCell?.contentView.layer.cornerRadius = 0
+            prevCell?.contentView.layer.borderWidth = 0
         }
         
         // 선택한 셀 불러오기
         if let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell {
             if cell.numberOfDayLabel.text != ""{
                 self.selectedIndexPath = indexPath
-                cell.backgroundColor = .green
+                cell.contentView.layer.cornerRadius = 5
+                cell.contentView.layer.borderWidth = 1
                 
                 let days = CalendarManager.manager.getDays()
                 

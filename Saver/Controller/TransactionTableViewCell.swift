@@ -121,13 +121,15 @@ class TransactionTableViewCell: UITableViewCell {
         switch amount {
         case ..<0:
             transactionAmount.text = "\(amountString) 원"
+//            transactionAmount.textColor = .red
         case 1..<Double.infinity:
             transactionAmount.text = "+\(amountString) 원"
+//            transactionAmount.textColor = .blue
         default:
             transactionAmount.text = "0 원"
         }
         
-        transactionCategory.text = transaction.name
+        transactionCategory.text = transaction.name != "" ? "[\(transaction.name)]" : "[Empty]"
         transactionName.text = transaction.transactionName
         
         self.transaction = transaction
