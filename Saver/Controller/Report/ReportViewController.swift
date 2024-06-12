@@ -34,6 +34,7 @@ class ReportViewController: UIViewController {
         label.text = "\(myData.map{ $0.value.totalAmount }.reduce(0, +))원"
         label.font = UIFont.systemFont(ofSize: 26, weight: .bold)
         label.textColor = .white
+        label.applySmallSuffixFontStyle()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -53,7 +54,7 @@ class ReportViewController: UIViewController {
         let view = BarChartView()
         view.noDataText = "데이터가 존재하지 않습니다" //데이터가 없을 시 Text
         view.noDataTextAlignment = .center
-        view.noDataFont = UIFont.systemFont(ofSize: 20) //데이터가 없을 시 textFont 설정
+        view.noDataFont = UIFont.systemFont(ofSize: 20, weight: .semibold) //데이터가 없을 시 textFont 설정
         view.noDataTextColor = .white //데이터가 없을 시 textColor
         
         view.backgroundColor = .darkGray //배경화면 색 설정
@@ -119,15 +120,14 @@ class ReportViewController: UIViewController {
     }()
     
     //MARK: - 3. stackView를 담을 UIView
-    private lazy var spendindUIView: UIView = {
-        let view = UIView()
+    private lazy var spendingUIStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [beforeMonthButton, spendingReportStackView, afterMonthButton])
+        view.axis = .horizontal
         view.backgroundColor = .darkGray
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
+        view.alignment = .center
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(beforeMonthButton)
-        view.addSubview(spendingReportStackView)
-        view.addSubview(afterMonthButton)
         return view
     }()
     
@@ -158,7 +158,7 @@ class ReportViewController: UIViewController {
         tableView.layer.cornerRadius = 10
         tableView.layer.masksToBounds = true
         tableView.backgroundColor = .darkGray
-        tableView.separatorStyle = .none //insetline 없애기
+//        tableView.separatorStyle = .none //insetline 없애기
         //셀 만드는 거 - GOD성빈님(역시 에이스...)
         tableView.register(CategoryExpenditureTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -166,28 +166,17 @@ class ReportViewController: UIViewController {
         return tableView
     }()
     
-    //MARK: - 6. 모든 View들을 담을 StackView
-    private lazy var mainStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [spendindUIView, legendScrollView, categoryExpenditureTableView])
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.spacing = 10
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
-    
-    //MARK: - Life Cycle
-    
-    //view처음 로드될 때
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
+    override func viewDidAppear(_ animated: Bool) {
         ShareData.shared.loadSaverEntries()
         fetchData = ShareData.shared.getMonthSaverEntries(month: month)
         setup()
+    }
+    
+    //MARK: - Life Cycle
+    //view처음 로드될 때
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
     }
     
     //MARK: - Methods
@@ -197,35 +186,26 @@ class ReportViewController: UIViewController {
         //불러온 데이터가 하나라도 존재하면 그 중 첫 번째 키를 selectedCategory에 저장한다.
         self.selectedCategory = myData.first?.key
         
-        view.addSubview(mainStackView)
-        setupLegendScrollView(labels: myData.map{$0.key})
+        view.addSubview(spendingUIStackView)
+        if !myData.isEmpty{
+            addViewWithConstraints([legendScrollView, categoryExpenditureTableView], to: view)
+            setupLegendScrollView(labels: myData.map{$0.key})
+            setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{ $0.value.totalAmount }))
+        }
         
         //오토레이아웃 설정
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            
-            //MARK: - 모든 View를 담는 ScrollView
-            //            mainScrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            //            mainScrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            //            mainScrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-            //            mainScrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-            
-            mainStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
-            mainStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
-            mainStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
-            //            mainStackView.widthAnchor.constraint(equalTo: safeArea.widthAnchor, constant: -20),
-            
-            //            //MARK: - 상단 Report
+            //MARK: - 상단 Report
             //stackView를 담는 UIView
-            spendindUIView.leadingAnchor.constraint(equalTo: mainStackView.leadingAnchor),
-            spendindUIView.trailingAnchor.constraint(equalTo: mainStackView.trailingAnchor),
-            spendindUIView.topAnchor.constraint(equalTo: mainStackView.topAnchor),
-            spendindUIView.bottomAnchor.constraint(equalTo: spendingReportStackView.bottomAnchor, constant: 20),
+            spendingUIStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
+            spendingUIStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
+            spendingUIStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
             
             //StackView(StackView(지출금액이름, 지출금액), 그래프)
-            spendingReportStackView.leadingAnchor.constraint(equalTo: spendindUIView.leadingAnchor, constant: 20),
-            spendingReportStackView.trailingAnchor.constraint(equalTo: spendindUIView.trailingAnchor, constant: -20),
-            spendingReportStackView.topAnchor.constraint(equalTo: spendindUIView.topAnchor, constant: 20),
+            spendingReportStackView.leadingAnchor.constraint(equalTo: spendingUIStackView.leadingAnchor, constant: 20),
+            spendingReportStackView.trailingAnchor.constraint(equalTo: spendingUIStackView.trailingAnchor, constant: -20),
+            spendingReportStackView.topAnchor.constraint(equalTo: spendingUIStackView.topAnchor, constant: 20),
             
             //StackView(지출금액이름, 지출금액)
             spendingAmountStackView.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
@@ -246,36 +226,16 @@ class ReportViewController: UIViewController {
             spendingReport.heightAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, multiplier: 0.5),
             
             //왼쪽 화살표
-            beforeMonthButton.leadingAnchor.constraint(equalTo: spendindUIView.leadingAnchor),
+            beforeMonthButton.leadingAnchor.constraint(equalTo: spendingUIStackView.leadingAnchor),
             beforeMonthButton.trailingAnchor.constraint(equalTo: spendingReport.leadingAnchor),
             beforeMonthButton.centerXAnchor.constraint(equalTo: beforeMonthButton.centerXAnchor),
-            beforeMonthButton.centerYAnchor.constraint(equalTo: spendindUIView.centerYAnchor),
+            beforeMonthButton.centerYAnchor.constraint(equalTo: spendingUIStackView.centerYAnchor),
             
             //오른쪽 화살표
             afterMonthButton.leadingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-            afterMonthButton.trailingAnchor.constraint(equalTo: spendindUIView.trailingAnchor),
+            afterMonthButton.trailingAnchor.constraint(equalTo: spendingUIStackView.trailingAnchor),
             afterMonthButton.centerXAnchor.constraint(equalTo: afterMonthButton.centerXAnchor),
-            afterMonthButton.centerYAnchor.constraint(equalTo: spendindUIView.centerYAnchor),
-            
-            //MARK: - 중간 카테고리 스크롤
-            //legend 스크롤
-            legendScrollView.leadingAnchor.constraint(equalTo: mainStackView.leadingAnchor),
-            legendScrollView.trailingAnchor.constraint(equalTo: mainStackView.trailingAnchor),
-            legendScrollView.heightAnchor.constraint(equalToConstant: 30),
-            
-            //            //legend 스택
-            legendStackView.leadingAnchor.constraint(equalTo: legendScrollView.leadingAnchor),
-            legendStackView.trailingAnchor.constraint(equalTo: legendScrollView.trailingAnchor),
-            legendStackView.topAnchor.constraint(equalTo: legendScrollView.topAnchor),
-            legendStackView.bottomAnchor.constraint(equalTo: legendScrollView.bottomAnchor),
-            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor),
-            
-            //MARK: - 하단 카테고리별 지출내역 테이블뷰
-            //카테고리별 지출 내역 Table
-            categoryExpenditureTableView.leadingAnchor.constraint(equalTo: mainStackView.leadingAnchor),
-            categoryExpenditureTableView.trailingAnchor.constraint(equalTo: mainStackView.trailingAnchor),
-            categoryExpenditureTableView.topAnchor.constraint(equalTo: legendScrollView.bottomAnchor, constant: 10),
-            categoryExpenditureTableView.bottomAnchor.constraint(equalTo: mainStackView.bottomAnchor),
+            afterMonthButton.centerYAnchor.constraint(equalTo: spendingUIStackView.centerYAnchor),
         ])
     }
     
@@ -285,6 +245,7 @@ class ReportViewController: UIViewController {
         if barChartDataEntries.isEmpty{
             barChartView.data = nil
         }else{
+            barChartView.data = nil
             //BarChart데이터들을 만든다.
             let barChartdataSet = BarChartDataSet(entries: barChartDataEntries, label: "사용금액")
             //각 데이터마다 위의 값이 나타는데 제거 시켜준다.
@@ -293,7 +254,7 @@ class ReportViewController: UIViewController {
             //위에서 만든 데이터들로 차트를 생성한다.
             let barChartData = BarChartData(dataSet: barChartdataSet)
             
-            barChartData.barWidth = 0.5
+//            barChartData.barWidth = 1
             
             //차트뷰의 해당 데이터는 위에서만들 차트이다.
             barChartView.data = barChartData
@@ -329,6 +290,7 @@ class ReportViewController: UIViewController {
     //MARK: - LegendScrol생성
     //그래프의 legend를 스크롤로 생성하는 함수
     private func setupLegendScrollView(labels: [String]){
+        legendStackView.subviews.forEach{ $0.removeFromSuperview() }
         for label in labels{
             //모양
             let capsuleView = UIView()
@@ -381,15 +343,44 @@ class ReportViewController: UIViewController {
             if month > 1{
                 month -= 1
                 fetchData = ShareData.shared.getMonthSaverEntries(month: month)
-                reloadViewUpdate()
             }
         }else if sender == afterMonthButton{
             if month < currentMonth{
                 month += 1
                 fetchData = ShareData.shared.getMonthSaverEntries(month: month)
-                reloadViewUpdate()
             }
         }
+        reloadViewUpdate()
+    }
+    
+    // 뷰를 추가하고 제약조건을 설정하는 함수
+    func addViewWithConstraints(_ view: [UIView], to superview: UIView) {
+        superview.addSubview(view[0])
+        superview.addSubview(view[1])
+        
+        let safeArea = superview.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            //MARK: - 중간 카테고리 스크롤
+            //legend 스크롤
+            view[0].leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
+            view[0].trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
+            view[0].topAnchor.constraint(equalTo: spendingUIStackView.bottomAnchor, constant: 10),
+            view[0].heightAnchor.constraint(equalToConstant: 30),
+
+            //legend 스택
+            legendStackView.leadingAnchor.constraint(equalTo: legendScrollView.leadingAnchor),
+            legendStackView.trailingAnchor.constraint(equalTo: legendScrollView.trailingAnchor),
+            legendStackView.topAnchor.constraint(equalTo: legendScrollView.topAnchor),
+            legendStackView.bottomAnchor.constraint(equalTo: legendScrollView.bottomAnchor),
+            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor),
+            
+            //MARK: - 하단 카테고리별 지출내역 테이블뷰
+            //카테고리별 지출 내역 Table
+            view[1].leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
+            view[1].trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
+            view[1].topAnchor.constraint(equalTo: legendScrollView.bottomAnchor, constant: 10),
+            view[1].bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10),
+        ])
     }
     
     //달을 변경했을 때 뷰를 업데이트하는 함수
@@ -404,13 +395,13 @@ class ReportViewController: UIViewController {
         }else{
             selectedCategory = myData.first?.key
             setupLegendScrollView(labels: myData.map{$0.key})
-            mainStackView.addArrangedSubview(legendScrollView)
-            mainStackView.addArrangedSubview(categoryExpenditureTableView)
+            addViewWithConstraints([legendScrollView, categoryExpenditureTableView], to: view)
             categoryExpenditureTableView.reloadData()
         }
         
         spendingAmountNameLabel.text = "\(month)월 지출 금액"
         spendingAmountLabel.text = "\(abs(myData.map{ $0.value.totalAmount }.reduce(0, +)))원"
+        spendingAmountLabel.applySmallSuffixFontStyle()
     }
     
     //MARK: - 필요한 데이터로 변환 및 생성
@@ -480,5 +471,20 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     //높이설정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         80
+    }
+}
+
+//MARK: - '원' 글씨크기 작게 만들기
+extension UILabel{
+    func applySmallSuffixFontStyle(){
+        guard let text = self.text else { return }
+        
+        //'원'의 글자 크기를 작게 설정
+        // label의 text를 기반으로 기존의 문자열을 변경할 수 있게 NSMutableAttributedString을 생성합니다
+        let attributedText = NSMutableAttributedString(string: text)
+        //지정된 범위에 대해 속성을 설정
+        attributedText.setAttributes([.font: UIFont.systemFont(ofSize: 20, weight: .semibold),], range: NSRange(location: text.count - 1, length: 1))
+        //속성 적용
+        self.attributedText = attributedText
     }
 }

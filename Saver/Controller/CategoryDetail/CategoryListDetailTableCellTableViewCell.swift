@@ -12,7 +12,7 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     private lazy var dateLabl: UILabel = {
         let label = UILabel()
         label.text = ""
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -31,7 +31,7 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     private lazy var amountLabel: UILabel = {
         let label = UILabel()
         label.text = ""
-        label.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 26, weight: .semibold)
         label.textAlignment = .right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -85,6 +85,7 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
         dateLabl.text = "\(foramtter.string(from: entry.transactionDate))"
         transactionNameLabel.text = entry.transactionName
         amountLabel.text = "\(Int(entry.spendingAmount))원"
+        amountLabel.applySmallSuffixFontStyle()
     }
 
 }

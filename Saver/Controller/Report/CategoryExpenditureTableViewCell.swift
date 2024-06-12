@@ -13,8 +13,8 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
     //거래금액
     private lazy var categoryTransactionDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "+19000원"
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.text = "-원"
+        label.font = UIFont.systemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -24,7 +24,7 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
         let label = UILabel()
         label.text = "000에게 받음"
         label.numberOfLines = 2
-        label.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 26, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -67,5 +67,6 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
         
         categoryTransactionDateLabel.text = "\(foramtter.string(from: entry.date))"
         categoryTransactionAmountLabel.text = "\(Double(entry.totalAmount))원"
+        categoryTransactionAmountLabel.applySmallSuffixFontStyle()
     }
 }
