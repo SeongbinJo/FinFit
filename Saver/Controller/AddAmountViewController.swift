@@ -22,8 +22,9 @@ class AddAmountViewController: UIViewController {
     // MARK: - view(뷰 타이틀)
     private lazy var titleView: UILabel = {
         let label = UILabel()
-        label.text = "소비 내역 추가"
-        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        label.text = "소비 내역 추가(수정 진행 중)"
+        label.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -51,6 +52,7 @@ class AddAmountViewController: UIViewController {
         let label = UILabel()
         label.text = "거래 날짜"
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .neutral5
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -92,6 +94,7 @@ class AddAmountViewController: UIViewController {
         let label = UILabel()
         label.text = "거래 내역"
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -100,9 +103,17 @@ class AddAmountViewController: UIViewController {
     // 거래명 작성
     private lazy var transactionNameViewTextField: UITextField = {
         let field = UITextField()
-        field.placeholder = "거래 내역을 입력해주세요."
+        let placeholderText = "거래 내역을 입력해주세요."
+        field.placeholder = placeholderText
         field.text = transaction?.transactionName ?? ""
         field.translatesAutoresizingMaskIntoConstraints = false
+        field.textColor = .neutral5
+        
+        // 텍스트필드 디자인
+        field.backgroundColor = .neutral80
+        field.borderStyle = .roundedRect
+        field.attributedPlaceholder = NSAttributedString(string: placeholderText,
+                                                         attributes: [NSAttributedString.Key.foregroundColor: UIColor.neutral40])
         
         return field
     }()
@@ -129,6 +140,7 @@ class AddAmountViewController: UIViewController {
         let label = UILabel()
         label.text = "거래 금액"
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -137,12 +149,20 @@ class AddAmountViewController: UIViewController {
     // 거래 금액 입력창
     private lazy var transactionAmountViewTextField: UITextField = {
         let field = UITextField()
-        field.placeholder = "거래 금액을 입력해주세요."
+        let placeholderText = "거래 금액을 입력해주세요."
+        field.placeholder = placeholderText
         if let spendingAmount = transaction?.spendingAmount {
             field.text = String(spendingAmount)
         } else {
             field.text = ""
         }
+        
+        // 텍스트필드 디자인
+        field.backgroundColor = .neutral80
+        field.borderStyle = .roundedRect
+        field.attributedPlaceholder = NSAttributedString(string: placeholderText,
+                                                         attributes: [NSAttributedString.Key.foregroundColor: UIColor.neutral40])
+        
         field.keyboardType = .numberPad
         field.translatesAutoresizingMaskIntoConstraints = false
         
@@ -156,6 +176,7 @@ class AddAmountViewController: UIViewController {
         let label = UILabel()
         label.text = "카테고리"
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -188,7 +209,7 @@ class AddAmountViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .saverBackground
         
         // TODO: - 정보 다 입력하기 전에 버튼 비활성화 되도록
         // TODO: - 채우지 않은 항목 있으면 경고창 뜨도록
@@ -265,7 +286,18 @@ class AddAmountViewController: UIViewController {
             transactionCategoryButton.leadingAnchor.constraint(equalTo: transactionCategoryScroll.leadingAnchor, constant: 24),
             transactionCategoryButton.trailingAnchor.constraint(equalTo: transactionCategoryScroll.trailingAnchor),
             transactionCategoryButton.bottomAnchor.constraint(equalTo: transactionCategoryScroll.bottomAnchor),
-            transactionCategoryButton.heightAnchor.constraint(equalTo: transactionCategoryScroll.heightAnchor)
+            transactionCategoryButton.heightAnchor.constraint(equalTo: transactionCategoryScroll.heightAnchor),
+            
+            // MARK: - viewDidLoad > 오토 레이아웃 > 텍스트 필드 사이즈
+            // MARK: - viewDidLoad > 오토 레이아웃 > 텍스트 필드 사이즈 > transactionNameViewTextField
+            transactionNameViewTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            transactionNameViewTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            transactionNameViewTextField.heightAnchor.constraint(equalToConstant: 45),
+            
+            // MARK: - viewDidLoad > 오토 레이아웃 > 텍스트 필드 사이즈 > transactionAmountViewTextField
+            transactionAmountViewTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            transactionAmountViewTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            transactionAmountViewTextField.heightAnchor.constraint(equalToConstant: 45),
         ])
     }
     
@@ -281,9 +313,9 @@ class AddAmountViewController: UIViewController {
         
         // 카테고리 추가 버튼 스타일
         var categoryAddConfig = UIButton.Configuration.filled()
-        categoryAddConfig.baseBackgroundColor = .white
-        categoryAddConfig.baseForegroundColor = .systemCyan
-        categoryAddConfig.background.strokeColor = .systemBlue
+        categoryAddConfig.baseBackgroundColor = .neutral80
+        categoryAddConfig.baseForegroundColor = .incomeAmount
+        categoryAddConfig.background.strokeColor = .incomeAmount
         categoryAddConfig.background.strokeWidth = 1
         categoryAddConfig.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20)
         categoryAddConfig.cornerStyle = .capsule
@@ -340,7 +372,7 @@ class AddAmountViewController: UIViewController {
         
             // 버튼 스타일
             var defaultConfig = UIButton.Configuration.filled()
-            defaultConfig.baseBackgroundColor = .systemBlue
+            defaultConfig.baseBackgroundColor = .neutral80
             defaultConfig.baseForegroundColor = .white
             defaultConfig.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20)
             defaultConfig.cornerStyle = .capsule
@@ -355,11 +387,11 @@ class AddAmountViewController: UIViewController {
             button.addAction(UIAction { _ in
                 // 모든 버튼 색상 초기화
                 for btn in buttons {
-                    btn.configuration?.baseBackgroundColor = .systemBlue
+                    btn.configuration?.baseBackgroundColor = .neutral80
                     btn.configuration?.baseForegroundColor = .white
                 }
                 // 모든 버튼 색상 초기화 후 선택된 버튼만 색상 변경
-                button.configuration?.baseBackgroundColor = .systemRed
+                button.configuration?.baseBackgroundColor = .incomeAmount
                 button.configuration?.baseForegroundColor = .white
                 
                 // 선택된 버튼 이름 저장
