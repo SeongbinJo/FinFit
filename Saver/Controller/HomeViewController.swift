@@ -496,8 +496,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let date = calendar.date(from: dateComponents)
         
         if self.selectedDate == date {
-            cell.contentView.layer.cornerRadius = 5
             cell.contentView.layer.borderWidth = 1
+            cell.contentView.layer.borderColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0.7)
         }
         
         cell.configureCell(date: date ?? Date(), day: days[indexPath.row], isToday: self.isToday)
@@ -518,8 +518,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         if let cell = collectionView.cellForItem(at: indexPath) as? CalendarCollectionViewCell {
             if cell.numberOfDayLabel.text != ""{
                 self.selectedIndexPath = indexPath
-                cell.contentView.layer.cornerRadius = 5
                 cell.contentView.layer.borderWidth = 1
+                cell.contentView.layer.borderColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0.7)
 //                cell.contentView.layer.borderColor = d
                 
                 let days = CalendarManager.manager.getDays()
@@ -562,6 +562,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
         cell.delegate = self
+        cell.backgroundColor = .clear
         let selectedDateComponents = self.calendar.dateComponents([.day], from: self.selectedDate ?? Date())
         let data = ShareData.shared.getTransactionListOfDay(day: selectedDateComponents.day ?? 1)
         if data.count > 0 {
@@ -569,7 +570,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         }else {
             cell.configureNilCell()
-            cell.contentView.backgroundColor = .clear
             self.currentDayAmount.text = ""
             return cell
         }

@@ -82,8 +82,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         numberOfDayLabel.textColor = .neutral20
         amountOfDayLabelColor(day: day)
         if isToday && String(day) == self.today {
-            contentView.layer.cornerRadius = 5
-            contentView.backgroundColor = .neutral40
+            contentView.backgroundColor = .neutral60
         }
         switch day {
         case 0:
