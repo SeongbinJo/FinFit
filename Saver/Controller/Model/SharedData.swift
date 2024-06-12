@@ -91,19 +91,17 @@ class ShareData{
     }
     
     // 특정 달의 합계금액
-    func totalAmountInMonth() -> Double {
+    func totalAmountInMonth() -> String {
         let totalAmount = self.monthTransactionData.reduce(0) { $0 + $1.spendingAmount }
-        print(monthTransactionData.count)
-        for i in self.monthTransactionData {
-            print(i.spendingAmount)
-        }
-        return totalAmount
+        let amountString = self.formatNumber(totalAmount)
+        return amountString
     }
     
     // 특정 날짜의 합계금액
-    func totalAmountIndDay(day: Int) -> Double {
+    func totalAmountIndDay(day: Int) -> String {
         let totalAmount = self.getTransactionListOfDay(day: day).reduce(0) { $0 + $1.spendingAmount }
-        return totalAmount
+        let amountString: String = self.formatNumber(totalAmount)
+        return amountString
     }
     
     // DataController에서 데이터를 삭제했을 때
@@ -120,8 +118,13 @@ class ShareData{
         dbController.deleteData(model: transaction)
     }
     
-    // DataController insert 테스트
-//    func insertTestEntries() {
-//        dbController.insertData(data: self.addTestEntries)
-//    }
+
+    func formatNumber(_ value: Double, maximumFractionDigits: Int = 2) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = maximumFractionDigits
+        
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
+    }
 }
