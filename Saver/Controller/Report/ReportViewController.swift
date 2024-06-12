@@ -170,6 +170,9 @@ class ReportViewController: UIViewController {
         ShareData.shared.loadSaverEntries()
         fetchData = ShareData.shared.getMonthSaverEntries(month: month)
         setup()
+        print(fetchData)
+        print("AAAAAAA")
+        print(myData)
     }
     
     //MARK: - Life Cycle
