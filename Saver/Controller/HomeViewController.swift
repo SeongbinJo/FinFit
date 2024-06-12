@@ -327,6 +327,7 @@ class HomeViewController: UIViewController {
         transactionTableView.delegate = self
         transactionTableView.dataSource = self
         transactionTableView.register(TransactionTableViewCell.self, forCellReuseIdentifier: "TransactionCell")
+        transactionTableView.backgroundColor = .clear
         transactionTableView.showsVerticalScrollIndicator = false
         transactionTableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -561,15 +562,14 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
         cell.delegate = self
+        cell.backgroundColor = .clear
         let selectedDateComponents = self.calendar.dateComponents([.day], from: self.selectedDate ?? Date())
         let data = ShareData.shared.getTransactionListOfDay(day: selectedDateComponents.day ?? 1)
         if data.count > 0 {
             cell.configureCell(transaction: data[indexPath.row])
-            cell.contentView.backgroundColor = .clear
             return cell
         }else {
             cell.configureNilCell()
-            cell.contentView.backgroundColor = .clear
             self.currentDayAmount.text = ""
             return cell
         }

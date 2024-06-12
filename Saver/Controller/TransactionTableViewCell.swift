@@ -59,7 +59,9 @@ class TransactionTableViewCell: UITableViewCell {
     //MARK: - 리스트 셀
     func setupCategoryNameHStackView() {
         transactionCategory.text = "[테스트 카테고리]"
+        transactionCategory.textColor = .neutral20
         transactionName.text = "테스트 내역 1"
+        transactionName.textColor = .neutral20
         
         categoryNameHStackView.axis = .horizontal
         categoryNameHStackView.distribution = .equalSpacing
@@ -120,10 +122,10 @@ class TransactionTableViewCell: UITableViewCell {
         switch amount {
         case ..<0:
             transactionAmount.text = "\(amountString) 원"
-//            transactionAmount.textColor = .red
+            transactionAmount.textColor = .spendingAmount
         case 1..<Double.infinity:
             transactionAmount.text = "+\(amountString) 원"
-//            transactionAmount.textColor = .blue
+            transactionAmount.textColor = .primaryBlue80
         default:
             transactionAmount.text = "0 원"
         }
