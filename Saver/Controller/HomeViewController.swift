@@ -390,7 +390,7 @@ class HomeViewController: UIViewController {
     
     // 이번달의 내역 총 합계
     func totalAmountCurrentMonth() {
-        self.monthTotalAmountLabel.text = String(ShareData.shared.totalAmountInMonth())
+        self.monthTotalAmountLabel.text = ShareData.shared.totalAmountInMonth()
         print(ShareData.shared.getYearMonthData().count)
         if ShareData.shared.getYearMonthData().count >= 1 {
             if self.monthTotalAmountLabel.text?.first == "-" {
@@ -564,7 +564,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let selectedDateComponents = self.calendar.dateComponents([.day], from: self.selectedDate ?? Date())
         let data = ShareData.shared.getTransactionListOfDay(day: selectedDateComponents.day ?? 1)
         if data.count > 0 {
-//            let date = calendar.dateComponents([.year, .month, .day], from: selectedDate ?? Date())
             cell.configureCell(transaction: data[indexPath.row])
             return cell
         }else {

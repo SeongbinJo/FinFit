@@ -93,10 +93,10 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     
     func amountOfDayLabelColor(day: Int) {
         let amount = ShareData.shared.totalAmountIndDay(day: day)
-        switch amount {
-        case ..<0.0:
+        switch amount.first {
+        case "-":
             amountOfDay.textColor = .red
-        case 0.0:
+        case "0":
             amountOfDay.textColor = .black
         default:
             amountOfDay.textColor = .blue
