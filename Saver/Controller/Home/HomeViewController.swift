@@ -398,7 +398,7 @@ class HomeViewController: UIViewController {
             if self.monthTotalAmountLabel.text?.first == "-" {
                 self.currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text ?? "-") 원 입니다."
             }else {
-                self.currentSpendingAmountLabel.text = "이번 달은 \n\(self.monthTotalAmountLabel.text ?? "-") 원\n수익이 있습니다."
+                self.currentSpendingAmountLabel.text = "이번 달 수익금액은\n\(self.monthTotalAmountLabel.text ?? "-") 원 입니다."
             }
         }else {
             self.currentSpendingAmountLabel.text = "이번 달은\n내역이 존재하지 않습니다."

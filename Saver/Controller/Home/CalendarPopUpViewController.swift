@@ -48,7 +48,7 @@ class CalendarPopUpViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         
         dateFormatter.dateFormat = "yyyy년"
         
