@@ -63,6 +63,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5893DB842C19BAA600143B21 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				7953E8062C0D508C0095AC36 /* HomeViewController.swift */,
+				58F099D92C0F6DC4008B4289 /* CalendarPopUpViewController.swift */,
+				58FAB1632C0ED0F5005251EB /* CalendarCollectionViewCell.swift */,
+				5837A6D82C11BB5D0036E654 /* TransactionTableViewCell.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		7953E7F62C0D508C0095AC36 = {
 			isa = PBXGroup;
 			children = (
@@ -116,6 +127,7 @@
 			children = (
 				79FE80832C0D9A5800517428 /* DataModel.swift */,
 				58233E192C16BD7A00780531 /* SharedData.swift */,
+				58FAB1612C0ECA63005251EB /* CalendarManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -124,14 +136,10 @@
 			isa = PBXGroup;
 			children = (
 				BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */,
+				5893DB842C19BAA600143B21 /* Home */,
 				796B01292C16EBF200E7D972 /* CategoryDetail */,
 				796B01282C16EBE400E7D972 /* Report */,
-				7953E8062C0D508C0095AC36 /* HomeViewController.swift */,
-				5837A6D82C11BB5D0036E654 /* TransactionTableViewCell.swift */,
 				79FE80852C0D9FA600517428 /* DataController.swift */,
-				58FAB1612C0ECA63005251EB /* CalendarManager.swift */,
-				58FAB1632C0ED0F5005251EB /* CalendarCollectionViewCell.swift */,
-				58F099D92C0F6DC4008B4289 /* CalendarPopUpViewController.swift */,
 				79FE807F2C0D99CD00517428 /* Model */,
 			);
 			path = Controller;
@@ -381,7 +389,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 96JWXAH89P;
+				DEVELOPMENT_TEAM = P95R3MRRWK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Saver/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -410,7 +418,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 96JWXAH89P;
+				DEVELOPMENT_TEAM = P95R3MRRWK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Saver/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

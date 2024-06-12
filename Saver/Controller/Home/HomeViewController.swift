@@ -1,9 +1,6 @@
 import UIKit
 
 class HomeViewController: UIViewController {
-    // 데이터 관련
-//    private var yearMonthData: [SaverModel] = []
-    
     // 날짜 관련
     private var dateFormatter: DateFormatter = DateFormatter()
     private var calendar: Calendar = Calendar.current
@@ -17,14 +14,21 @@ class HomeViewController: UIViewController {
     private var addTransactionButton: UIButton = UIButton(type: .system)
     private var titleHStackView: UIStackView = UIStackView()
     
+    // 달력의 년/월 선택 버튼
     private var yearMonthButtonLabel: UILabel = UILabel()
     private var changeMonthButton: UIButton = UIButton(type: .system)
     
+    // <, >, today 버튼
     private var prevMonthButton: UIButton = UIButton(type: .system)
     private var nextMonthButton: UIButton = UIButton(type: .system)
     private var todayButton: UIButton = UIButton(type: .system)
     private var prevNextButtonStackView: UIStackView = UIStackView()
     
+    // 달력 뷰를 위 아래로 감싸는 선
+    private var topLineView: UIView = UIView()
+    private var bottomLineView: UIView = UIView()
+    
+    // 달력 관련 뷰
     private var weekDayOfStackView: UIStackView = UIStackView()
     private var calendarCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private var calendarCollectionViewHeightConstraint: NSLayoutConstraint!
@@ -33,7 +37,10 @@ class HomeViewController: UIViewController {
     private var selectedIndexPath: IndexPath?
     private var calendarView: UIView = UIView()
     
+    // 콜렉션 뷰의 날짜 클릭했을 때 저장되는 변수
     private var selectedDate: Date?
+    
+    // 달력 아래의 테이블 뷰 관련
     private var currentDayTitle: UILabel = UILabel()
     private var currentDayAmount: UILabel = UILabel()
     private var transactionTableView: UITableView = UITableView(frame: .zero, style: .plain)
@@ -48,9 +55,6 @@ class HomeViewController: UIViewController {
         // 앱 실행 후 오늘 날짜의 테이블 뷰 리스트 가져오기위함
         let todayComponents = calendar.dateComponents([.year, .month, .day], from: Date())
         ShareData.shared.getYearMonthTransactionData(year: todayComponents.year!, month: todayComponents.month!)
-//        self.yearMonthData = ShareData.shared.getYearMonthData()
-//        print(self.yearMonthData)
-        
         
         dateFormatter.dateFormat = "yyyy년 M월"
         todayString = dateFormatter.string(from: Date())
@@ -104,15 +108,20 @@ class HomeViewController: UIViewController {
     
     //MARK: - 소비금액 타이틀 & 내역추가 버튼
     func setupTitleHStackView() {
-        currentSpendingAmountLabel.font = UIFont.systemFont(ofSize: 24)
+        currentSpendingAmountLabel.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
         currentSpendingAmountLabel.numberOfLines = 0
         currentSpendingAmountLabel.textColor = .white
         currentSpendingAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        
         var config = UIButton.Configuration.plain()
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        addTransactionButton.setTitle("내역추가", for: .normal)
+        config.contentInsets = NSDirectionalEdgeInsets(top: 1, leading: 0, bottom: 0, trailing: 0)
+        config.imagePlacement = .trailing
+        config.imagePadding = 5
+        var container = AttributeContainer()
+        container.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        config.attributedTitle = AttributedString("내역추가", attributes: container)
+        addTransactionButton.setImage(UIImage(systemName: "arrow.right"), for: .normal)
+        addTransactionButton.configuration?.imagePlacement = .trailing
         addTransactionButton.tintColor = .white
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
@@ -154,7 +163,7 @@ class HomeViewController: UIViewController {
         config.imagePadding = 5
         
         var container = AttributeContainer()
-        container.font = UIFont.systemFont(ofSize: 20, weight: .light)
+        container.font = UIFont.systemFont(ofSize: 22, weight: .light)
         config.attributedTitle = AttributedString(yearMonthButtonLabel.text ?? "정보없음", attributes: container)
         
         changeMonthButton.setImage(UIImage(systemName: "calendar"), for: .normal)
@@ -230,8 +239,12 @@ class HomeViewController: UIViewController {
         ])
     }
     
+    
     //MARK: - 일~토 요일 스택뷰
     func setupWeekDayOfStackView() {
+        topLineView.backgroundColor = .neutral20
+        topLineView.translatesAutoresizingMaskIntoConstraints = false
+        
         weekDayOfStackView.axis = .horizontal
         weekDayOfStackView.distribution = .fillEqually
         weekDayOfStackView.alignment = .center
@@ -259,18 +272,26 @@ class HomeViewController: UIViewController {
         
         weekDayOfStackView.translatesAutoresizingMaskIntoConstraints = false
         
+        calendarView.addSubview(topLineView)
         calendarView.addSubview(weekDayOfStackView)
         
         NSLayoutConstraint.activate([
-            weekDayOfStackView.topAnchor.constraint(equalTo: calendarView.topAnchor),
-            weekDayOfStackView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
-            weekDayOfStackView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor)
+            topLineView.topAnchor.constraint(equalTo: calendarView.topAnchor),
+            topLineView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
+            topLineView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
+            topLineView.heightAnchor.constraint(equalToConstant: 0.5),
+            
+            weekDayOfStackView.topAnchor.constraint(equalTo: topLineView.bottomAnchor, constant: 10),
+            weekDayOfStackView.leadingAnchor.constraint(equalTo: topLineView.leadingAnchor),
+            weekDayOfStackView.trailingAnchor.constraint(equalTo: topLineView.trailingAnchor)
         ])
     }
     
+
+    
     //MARK: - 캘린더 뷰 setup
     func setupCalendarView() {
-
+        // 달력 콜렉션 뷰
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
         calendarCollectionView.register(CalendarCollectionViewCell.self, forCellWithReuseIdentifier: "CalendarCell")
@@ -280,11 +301,23 @@ class HomeViewController: UIViewController {
         calendarView.translatesAutoresizingMaskIntoConstraints = false
         calendarView.addSubview(calendarCollectionView)
         
+        // 달력 아래 라인
+        bottomLineView.backgroundColor = .neutral20
+        bottomLineView.translatesAutoresizingMaskIntoConstraints = false
+        
+        calendarView.addSubview(bottomLineView)
+        
+        
         NSLayoutConstraint.activate([
             calendarCollectionView.topAnchor.constraint(equalTo: weekDayOfStackView.bottomAnchor, constant: 5),
             calendarCollectionView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
             calendarCollectionView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
-            calendarCollectionView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor),
+            
+            bottomLineView.topAnchor.constraint(equalTo: calendarCollectionView.bottomAnchor),
+            bottomLineView.leadingAnchor.constraint(equalTo: calendarCollectionView.leadingAnchor),
+            bottomLineView.trailingAnchor.constraint(equalTo: calendarCollectionView.trailingAnchor),
+            bottomLineView.bottomAnchor.constraint(equalTo: calendarView.bottomAnchor),
+            bottomLineView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
         
         calendarCollectionViewHeightConstraint = calendarCollectionView.heightAnchor.constraint(equalToConstant: 0)
@@ -392,7 +425,7 @@ class HomeViewController: UIViewController {
             if self.monthTotalAmountLabel.text?.first == "-" {
                 self.currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text ?? "-") 원 입니다."
             }else {
-                self.currentSpendingAmountLabel.text = "이번 달은 \n\(self.monthTotalAmountLabel.text ?? "-") 원\n수익이 있습니다."
+                self.currentSpendingAmountLabel.text = "이번 달 수익금액은\n\(self.monthTotalAmountLabel.text ?? "-") 원 입니다."
             }
         }else {
             self.currentSpendingAmountLabel.text = "이번 달은\n내역이 존재하지 않습니다."

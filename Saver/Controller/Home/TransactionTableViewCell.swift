@@ -94,6 +94,7 @@ class TransactionTableViewCell: UITableViewCell {
         }
         let menu: UIMenu = UIMenu(options: .displayInline, children: [editMenu, removeMenu])
         editMenuButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        editMenuButton.tintColor = .neutral20
         editMenuButton.menu = menu
         editMenuButton.showsMenuAsPrimaryAction = true
         
