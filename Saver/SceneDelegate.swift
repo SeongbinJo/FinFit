@@ -34,7 +34,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [firstNavigationController, secondNavigationController]
-        tabBarController.tabBar.unselectedItemTintColor = .neutral20
+        tabBarController.tabBar.unselectedItemTintColor = .neutral40
         
         self.window?.rootViewController = tabBarController
         self.window?.makeKeyAndVisible()

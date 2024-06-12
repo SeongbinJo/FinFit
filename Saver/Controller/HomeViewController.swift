@@ -1,9 +1,6 @@
 import UIKit
 
 class HomeViewController: UIViewController {
-    // 데이터 관련
-//    private var yearMonthData: [SaverModel] = []
-    
     // 날짜 관련
     private var dateFormatter: DateFormatter = DateFormatter()
     private var calendar: Calendar = Calendar.current
@@ -17,14 +14,18 @@ class HomeViewController: UIViewController {
     private var addTransactionButton: UIButton = UIButton(type: .system)
     private var titleHStackView: UIStackView = UIStackView()
     
+    // 달력의 년/월 선택 버튼
     private var yearMonthButtonLabel: UILabel = UILabel()
     private var changeMonthButton: UIButton = UIButton(type: .system)
     
+    // <, >, today 버튼
     private var prevMonthButton: UIButton = UIButton(type: .system)
     private var nextMonthButton: UIButton = UIButton(type: .system)
     private var todayButton: UIButton = UIButton(type: .system)
     private var prevNextButtonStackView: UIStackView = UIStackView()
     
+    
+    // 달력 관련 뷰
     private var weekDayOfStackView: UIStackView = UIStackView()
     private var calendarCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private var calendarCollectionViewHeightConstraint: NSLayoutConstraint!
@@ -33,7 +34,10 @@ class HomeViewController: UIViewController {
     private var selectedIndexPath: IndexPath?
     private var calendarView: UIView = UIView()
     
+    // 콜렉션 뷰의 날짜 클릭했을 때 저장되는 변수
     private var selectedDate: Date?
+    
+    // 달력 아래의 테이블 뷰 관련
     private var currentDayTitle: UILabel = UILabel()
     private var currentDayAmount: UILabel = UILabel()
     private var transactionTableView: UITableView = UITableView(frame: .zero, style: .plain)
@@ -48,9 +52,6 @@ class HomeViewController: UIViewController {
         // 앱 실행 후 오늘 날짜의 테이블 뷰 리스트 가져오기위함
         let todayComponents = calendar.dateComponents([.year, .month, .day], from: Date())
         ShareData.shared.getYearMonthTransactionData(year: todayComponents.year!, month: todayComponents.month!)
-//        self.yearMonthData = ShareData.shared.getYearMonthData()
-//        print(self.yearMonthData)
-        
         
         dateFormatter.dateFormat = "yyyy년 M월"
         todayString = dateFormatter.string(from: Date())
@@ -104,15 +105,20 @@ class HomeViewController: UIViewController {
     
     //MARK: - 소비금액 타이틀 & 내역추가 버튼
     func setupTitleHStackView() {
-        currentSpendingAmountLabel.font = UIFont.systemFont(ofSize: 24)
+        currentSpendingAmountLabel.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
         currentSpendingAmountLabel.numberOfLines = 0
         currentSpendingAmountLabel.textColor = .white
         currentSpendingAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        
         var config = UIButton.Configuration.plain()
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        addTransactionButton.setTitle("내역추가", for: .normal)
+        config.contentInsets = NSDirectionalEdgeInsets(top: 1, leading: 0, bottom: 0, trailing: 0)
+        config.imagePlacement = .trailing
+        config.imagePadding = 5
+        var container = AttributeContainer()
+        container.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        config.attributedTitle = AttributedString("내역추가", attributes: container)
+        addTransactionButton.setImage(UIImage(systemName: "arrow.right"), for: .normal)
+        addTransactionButton.configuration?.imagePlacement = .trailing
         addTransactionButton.tintColor = .white
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
@@ -154,7 +160,7 @@ class HomeViewController: UIViewController {
         config.imagePadding = 5
         
         var container = AttributeContainer()
-        container.font = UIFont.systemFont(ofSize: 20, weight: .light)
+        container.font = UIFont.systemFont(ofSize: 22, weight: .light)
         config.attributedTitle = AttributedString(yearMonthButtonLabel.text ?? "정보없음", attributes: container)
         
         changeMonthButton.setImage(UIImage(systemName: "calendar"), for: .normal)
