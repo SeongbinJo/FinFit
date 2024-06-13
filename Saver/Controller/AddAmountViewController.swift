@@ -10,6 +10,9 @@ import UIKit
 class AddAmountViewController: UIViewController {
     weak var delegate: TransactionTableViewButtonDelegate?
     
+    // 키보드 관련 탭 제스처
+    lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
+    
     //MARK: - 저장되어있는 내역의 수정 버튼을 눌러 들어온 경우
     var transaction: SaverModel?
     
@@ -162,6 +165,7 @@ class AddAmountViewController: UIViewController {
         let placeholderText = "거래 내역을 입력해주세요."
         field.placeholder = placeholderText
         field.text = transaction?.transactionName ?? ""
+        field.delegate = self
         field.translatesAutoresizingMaskIntoConstraints = false
         field.textColor = .neutral5
         
@@ -208,6 +212,7 @@ class AddAmountViewController: UIViewController {
         let field = UITextField()
         let placeholderText = "거래 금액을 입력해주세요."
         field.placeholder = placeholderText
+        field.delegate = self
         if let spendingAmount = transaction?.spendingAmount {
             field.text = String(spendingAmount)
         } else {
@@ -267,6 +272,9 @@ class AddAmountViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .saverBackground
+        
+        view.addGestureRecognizer(tapGesture)
+        
         
         // TODO: - 정보 다 입력하기 전에 버튼 비활성화 되도록
         // TODO: - 채우지 않은 항목 있으면 경고창 뜨도록
@@ -362,6 +370,10 @@ class AddAmountViewController: UIViewController {
         ])
     }
     
+    @objc func tapHandler(_ sender: UIView) {
+        transactionNameViewTextField.resignFirstResponder()
+        transactionAmountViewTextField.resignFirstResponder()
+    }
     
     // MARK: - 메소드
     // MARK: - 메소드 > 카테고리 버튼 생성
@@ -481,4 +493,9 @@ class AddAmountViewController: UIViewController {
         navigationController?.popViewController(animated: true)
 
     }
+}
+
+//MARK: - Delegate
+extension AddAmountViewController: UITextFieldDelegate{
+    
 }
