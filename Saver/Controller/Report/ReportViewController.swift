@@ -42,16 +42,6 @@ class ReportViewController: UIViewController {
         return label
     }()
     
-    //    //지출금액이름, 지출금액을 담는 Stack
-    //    private lazy var spendingAmountStackView: UIStackView = {
-    //        let stackView = UIStackView(arrangedSubviews: [spendingAmountNameLabel, spendingAmountLabel])
-    //        stackView.axis = .vertical
-    //        stackView.alignment = .center
-    //        stackView.spacing = 5
-    //        stackView.translatesAutoresizingMaskIntoConstraints = false
-    //        return stackView
-    //    }()
-    
     //MARK: - 2. Stack(stack(지출금액이름, 지출금액), 그래프)
     //지출금액 그래프
     private lazy var spendingReport: BarChartView = {
@@ -217,10 +207,6 @@ class ReportViewController: UIViewController {
             spendingReportStackView.trailingAnchor.constraint(equalTo: spendingUIStackView.trailingAnchor, constant: -viewPadding),
             spendingReportStackView.topAnchor.constraint(equalTo: spendingUIStackView.topAnchor, constant: viewPadding),
             
-            //            //StackView(지출금액이름, 지출금액)
-            //            spendingAmountStackView.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
-            //            spendingAmountStackView.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-            
             //지출금액이름
             spendingAmountNameLabel.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
             spendingAmountNameLabel.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
@@ -278,18 +264,6 @@ class ReportViewController: UIViewController {
             
             //BarChart데이터들을 만든다.
             let barChartdataSet = BarChartDataSet(entries: barChartDataEntries, label: "사용금액")
-            
-            //상단 라벨 설정
-            //            barChartdataSet.valueFormatter = CustomValueFormatter(topLabels: topLabels)
-            
-            //각 데이터마다 위의 값이 나타는데 제거 시켜준다.
-            //            barChartdataSet.valueTextColor = .clear
-            
-            
-            
-            //폰트크기 설정
-            //            barChartdataSet.valueFont = .saverBody2Regurlar
-            //            barChartdataSet.valueTextColor = .white
             
             //색상 설정
             barChartdataSet.colors = self.colors
@@ -377,9 +351,6 @@ class ReportViewController: UIViewController {
             legendStackView.addArrangedSubview(capsuleView)
             
             NSLayoutConstraint.activate([
-                //캡슐뷰
-                //                capsuleView.widthAnchor.constraint(),
-                
                 //라벨뷰
                 labelView.leadingAnchor.constraint(equalTo: capsuleView.leadingAnchor, constant: 20),
                 labelView.trailingAnchor.constraint(equalTo: capsuleView.trailingAnchor, constant: -20),
@@ -450,7 +421,6 @@ class ReportViewController: UIViewController {
             legendStackView.trailingAnchor.constraint(equalTo: legendScrollView.trailingAnchor),
             legendStackView.topAnchor.constraint(equalTo: legendScrollView.topAnchor),
             legendStackView.bottomAnchor.constraint(equalTo: legendScrollView.bottomAnchor),
-            //            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor),
             
             //MARK: - 하단 카테고리별 지출내역 테이블뷰
             //카테고리별 지출 내역 Table
@@ -643,35 +613,7 @@ extension UIFont{
     static let saverCaption2Regular = UIFont.systemFont(ofSize: 10, weight: .regular)
 }
 
-//MARK: - 커스텀 valueFormatter 설정
-
-//private class CustomValueFormatter: NSObject, ValueFormatter {
-//    private let topLabels: [String] // 각 막대 상단에 표시할 텍스트 배열
-//
-//        init(topLabels: [String]) {
-//            self.topLabels = topLabels
-//            super.init()
-//        }
-//
-//        func stringForValue(_ value: Double,
-//                            entry: ChartDataEntry,
-//                            dataSetIndex: Int,
-//                            viewPortHandler: ViewPortHandler?) -> String {
-//            // 이 메서드에서는 각 데이터 포인트의 값을 원하는 형식으로 포맷하여 반환합니다.
-//            // 여기서는 예시로 topLabels 배열에서 인덱스에 해당하는 값을 반환하도록 설정합니다.
-//            let index = Int(entry.x)
-//            if index < topLabels.count {
-//                return topLabels[index]
-//            } else {
-//                return ""
-//            }
-//        }
-//}
-
 //MARK: - 막대그래프를 둥글게 만들기 위해 render재정의
-import UIKit
-import Charts
-
 class CustomRoundedBarChartRenderer: BarChartRenderer {
     
     var topLabels: [String] = []
@@ -703,10 +645,10 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
             let valueHeight = CGFloat(y)
             if valueHeight == 0 { continue } // 데이터가 없으면
             
-            // 애니메이션 효과 적용: animator.phaseY 사용
+            // 애니메이션 효과 적용
             let animatedHeight = valueHeight * animator.phaseY
             
-            // **위에서 아래로 애니메이션 효과 적용**
+            // 아래에서 위로 애니메이션 효과 적용
             let animatedBarHeight = animatedHeight * barRect.size.height
             let finalBarHeight = max(animatedBarHeight, minBarHeight * animator.phaseY)
             
