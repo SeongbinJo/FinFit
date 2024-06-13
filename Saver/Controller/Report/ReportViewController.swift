@@ -658,11 +658,15 @@ extension UIFont{
 //}
 
 //MARK: - 막대그래프를 둥글게 만들기 위해 render재정의
+import UIKit
+import Charts
+
 class CustomRoundedBarChartRenderer: BarChartRenderer {
     
     var topLabels: [String] = []
     var bottomLabels: [String] = []
     var minBarHeight: CGFloat = 5.0 // 최소 바 높이
+    let labelOffset: CGFloat = 8.0 // 라벨과 막대 사이의 간격
     
     override func drawDataSet(context: CGContext, dataSet: BarChartDataSetProtocol, index: Int) {
         guard let barData = dataProvider?.barData else { return }
@@ -684,14 +688,14 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
             var barRect = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
             trans?.rectValueToPixel(&barRect)
             
-            //데이터의 크기에 따라 높이 조절
+            // 데이터의 크기에 따라 높이 조절
             let valueHeight = CGFloat(y)
-            if valueHeight == 0{ continue } //데이터가 없으면
+            if valueHeight == 0 { continue } // 데이터가 없으면
             
             // 애니메이션 효과 적용: animator.phaseY 사용
             let animatedHeight = valueHeight * animator.phaseY
             
-            // **아래에서 위로 애니메이션 효과 적용**
+            // **위에서 아래로 애니메이션 효과 적용**
             let animatedBarHeight = animatedHeight * barRect.size.height
             let finalBarHeight = max(animatedBarHeight, minBarHeight * animator.phaseY)
             
@@ -705,10 +709,11 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
             // 상단 텍스트 그리기
             if i < topLabels.count {
                 let topLabel = topLabels[i]
-                drawTopLabel(context: context, label: topLabel, rect: barRect)
+                drawTopLabel(context: context, label: topLabel, rect: animatedRect)
             }
             
-            if i < bottomLabels.count{
+            // 하단 텍스트 그리기
+            if i < bottomLabels.count {
                 let bottomLabel = bottomLabels[i]
                 drawBottomLabel(context: context, label: bottomLabel, rect: barRect)
             }
@@ -717,13 +722,13 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
     
     private func drawTopLabel(context: CGContext, label: String, rect: CGRect) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.saverBody2Regurlar,
+            .font: UIFont.systemFont(ofSize: 12),
             .foregroundColor: UIColor.white
         ]
         
         let size = label.size(withAttributes: attributes)
-        let x = rect.midX - size.width / 2 // 막대 x축 중앙에 위치 -> alignment = .center
-        let y = rect.minY - size.height - 8 // 막대 상단에서 8 포인트 위로
+        let x = rect.midX - size.width / 2
+        let y = rect.minY - size.height - labelOffset // 막대 그래프 맨 위에서 라벨 간격만큼 위에 위치
         
         let textRect = CGRect(x: x, y: y, width: size.width, height: size.height)
         label.draw(in: textRect, withAttributes: attributes)
@@ -731,13 +736,15 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
     
     private func drawBottomLabel(context: CGContext, label: String, rect: CGRect) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.saverBody2Semibold,
+            .font: UIFont.systemFont(ofSize: 12),
             .foregroundColor: UIColor.white
         ]
         
         let size = label.size(withAttributes: attributes)
-        let x = rect.midX - size.width / 2.0
-        let y = rect.maxY + 8.0 // Adjust the distance from the bottom of the bar
+        let x = rect.midX - size.width / 2
+        
+        // 바텀 라벨의 위치를 막대 그래프 하단에 고정
+        let y = rect.maxY + labelOffset // 막대 하단에서 라벨 간격만큼 아래에 위치
         
         let textRect = CGRect(x: x, y: y, width: size.width, height: size.height)
         label.draw(in: textRect, withAttributes: attributes)
