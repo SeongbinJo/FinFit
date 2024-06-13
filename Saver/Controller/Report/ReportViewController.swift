@@ -62,7 +62,6 @@ class ReportViewController: UIViewController {
         view.noDataTextColor = .white //데이터가 없을 시 textColor
         
         view.isUserInteractionEnabled = false //사용자가 해당 view는 상호작요을 못하게 한다.
-        
         view.minOffset = 0 //내부 여백 설정
         //x축 설정
         let xAxis = view.xAxis //charView에 x축
@@ -299,11 +298,10 @@ class ReportViewController: UIViewController {
             //위에서 만든 데이터들로 차트를 생성한다.
             let barChartData = BarChartData(dataSet: barChartdataSet)
             
+            barChartData.barWidth = 0.6
+            
             //차트뷰의 해당 데이터는 위에서만들 차트이다.
             barChartView.data = barChartData
-            barChartView.animate(yAxisDuration: 0.7, easingOption: .easeInOutQuad) // 애니메이션 활성화 및 지속 시간 설정
-            
-            barChartData.barWidth = 0.6
             
             //차트뷰의 해당 데이터는 위에서만들 차트이다.
             barChartView.data = barChartData
@@ -313,6 +311,9 @@ class ReportViewController: UIViewController {
             customRenderer.topLabels = topLabels
             customRenderer.bottomLabels = labels
             barChartView.renderer = customRenderer
+        
+            
+//            barChartView.animate(yAxisDuration: 0.7, easingOption: .easeInOutQuad) // 애니메이션 활성화 및 지속 시간 설정
         }
         
         barChartView.notifyDataSetChanged()
