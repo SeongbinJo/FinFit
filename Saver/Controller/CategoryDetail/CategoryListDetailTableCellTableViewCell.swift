@@ -12,17 +12,8 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     private lazy var dateLabl: UILabel = {
         let label = UILabel()
         label.text = ""
-        label.font = UIFont.systemFont(ofSize: 20)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    //MARK: - 거래내용
-    private lazy var transactionNameLabel: UILabel = {
-        let label = UILabel()
-        label.text = ""
-        label.numberOfLines = 2
-        label.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
+        label.font = .saverBody1Regurlar
+        label.textColor = .neutral20
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -31,43 +22,65 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     private lazy var amountLabel: UILabel = {
         let label = UILabel()
         label.text = ""
-        label.font = UIFont.systemFont(ofSize: 26, weight: .semibold)
-        label.textAlignment = .right
+        label.font = .saverSubTitleSemibold
+        label.textColor = .spendingAmount
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    //MARK: - 거래내용
+    private lazy var transactionNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""
+//        label.numberOfLines = 2
+        label.font = .saverBody2Regurlar
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var categoryinfoStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [amountLabel, transactionNameLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 5
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     //MARK: - Stackview(날짜표시, 금액표시, 거래내용)(
     private lazy var categoryItemStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [dateLabl, transactionNameLabel, amountLabel])
+        let stackView = UIStackView(arrangedSubviews: [dateLabl, categoryinfoStackView])
         stackView.axis = .vertical
-        stackView.distribution = .fill
-        stackView.spacing = 10
+        stackView.spacing = 20
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        addSubview(categoryItemStackView)
-        
-        let safeArea = safeAreaLayoutGuide
+        self.backgroundColor = .saverBackground
+        contentView.addSubview(categoryItemStackView)
+//        let safeArea = safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
 //            categoryItemStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
-            categoryItemStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
-            categoryItemStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
-            categoryItemStackView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            categoryItemStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            categoryItemStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+//            categoryItemStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            categoryItemStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            categoryItemStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
             dateLabl.leadingAnchor.constraint(equalTo: categoryItemStackView.leadingAnchor),
             dateLabl.trailingAnchor.constraint(equalTo: categoryItemStackView.trailingAnchor),
+            dateLabl.topAnchor.constraint(equalTo: categoryItemStackView.topAnchor),
             
-            transactionNameLabel.leadingAnchor.constraint(equalTo: categoryItemStackView.leadingAnchor),
-            transactionNameLabel.trailingAnchor.constraint(equalTo: categoryItemStackView.trailingAnchor),
             
             amountLabel.leadingAnchor.constraint(equalTo: categoryItemStackView.leadingAnchor),
             amountLabel.trailingAnchor.constraint(equalTo: categoryItemStackView.trailingAnchor),
+            amountLabel.topAnchor.constraint(equalTo: dateLabl.bottomAnchor, constant: 20),
+            
+            transactionNameLabel.leadingAnchor.constraint(equalTo: categoryItemStackView.leadingAnchor),
+            transactionNameLabel.trailingAnchor.constraint(equalTo: categoryItemStackView.trailingAnchor),
+            transactionNameLabel.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: 5)
         ])
         
     }
@@ -79,12 +92,12 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     //MARK: - configureCell
     func configureCell(entry: SaverModel){
         let foramtter = DateFormatter()
-        foramtter.dateFormat = "yyyy-MM-dd (E)"
+        foramtter.dateFormat = "M월 d일 (E)"
         foramtter.locale = Locale(identifier: "ko_KR")
         
         dateLabl.text = "\(foramtter.string(from: entry.transactionDate))"
         transactionNameLabel.text = entry.transactionName
-        amountLabel.text = "\(Int(entry.spendingAmount))원"
+        amountLabel.text = "\(ShareData.shared.formatNumber(Double(entry.spendingAmount)))원"
         amountLabel.applySmallSuffixFontStyle()
     }
 

@@ -165,6 +165,7 @@ class AddAmountViewController: UIViewController {
         let placeholderText = "거래 내역을 입력해주세요."
         field.placeholder = placeholderText
         field.text = transaction?.transactionName ?? ""
+        field.delegate = self
         field.translatesAutoresizingMaskIntoConstraints = false
         field.textColor = .neutral5
         
@@ -211,6 +212,7 @@ class AddAmountViewController: UIViewController {
         let field = UITextField()
         let placeholderText = "거래 금액을 입력해주세요."
         field.placeholder = placeholderText
+        field.delegate = self
         if let spendingAmount = transaction?.spendingAmount {
             field.text = String(spendingAmount)
         } else {
@@ -491,4 +493,9 @@ class AddAmountViewController: UIViewController {
         navigationController?.popViewController(animated: true)
 
     }
+}
+
+//MARK: - Delegate
+extension AddAmountViewController: UITextFieldDelegate{
+    
 }
