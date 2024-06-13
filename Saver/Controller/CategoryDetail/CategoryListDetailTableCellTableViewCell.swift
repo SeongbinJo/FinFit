@@ -34,6 +34,7 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
         label.text = ""
 //        label.numberOfLines = 2
         label.font = .saverBody2Regurlar
+        label.textColor = .neutral20
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -63,10 +64,10 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
         
         NSLayoutConstraint.activate([
 //            categoryItemStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
-            categoryItemStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            categoryItemStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            categoryItemStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            categoryItemStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
 //            categoryItemStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            categoryItemStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            categoryItemStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             categoryItemStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
             dateLabl.leadingAnchor.constraint(equalTo: categoryItemStackView.leadingAnchor),

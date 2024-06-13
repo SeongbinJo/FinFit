@@ -592,6 +592,17 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let saverEntries = self.getSaverEntries(index: indexPath.row)
         let detailCateogryTransactionViewController = DetailCategoryTransactionAmoutViewController(saverEntries: saverEntries)
+        //sheet시 얼마나 커지게 할지 .fullscreen의 경우 끝까지 올람감, automatic safeArea?정도 올라감
+        detailCateogryTransactionViewController.modalPresentationStyle = .automatic
+        //sheet올리거나 때릴 때 순서 medium: 중간, large: 끝까지
+        detailCateogryTransactionViewController.sheetPresentationController?.detents = [.medium(), .large()]
+        //sheet 상위 중앙에 sheet를 알 수 있는 선 생성
+        detailCateogryTransactionViewController.sheetPresentationController?.prefersGrabberVisible = true
+        detailCateogryTransactionViewController.sheetPresentationController?.preferredCornerRadius = 10
+        //안에 프로퍼티로 변할때 애니메이션 추가
+        detailCateogryTransactionViewController.sheetPresentationController?.animateChanges {
+            sheetPresentationController?.selectedDetentIdentifier = .medium
+        }
         present(detailCateogryTransactionViewController, animated: true)
     }
 }
