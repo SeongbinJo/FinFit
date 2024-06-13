@@ -311,9 +311,9 @@ class ReportViewController: UIViewController {
             customRenderer.topLabels = topLabels
             customRenderer.bottomLabels = labels
             barChartView.renderer = customRenderer
-        
             
-//            barChartView.animate(yAxisDuration: 0.7, easingOption: .easeInOutQuad) // 애니메이션 활성화 및 지속 시간 설정
+            
+            barChartView.animate(yAxisDuration: 0.7, easingOption: .easeInOutQuad) // 애니메이션 활성화 및 지속 시간 설정
         }
         
         barChartView.notifyDataSetChanged()
@@ -670,7 +670,6 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
         
         let barWidthHalf = barData.barWidth / 2.0
         let radius: CGFloat = 10.0 // 둥근 모서리 정도를 설정
-        //        let minBarHeight: CGFloat = 5.0 //최소 바 높이
         
         for i in 0 ..< min(Int(ceil(CGFloat(dataSet.entryCount) * animator.phaseX)), dataSet.entryCount) {
             guard let entry = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
@@ -689,12 +688,16 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
             let valueHeight = CGFloat(y)
             if valueHeight == 0{ continue } //데이터가 없으면
             
-            let normalizedHeight = valueHeight * barRect.size.height
+            // 애니메이션 효과 적용: animator.phaseY 사용
+            let animatedHeight = valueHeight * animator.phaseY
             
-            // 막대의 최소 높이 적용
-            let barHeight = max(normalizedHeight, minBarHeight)
+            // **아래에서 위로 애니메이션 효과 적용**
+            let animatedBarHeight = animatedHeight * barRect.size.height
+            let finalBarHeight = max(animatedBarHeight, minBarHeight * animator.phaseY)
             
-            let bezierPath = UIBezierPath(roundedRect: CGRect(x: barRect.origin.x, y: barRect.origin.y, width: barRect.size.width, height: barHeight), cornerRadius: radius)
+            let animatedRect = CGRect(x: barRect.origin.x, y: barRect.maxY - finalBarHeight, width: barRect.size.width, height: finalBarHeight)
+            
+            let bezierPath = UIBezierPath(roundedRect: animatedRect, cornerRadius: radius)
             context.addPath(bezierPath.cgPath)
             context.setFillColor(dataSet.color(atIndex: i).cgColor)
             context.fillPath()
