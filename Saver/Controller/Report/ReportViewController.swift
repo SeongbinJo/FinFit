@@ -42,16 +42,6 @@ class ReportViewController: UIViewController {
         return label
     }()
     
-    //    //지출금액이름, 지출금액을 담는 Stack
-    //    private lazy var spendingAmountStackView: UIStackView = {
-    //        let stackView = UIStackView(arrangedSubviews: [spendingAmountNameLabel, spendingAmountLabel])
-    //        stackView.axis = .vertical
-    //        stackView.alignment = .center
-    //        stackView.spacing = 5
-    //        stackView.translatesAutoresizingMaskIntoConstraints = false
-    //        return stackView
-    //    }()
-    
     //MARK: - 2. Stack(stack(지출금액이름, 지출금액), 그래프)
     //지출금액 그래프
     private lazy var spendingReport: BarChartView = {
@@ -217,10 +207,6 @@ class ReportViewController: UIViewController {
             spendingReportStackView.trailingAnchor.constraint(equalTo: spendingUIStackView.trailingAnchor, constant: -viewPadding),
             spendingReportStackView.topAnchor.constraint(equalTo: spendingUIStackView.topAnchor, constant: viewPadding),
             
-            //            //StackView(지출금액이름, 지출금액)
-            //            spendingAmountStackView.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
-            //            spendingAmountStackView.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-            
             //지출금액이름
             spendingAmountNameLabel.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
             spendingAmountNameLabel.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
@@ -279,18 +265,6 @@ class ReportViewController: UIViewController {
             //BarChart데이터들을 만든다.
             let barChartdataSet = BarChartDataSet(entries: barChartDataEntries, label: "사용금액")
             
-            //상단 라벨 설정
-            //            barChartdataSet.valueFormatter = CustomValueFormatter(topLabels: topLabels)
-            
-            //각 데이터마다 위의 값이 나타는데 제거 시켜준다.
-            //            barChartdataSet.valueTextColor = .clear
-            
-            
-            
-            //폰트크기 설정
-            //            barChartdataSet.valueFont = .saverBody2Regurlar
-            //            barChartdataSet.valueTextColor = .white
-            
             //색상 설정
             barChartdataSet.colors = self.colors
             
@@ -311,9 +285,9 @@ class ReportViewController: UIViewController {
             customRenderer.topLabels = topLabels
             customRenderer.bottomLabels = labels
             barChartView.renderer = customRenderer
-        
             
-//            barChartView.animate(yAxisDuration: 0.7, easingOption: .easeInOutQuad) // 애니메이션 활성화 및 지속 시간 설정
+            
+            barChartView.animate(yAxisDuration: 0.7, easingOption: .easeInOutQuad) // 애니메이션 활성화 및 지속 시간 설정
         }
         
         barChartView.notifyDataSetChanged()
@@ -377,9 +351,6 @@ class ReportViewController: UIViewController {
             legendStackView.addArrangedSubview(capsuleView)
             
             NSLayoutConstraint.activate([
-                //캡슐뷰
-                //                capsuleView.widthAnchor.constraint(),
-                
                 //라벨뷰
                 labelView.leadingAnchor.constraint(equalTo: capsuleView.leadingAnchor, constant: 20),
                 labelView.trailingAnchor.constraint(equalTo: capsuleView.trailingAnchor, constant: -20),
@@ -450,7 +421,6 @@ class ReportViewController: UIViewController {
             legendStackView.trailingAnchor.constraint(equalTo: legendScrollView.trailingAnchor),
             legendStackView.topAnchor.constraint(equalTo: legendScrollView.topAnchor),
             legendStackView.bottomAnchor.constraint(equalTo: legendScrollView.bottomAnchor),
-            //            legendStackView.heightAnchor.constraint(equalTo: legendScrollView.heightAnchor),
             
             //MARK: - 하단 카테고리별 지출내역 테이블뷰
             //카테고리별 지출 내역 Table
@@ -592,6 +562,17 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let saverEntries = self.getSaverEntries(index: indexPath.row)
         let detailCateogryTransactionViewController = DetailCategoryTransactionAmoutViewController(saverEntries: saverEntries)
+        //sheet시 얼마나 커지게 할지 .fullscreen의 경우 끝까지 올람감, automatic safeArea?정도 올라감
+        detailCateogryTransactionViewController.modalPresentationStyle = .automatic
+        //sheet올리거나 때릴 때 순서 medium: 중간, large: 끝까지
+        detailCateogryTransactionViewController.sheetPresentationController?.detents = [.medium(), .large()]
+        //sheet 상위 중앙에 sheet를 알 수 있는 선 생성
+        detailCateogryTransactionViewController.sheetPresentationController?.prefersGrabberVisible = true
+        detailCateogryTransactionViewController.sheetPresentationController?.preferredCornerRadius = 10
+        //안에 프로퍼티로 변할때 애니메이션 추가
+        detailCateogryTransactionViewController.sheetPresentationController?.animateChanges {
+            sheetPresentationController?.selectedDetentIdentifier = .medium
+        }
         present(detailCateogryTransactionViewController, animated: true)
     }
 }
@@ -632,37 +613,13 @@ extension UIFont{
     static let saverCaption2Regular = UIFont.systemFont(ofSize: 10, weight: .regular)
 }
 
-//MARK: - 커스텀 valueFormatter 설정
-
-//private class CustomValueFormatter: NSObject, ValueFormatter {
-//    private let topLabels: [String] // 각 막대 상단에 표시할 텍스트 배열
-//
-//        init(topLabels: [String]) {
-//            self.topLabels = topLabels
-//            super.init()
-//        }
-//
-//        func stringForValue(_ value: Double,
-//                            entry: ChartDataEntry,
-//                            dataSetIndex: Int,
-//                            viewPortHandler: ViewPortHandler?) -> String {
-//            // 이 메서드에서는 각 데이터 포인트의 값을 원하는 형식으로 포맷하여 반환합니다.
-//            // 여기서는 예시로 topLabels 배열에서 인덱스에 해당하는 값을 반환하도록 설정합니다.
-//            let index = Int(entry.x)
-//            if index < topLabels.count {
-//                return topLabels[index]
-//            } else {
-//                return ""
-//            }
-//        }
-//}
-
 //MARK: - 막대그래프를 둥글게 만들기 위해 render재정의
 class CustomRoundedBarChartRenderer: BarChartRenderer {
     
     var topLabels: [String] = []
     var bottomLabels: [String] = []
     var minBarHeight: CGFloat = 5.0 // 최소 바 높이
+    let labelOffset: CGFloat = 8.0 // 라벨과 막대 사이의 간격
     
     override func drawDataSet(context: CGContext, dataSet: BarChartDataSetProtocol, index: Int) {
         guard let barData = dataProvider?.barData else { return }
@@ -670,7 +627,6 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
         
         let barWidthHalf = barData.barWidth / 2.0
         let radius: CGFloat = 10.0 // 둥근 모서리 정도를 설정
-        //        let minBarHeight: CGFloat = 5.0 //최소 바 높이
         
         for i in 0 ..< min(Int(ceil(CGFloat(dataSet.entryCount) * animator.phaseX)), dataSet.entryCount) {
             guard let entry = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
@@ -685,16 +641,20 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
             var barRect = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
             trans?.rectValueToPixel(&barRect)
             
-            //데이터의 크기에 따라 높이 조절
+            // 데이터의 크기에 따라 높이 조절
             let valueHeight = CGFloat(y)
-            if valueHeight == 0{ continue } //데이터가 없으면
+            if valueHeight == 0 { continue } // 데이터가 없으면
             
-            let normalizedHeight = valueHeight * barRect.size.height
+            // 애니메이션 효과 적용
+            let animatedHeight = valueHeight * animator.phaseY
             
-            // 막대의 최소 높이 적용
-            let barHeight = max(normalizedHeight, minBarHeight)
+            // 아래에서 위로 애니메이션 효과 적용
+            let animatedBarHeight = animatedHeight * barRect.size.height
+            let finalBarHeight = max(animatedBarHeight, minBarHeight * animator.phaseY)
             
-            let bezierPath = UIBezierPath(roundedRect: CGRect(x: barRect.origin.x, y: barRect.origin.y, width: barRect.size.width, height: barHeight), cornerRadius: radius)
+            let animatedRect = CGRect(x: barRect.origin.x, y: barRect.maxY - finalBarHeight, width: barRect.size.width, height: finalBarHeight)
+            
+            let bezierPath = UIBezierPath(roundedRect: animatedRect, cornerRadius: radius)
             context.addPath(bezierPath.cgPath)
             context.setFillColor(dataSet.color(atIndex: i).cgColor)
             context.fillPath()
@@ -702,10 +662,11 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
             // 상단 텍스트 그리기
             if i < topLabels.count {
                 let topLabel = topLabels[i]
-                drawTopLabel(context: context, label: topLabel, rect: barRect)
+                drawTopLabel(context: context, label: topLabel, rect: animatedRect)
             }
             
-            if i < bottomLabels.count{
+            // 하단 텍스트 그리기
+            if i < bottomLabels.count {
                 let bottomLabel = bottomLabels[i]
                 drawBottomLabel(context: context, label: bottomLabel, rect: barRect)
             }
@@ -714,13 +675,13 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
     
     private func drawTopLabel(context: CGContext, label: String, rect: CGRect) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.saverBody2Regurlar,
+            .font: UIFont.systemFont(ofSize: 12),
             .foregroundColor: UIColor.white
         ]
         
         let size = label.size(withAttributes: attributes)
-        let x = rect.midX - size.width / 2 // 막대 x축 중앙에 위치 -> alignment = .center
-        let y = rect.minY - size.height - 8 // 막대 상단에서 8 포인트 위로
+        let x = rect.midX - size.width / 2
+        let y = rect.minY - size.height - labelOffset // 막대 그래프 맨 위에서 라벨 간격만큼 위에 위치
         
         let textRect = CGRect(x: x, y: y, width: size.width, height: size.height)
         label.draw(in: textRect, withAttributes: attributes)
@@ -728,13 +689,15 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
     
     private func drawBottomLabel(context: CGContext, label: String, rect: CGRect) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.saverBody2Semibold,
+            .font: UIFont.systemFont(ofSize: 12),
             .foregroundColor: UIColor.white
         ]
         
         let size = label.size(withAttributes: attributes)
-        let x = rect.midX - size.width / 2.0
-        let y = rect.maxY + 8.0 // Adjust the distance from the bottom of the bar
+        let x = rect.midX - size.width / 2
+        
+        // 바텀 라벨의 위치를 막대 그래프 하단에 고정
+        let y = rect.maxY + labelOffset // 막대 하단에서 라벨 간격만큼 아래에 위치
         
         let textRect = CGRect(x: x, y: y, width: size.width, height: size.height)
         label.draw(in: textRect, withAttributes: attributes)
