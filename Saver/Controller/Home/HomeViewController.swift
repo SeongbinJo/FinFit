@@ -304,7 +304,6 @@ class HomeViewController: UIViewController {
         // 달력 아래 라인
         bottomLineView.backgroundColor = .neutral20
         bottomLineView.translatesAutoresizingMaskIntoConstraints = false
-        
         calendarView.addSubview(bottomLineView)
         
         
@@ -423,14 +422,13 @@ class HomeViewController: UIViewController {
         print(ShareData.shared.getYearMonthData().count)
         if ShareData.shared.getYearMonthData().count >= 1 {
             if self.monthTotalAmountLabel.text?.first == "-" {
-                self.currentSpendingAmountLabel.text = "이번 달 소비금액은\n\(self.monthTotalAmountLabel.text ?? "-") 원 입니다."
+                self.currentSpendingAmountLabel.text = "이번 달 거래금액\n\(self.monthTotalAmountLabel.text ?? "-") 원"
             }else {
-                self.currentSpendingAmountLabel.text = "이번 달 수익금액은\n\(self.monthTotalAmountLabel.text ?? "-") 원 입니다."
+                self.currentSpendingAmountLabel.text = "이번 달 거래금액\n\(self.monthTotalAmountLabel.text ?? "-") 원"
             }
         }else {
-            self.currentSpendingAmountLabel.text = "이번 달은\n내역이 존재하지 않습니다."
+            self.currentSpendingAmountLabel.text = "이번 달의\n내역이 존재하지 않습니다."
         }
-
     }
     
     
@@ -591,11 +589,12 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             return 1
         }
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TransactionCell", for: indexPath) as! TransactionTableViewCell
         cell.delegate = self
         cell.backgroundColor = .clear
+        cell.selectionStyle = .none
         let selectedDateComponents = self.calendar.dateComponents([.day], from: self.selectedDate ?? Date())
         let data = ShareData.shared.getTransactionListOfDay(day: selectedDateComponents.day ?? 1)
         if data.count > 0 {

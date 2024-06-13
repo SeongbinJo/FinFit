@@ -10,6 +10,9 @@ import UIKit
 class AddAmountViewController: UIViewController {
     weak var delegate: TransactionTableViewButtonDelegate?
     
+    // 키보드 관련 탭 제스처
+    lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
+    
     //MARK: - 저장되어있는 내역의 수정 버튼을 눌러 들어온 경우
     var transaction: SaverModel?
     
@@ -18,11 +21,14 @@ class AddAmountViewController: UIViewController {
     var testCategories: [String] = ["test1", "test2", "test3", "test4", "test5", "test6"]
     var selectCategoryName: String?
     
+    // 지출/수익 세그먼트컨트롤 인덱스 -> 0: 지출, 1: 수익
+    var segueIndex: Int?
+    
     
     // MARK: - view(뷰 타이틀)
     private lazy var titleView: UILabel = {
         let label = UILabel()
-        label.text = "소비 내역 추가(수정 진행 중)"
+        label.text = "거래 내역 추가"
         label.font = UIFont.systemFont(ofSize: 25, weight: .bold)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -40,7 +46,6 @@ class AddAmountViewController: UIViewController {
         stack.alignment = .leading
         stack.distribution = .fill
         stack.translatesAutoresizingMaskIntoConstraints = false
-        
         stack.addArrangedSubview(dateViewTitle)
         stack.addArrangedSubview(dateViewDateSelect)
         
@@ -67,6 +72,60 @@ class AddAmountViewController: UIViewController {
         date.translatesAutoresizingMaskIntoConstraints = false
         
         return date
+    }()
+    
+    // 지출/수익 총괄
+    private lazy var segueStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 10
+        stack.alignment = .leading
+        stack.distribution = .fill
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        stack.addArrangedSubview(segueLabel)
+        stack.addArrangedSubview(segueButton)
+        
+        return stack
+    }()
+    
+    // 지출/수익 라벨
+    private var segueLabel: UILabel = {
+        let label = UILabel()
+        label.text = "거래 타입"
+        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .neutral5
+        return label
+    }()
+    
+    // 거래 금액 지출/수익 스위치
+    private lazy var segueButton: UISegmentedControl = {
+        let button = UISegmentedControl(items: ["지출", "수익"])
+        if let transaction = self.transaction, String(transaction.spendingAmount).first != "-" {
+            button.selectedSegmentIndex = 1
+            self.segueIndex = 1
+        }else {
+            button.selectedSegmentIndex = 0
+            self.segueIndex = 0
+        }
+        button.addAction(UIAction { [weak self] _ in
+            self?.segueIndex = button.selectedSegmentIndex
+        }, for: .valueChanged)
+        return button
+    }()
+    
+    
+    // dateView, segueStackView의 스택뷰
+    private lazy var topStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .top
+        stackView.spacing = 30
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        stackView.addArrangedSubview(dateView)
+        stackView.addArrangedSubview(segueStackView)
+        return stackView
     }()
     
     
@@ -145,6 +204,7 @@ class AddAmountViewController: UIViewController {
         
         return label
     }()
+
     
     // 거래 금액 입력창
     private lazy var transactionAmountViewTextField: UITextField = {
@@ -211,6 +271,9 @@ class AddAmountViewController: UIViewController {
         
         view.backgroundColor = .saverBackground
         
+        view.addGestureRecognizer(tapGesture)
+        
+        
         // TODO: - 정보 다 입력하기 전에 버튼 비활성화 되도록
         // TODO: - 채우지 않은 항목 있으면 경고창 뜨도록
         // save 버튼
@@ -232,7 +295,7 @@ class AddAmountViewController: UIViewController {
         
         // MARK: - viewDidLoad > view 추가
         view.addSubview(titleView)
-        view.addSubview(dateView)
+        view.addSubview(topStackView)
         view.addSubview(transactionNameView)
         view.addSubview(transactionAmountView)
         view.addSubview(transactionCategoryViewTitle)
@@ -250,14 +313,18 @@ class AddAmountViewController: UIViewController {
             titleView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             titleView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
             
+            topStackView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 30),
+            topStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+//            topStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            
             // MARK: - viewDidLoad > 오토 레이아웃 > dateView
-            dateView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 30),
-            dateView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            dateView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            dateView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
+//            dateView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 30),
+//            dateView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+//            dateView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+//            dateView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
             
             // MARK: - viewDidLoad > 오토 레이아웃 > transactionNameView
-            transactionNameView.topAnchor.constraint(equalTo: dateView.bottomAnchor, constant: 40),
+            transactionNameView.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: 40),
             transactionNameView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             transactionNameView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             transactionNameView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
@@ -301,6 +368,10 @@ class AddAmountViewController: UIViewController {
         ])
     }
     
+    @objc func tapHandler(_ sender: UIView) {
+        transactionNameViewTextField.resignFirstResponder()
+        transactionAmountViewTextField.resignFirstResponder()
+    }
     
     // MARK: - 메소드
     // MARK: - 메소드 > 카테고리 버튼 생성
@@ -405,46 +476,19 @@ class AddAmountViewController: UIViewController {
     
     @objc func save() {
         // 사용자가 작성한 내역(newTransaction)
+        if self.segueIndex == 0 { // 지출/수익 구분
+            self.transactionAmountViewTextField.text = "-" + (self.transactionAmountViewTextField.text ?? "")
+        }
         let transaction: SaverModel = SaverModel(transactionName: self.transactionNameViewTextField.text ?? "", spendingAmount: Double(self.transactionAmountViewTextField.text ?? "0") ?? 0, transactionDate: self.dateViewDateSelect.date, name: self.selectCategoryName ?? "")
         
         // 델리게이트 패턴으로 save/edit
         if self.transaction != nil {
-            // self.transaction에 값이 있으면 edit(update)
             self.delegate?.editTransactionInAddView(oldTransactoin: self.transaction!, newTransaction: transaction)
         }else {
             self.delegate?.saveTransactionInAddView(transaction: transaction)
         }
         
         navigationController?.popViewController(animated: true)
-//        guard let transactionName = transactionNameViewTextField.text, // 거래명 담을 변수
-//              let spendingAmountTextField = transactionAmountViewTextField.text // 거래금액 담을 변수
-//        /*나중에 카테고리 받아온걸로 변경 let transactionCategory = transactionCategory*/ else {
-//            return
-//        }
-        
-        // 데이터 유형 불일치 해결 위해 추가
-        // 카테고리 변환하는 코드 추가 필요
-//        guard let spendingAmount = Double(spendingAmountTextField) else { // text로 받아온 값의 데이터 유형 변경
-//            return
-//        }
-        
-//        guard let transactionDate = dateView.subviews.compactMap({ $0 as? UIDatePicker }).first?.date else {
-//            return
-//        }
-        
-//        let addTransaction = [SaverModel(transactionName: transactionName, // 거래명
-//                                        spendingAmount: spendingAmount, // 거래금액
-//                                        transactionDate: transactionDate, // 거래날짜
-//                                        name: selectCategoryName ?? "") // 카테고리
-//                              ]
-        
-//        DBController.shared.insertData(data: addTransaction)
-//        print(addTransaction.transactionName)
-//        print(addTransaction.spendingAmount)
-//        print(addTransaction.transactionDate)
-//        print(addTransaction.name)
+
     }
-    
-    // TODO: - 키보드 올라오면 텍스트 입력창 올라가도록 하기
-    // TODO: - 화면 아무곳이나 터치하면 키보드 내려가게 하기
 }
