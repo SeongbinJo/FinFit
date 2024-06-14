@@ -214,7 +214,7 @@ class AddAmountViewController: UIViewController {
         field.placeholder = placeholderText
         field.delegate = self
         if let spendingAmount = transaction?.spendingAmount {
-            field.text = String(spendingAmount)
+            field.text = String(abs(spendingAmount))
         } else {
             field.text = ""
         }
