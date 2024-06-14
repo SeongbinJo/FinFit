@@ -50,9 +50,9 @@ class DetailCategoryTransactionAmoutViewController: UIViewController{
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            categoryListTableView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
-            categoryListTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 24),
-            categoryListTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -24),
+            categoryListTableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            categoryListTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            categoryListTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             categoryListTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
