@@ -74,6 +74,8 @@ class AddAmountViewController: UIViewController {
         return date
     }()
     
+    
+    // MARK: - view(거래 유형(수입/지출))
     // 지출/수익 총괄
     private lazy var segueStackView: UIStackView = {
         let stack = UIStackView()
@@ -113,23 +115,6 @@ class AddAmountViewController: UIViewController {
         }, for: .valueChanged)
         return button
     }()
-    
-    
-    // dateView, segueStackView의 스택뷰
-    private lazy var topStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .top
-        stackView.spacing = 30
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        stackView.addArrangedSubview(dateView)
-        stackView.addArrangedSubview(segueStackView)
-        return stackView
-    }()
-    
-    
-    // TODO: - view(거래 유형(수입/지출))
     
     
     // MARK: - view(거래명)
@@ -279,7 +264,7 @@ class AddAmountViewController: UIViewController {
         // TODO: - 정보 다 입력하기 전에 버튼 비활성화 되도록
         // TODO: - 채우지 않은 항목 있으면 경고창 뜨도록
         // save 버튼
-        let barButtonSystemItem: UIBarButtonItem.SystemItem = (transaction != nil) ? .edit : .save
+        let barButtonSystemItem: UIBarButtonItem.SystemItem = (transaction != nil) ? .done : .save
         
         navigationItem.rightBarButtonItem =  UIBarButtonItem(barButtonSystemItem: barButtonSystemItem,
                                                             target: self,
@@ -293,11 +278,13 @@ class AddAmountViewController: UIViewController {
         transactionCategoryViewTitle.translatesAutoresizingMaskIntoConstraints = false
         transactionCategoryScroll.translatesAutoresizingMaskIntoConstraints = false
         transactionCategoryButton.translatesAutoresizingMaskIntoConstraints = false
+        segueStackView.translatesAutoresizingMaskIntoConstraints = false
         
         
         // MARK: - viewDidLoad > view 추가
         view.addSubview(titleView)
-        view.addSubview(topStackView)
+        view.addSubview(dateView)
+        view.addSubview(segueStackView)
         view.addSubview(transactionNameView)
         view.addSubview(transactionAmountView)
         view.addSubview(transactionCategoryViewTitle)
@@ -315,18 +302,24 @@ class AddAmountViewController: UIViewController {
             titleView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             titleView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
             
-            topStackView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 30),
-            topStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-//            topStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            
             // MARK: - viewDidLoad > 오토 레이아웃 > dateView
-//            dateView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 30),
-//            dateView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-//            dateView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-//            dateView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
+            dateView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 30),
+            dateView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            dateView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            dateView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
+            
+            // MARK: - viewDidLoad > 오토 레이아웃 > segueStackView
+            segueStackView.topAnchor.constraint(equalTo: dateView.bottomAnchor, constant: 30),
+            segueStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            segueStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            
+            // 버튼 사이즈
+            segueButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            segueButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            transactionAmountViewTextField.heightAnchor.constraint(equalToConstant: 45),
             
             // MARK: - viewDidLoad > 오토 레이아웃 > transactionNameView
-            transactionNameView.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: 40),
+            transactionNameView.topAnchor.constraint(equalTo: segueStackView.bottomAnchor, constant: 40),
             transactionNameView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             transactionNameView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             transactionNameView.widthAnchor.constraint(equalTo: safeArea.widthAnchor),
