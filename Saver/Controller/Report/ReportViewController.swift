@@ -281,7 +281,7 @@ class ReportViewController: UIViewController {
             barChartView.data = barChartData
             //            barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: labels)
             
-            let customRenderer = CustomRoundedBarChartRenderer(dataProvider: barChartView, animator: barChartView.chartAnimator, viewPortHandler: barChartView.viewPortHandler)
+            let customRenderer = CustomRoundedBarChartRenderer(dataProvider: barChartView,  animator: barChartView.chartAnimator, viewPortHandler: barChartView.viewPortHandler)
             customRenderer.topLabels = topLabels
             customRenderer.bottomLabels = labels
             barChartView.renderer = customRenderer
@@ -615,90 +615,89 @@ extension UIFont{
 
 //MARK: - 막대그래프를 둥글게 만들기 위해 render재정의
 class CustomRoundedBarChartRenderer: BarChartRenderer {
-    
+
     var topLabels: [String] = []
     var bottomLabels: [String] = []
     var minBarHeight: CGFloat = 5.0 // 최소 바 높이
     let labelOffset: CGFloat = 8.0 // 라벨과 막대 사이의 간격
-    
+    let cornerRadius: CGFloat = 10.0 // 둥근 모서리 정도
+
     override func drawDataSet(context: CGContext, dataSet: BarChartDataSetProtocol, index: Int) {
         guard let barData = dataProvider?.barData else { return }
         let trans = dataProvider?.getTransformer(forAxis: dataSet.axisDependency)
-        
+
         let barWidthHalf = barData.barWidth / 2.0
-        let radius: CGFloat = 10.0 // 둥근 모서리 정도를 설정
-        
+
         for i in 0 ..< min(Int(ceil(CGFloat(dataSet.entryCount) * animator.phaseX)), dataSet.entryCount) {
             guard let entry = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
             let x = entry.x
             let y = entry.y
-            
+
             let left = CGFloat(x - barWidthHalf)
             let right = CGFloat(x + barWidthHalf)
             let top = CGFloat(y >= 0.0 ? y : 0.0)
             let bottom = CGFloat(y <= 0.0 ? y : 0.0)
-            
+
             var barRect = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
             trans?.rectValueToPixel(&barRect)
-            
+
             // 데이터의 크기에 따라 높이 조절
             let valueHeight = CGFloat(y)
-            if valueHeight == 0 { continue } // 데이터가 없으면
-            
+            if valueHeight == 0 { continue } // 데이터가 없으면 건너뜀
+
             // 애니메이션 효과 적용
             let animatedHeight = valueHeight * animator.phaseY
-            
-            // 아래에서 위로 애니메이션 효과 적용
-            let animatedBarHeight = animatedHeight * barRect.size.height
+            let totalAvailableHeight = barRect.size.height - 2 * labelOffset // 위, 아래 라벨 간격을 확보한 총 높이
+            let animatedBarHeight = animatedHeight * totalAvailableHeight
             let finalBarHeight = max(animatedBarHeight, minBarHeight * animator.phaseY)
-            
-            let animatedRect = CGRect(x: barRect.origin.x, y: barRect.maxY - finalBarHeight, width: barRect.size.width, height: finalBarHeight)
-            
-            let bezierPath = UIBezierPath(roundedRect: animatedRect, cornerRadius: radius)
+
+            // 간격을 추가하기 위해 바의 위치 조정
+            let adjustedRect = CGRect(x: barRect.origin.x, y: barRect.maxY - finalBarHeight - labelOffset, width: barRect.size.width, height: finalBarHeight)
+
+            let bezierPath = UIBezierPath(roundedRect: adjustedRect, cornerRadius: cornerRadius)
             context.addPath(bezierPath.cgPath)
             context.setFillColor(dataSet.color(atIndex: i).cgColor)
             context.fillPath()
-            
+
             // 상단 텍스트 그리기
             if i < topLabels.count {
                 let topLabel = topLabels[i]
-                drawTopLabel(context: context, label: topLabel, rect: animatedRect)
+                drawTopLabel(context: context, label: topLabel, rect: adjustedRect)
             }
-            
+
             // 하단 텍스트 그리기
             if i < bottomLabels.count {
                 let bottomLabel = bottomLabels[i]
-                drawBottomLabel(context: context, label: bottomLabel, rect: barRect)
+                drawBottomLabel(context: context, label: bottomLabel, rect: adjustedRect)
             }
         }
     }
-    
+
     private func drawTopLabel(context: CGContext, label: String, rect: CGRect) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 12),
+            .font: UIFont.saverBody1Regurlar,
             .foregroundColor: UIColor.white
         ]
-        
+
         let size = label.size(withAttributes: attributes)
-        let x = rect.midX - size.width / 2
-        let y = rect.minY - size.height - labelOffset // 막대 그래프 맨 위에서 라벨 간격만큼 위에 위치
-        
+        let x = max(rect.midX - size.width / 2, 0)
+        let y = max(rect.minY - size.height - labelOffset, 0) // 막대 그래프 맨 위에서 라벨 간격만큼 위에 위치
+
         let textRect = CGRect(x: x, y: y, width: size.width, height: size.height)
         label.draw(in: textRect, withAttributes: attributes)
     }
-    
+
     private func drawBottomLabel(context: CGContext, label: String, rect: CGRect) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 12),
+            .font: UIFont.saverBody1Semibold,
             .foregroundColor: UIColor.white
         ]
-        
+
         let size = label.size(withAttributes: attributes)
-        let x = rect.midX - size.width / 2
-        
-        // 바텀 라벨의 위치를 막대 그래프 하단에 고정
+        let x = max(rect.midX - size.width / 2, 0)
         let y = rect.maxY + labelOffset // 막대 하단에서 라벨 간격만큼 아래에 위치
-        
+
+        // 라벨이 그래프의 하단 경계를 벗어나지 않도록 조정
         let textRect = CGRect(x: x, y: y, width: size.width, height: size.height)
         label.draw(in: textRect, withAttributes: attributes)
     }
