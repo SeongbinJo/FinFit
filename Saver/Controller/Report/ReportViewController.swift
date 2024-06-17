@@ -85,8 +85,17 @@ class ReportViewController: UIViewController {
     }()
     
     //그래프와 지출금액이름, 지출금액을 담는 Stack
+    private lazy var spendingTitleStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [spendingAmountNameLabel, spendingAmountLabel])
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 5
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     private lazy var spendingReportStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [spendingAmountNameLabel, spendingAmountLabel, spendingReport])
+        let stackView = UIStackView(arrangedSubviews: [spendingTitleStackView, spendingReport])
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.spacing = 20
@@ -207,22 +216,23 @@ class ReportViewController: UIViewController {
             spendingReportStackView.trailingAnchor.constraint(equalTo: spendingUIStackView.trailingAnchor, constant: -viewPadding),
             spendingReportStackView.topAnchor.constraint(equalTo: spendingUIStackView.topAnchor, constant: viewPadding),
             
+            spendingTitleStackView.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
+            spendingTitleStackView.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
+            spendingTitleStackView.topAnchor.constraint(equalTo: spendingReportStackView.topAnchor),
+            
             //지출금액이름
-            spendingAmountNameLabel.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
-            spendingAmountNameLabel.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-            spendingAmountNameLabel.topAnchor.constraint(equalTo: spendingReportStackView.topAnchor),
+            spendingAmountNameLabel.leadingAnchor.constraint(equalTo: spendingTitleStackView.leadingAnchor),
+            spendingAmountNameLabel.trailingAnchor.constraint(equalTo: spendingTitleStackView.trailingAnchor),
+            spendingAmountNameLabel.topAnchor.constraint(equalTo: spendingTitleStackView.topAnchor),
             
             //지출금액
-            
-            spendingAmountLabel.leadingAnchor.constraint(equalTo: spendingReportStackView.leadingAnchor),
-            spendingAmountLabel.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-            spendingAmountLabel.topAnchor.constraint(equalTo: spendingAmountNameLabel.bottomAnchor, constant: 5),
+            spendingAmountLabel.leadingAnchor.constraint(equalTo: spendingTitleStackView.leadingAnchor),
+            spendingAmountLabel.trailingAnchor.constraint(equalTo: spendingTitleStackView.trailingAnchor),
             
             //지출 그래프
             spendingReport.leadingAnchor.constraint(equalTo: spendingReportStackView
                 .leadingAnchor),
             spendingReport.trailingAnchor.constraint(equalTo: spendingReportStackView.trailingAnchor),
-            //            spendingReport.heightAnchor.constraint(equalTo: spendingReportStackView.widthAnchor, multiplier: 0.4),
             
             //왼쪽 화살표
             beforeMonthButton.leadingAnchor.constraint(equalTo: spendingUIStackView.leadingAnchor),
@@ -560,7 +570,7 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     
     //셀이 선택됬을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let saverEntries = self.getSaverEntries(index: indexPath.row)
+        let saverEntries = self.getSaverEntries(index: indexPath.section)
         let detailCateogryTransactionViewController = DetailCategoryTransactionAmoutViewController(saverEntries: saverEntries)
         //sheet시 얼마나 커지게 할지 .fullscreen의 경우 끝까지 올람감, automatic safeArea?정도 올라감
         detailCateogryTransactionViewController.modalPresentationStyle = .automatic
