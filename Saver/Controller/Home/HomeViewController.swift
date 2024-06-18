@@ -72,7 +72,6 @@ class HomeViewController: UIViewController {
         setupCalendarView()
         setupPrevNextMonthStackView()
         setupTransactionTableView()
-    
     }
     
     override func viewDidLayoutSubviews() {
@@ -329,7 +328,6 @@ class HomeViewController: UIViewController {
             calendarView.leadingAnchor.constraint(equalTo: titleHStackView.leadingAnchor),
             calendarView.trailingAnchor.constraint(equalTo: titleHStackView.trailingAnchor),
         ])
-
     }
     
     //MARK: - 콜렉션 뷰 동적 높이 조절
@@ -430,11 +428,6 @@ class HomeViewController: UIViewController {
             self.currentSpendingAmountLabel.text = "이번 달의\n내역이 존재하지 않습니다."
         }
     }
-    
-    
-    
-
-
 }
 
 extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTableViewButtonDelegate {
@@ -551,7 +544,6 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 self.selectedIndexPath = indexPath
                 cell.contentView.layer.borderWidth = 1
                 cell.contentView.layer.borderColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0.7)
-//                cell.contentView.layer.borderColor = d
                 
                 let days = CalendarManager.manager.getDays()
                 
