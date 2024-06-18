@@ -188,6 +188,7 @@ class AddAmountViewController: UIViewController {
         field.addAction(UIAction { [weak self] _ in
             self?.viewModel.transactionName = field.text ?? ""
         }, for: .editingChanged)
+        field.delegate = self
         field.translatesAutoresizingMaskIntoConstraints = false
         field.textColor = .neutral5
         
@@ -234,6 +235,7 @@ class AddAmountViewController: UIViewController {
         let field = UITextField()
         let placeholderText = "거래 금액을 입력해주세요."
         field.placeholder = placeholderText
+        field.delegate = self
         field.addAction(UIAction { [weak self] _ in
             self?.viewModel.transactionAmount = field.text ?? ""
         }, for: .editingChanged)
@@ -531,3 +533,14 @@ class AddAmountViewController: UIViewController {
     }
 }
 
+extension AddAmountViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == self.transactionAmountViewTextField {
+            // 숫자만 포함된 문자열인지 확인
+            let allowedCharacters = CharacterSet.decimalDigits
+            let characterSet = CharacterSet(charactersIn: string)
+            return allowedCharacters.isSuperset(of: characterSet)
+        }
+        return true
+    }
+}
