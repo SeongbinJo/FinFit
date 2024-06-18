@@ -199,6 +199,7 @@ class ReportViewController: UIViewController {
             setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{ $0.1.totalAmount }))
             spendingAmountLabel.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
             spendingAmountLabel.applySmallSuffixFontStyle()
+            categoryExpenditureTableView.reloadData()
         }
         
         //오토레이아웃 설정
@@ -373,8 +374,6 @@ class ReportViewController: UIViewController {
             capsuleView.addGestureRecognizer(tapGesture)
             capsuleView.accessibilityIdentifier = label
             capsuleView.isUserInteractionEnabled = true
-            
-            
         }
     }
     
@@ -527,8 +526,6 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
         return myData[categoryIndex].1.dailyDatas.count
     }
     
-    
-    
     //MARK: - row, cell 설정
     //섹션의 포함되는 행의 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -554,7 +551,6 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
         cell.configureCell(entry: entry)
         return cell
     }
-    
     
     //섹션하단에 넣을 뷰 높이 지정
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
