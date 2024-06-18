@@ -6,8 +6,43 @@
 //
 
 import UIKit
+import Combine
+
+class AddAmountViewModel: ObservableObject {
+    @Published var transactionName: String = ""
+    @Published var transactionAmount: String = ""
+    @Published var transactionCategory: String = ""
+    
+    @Published var isValid: Bool = false
+    
+    private lazy var isTransactionNameEmptyPublisher: AnyPublisher<Bool, Never> = {
+        $transactionName.map(\.isEmpty).eraseToAnyPublisher()
+    }()
+    
+    private lazy var isTransactionAmountEmptyPublisher: AnyPublisher<Bool, Never> = {
+        $transactionAmount.map(\.isEmpty).eraseToAnyPublisher()
+    }()
+    
+    private lazy var isTransactionCateogryEmptyPublisher: AnyPublisher<Bool, Never> = {
+        $transactionCategory.map(\.isEmpty).eraseToAnyPublisher()
+    }()
+    
+    private lazy var isTextFieldValidPublisher: AnyPublisher<Bool, Never> = {
+        Publishers.CombineLatest3(isTransactionNameEmptyPublisher, isTransactionAmountEmptyPublisher, isTransactionCateogryEmptyPublisher)
+            .map {
+                return !$0 && !$1 && !$2 }
+            .eraseToAnyPublisher()
+    }()
+    
+    init() {
+        isTextFieldValidPublisher.assign(to: &$isValid)
+    }
+}
 
 class AddAmountViewController: UIViewController {
+    private let viewModel: AddAmountViewModel = AddAmountViewModel()
+    private var cancellables = Set<AnyCancellable>()
+    
     weak var delegate: TransactionTableViewButtonDelegate?
     
     // 키보드 관련 탭 제스처
@@ -150,7 +185,9 @@ class AddAmountViewController: UIViewController {
         let placeholderText = "거래 내역을 입력해주세요."
         field.placeholder = placeholderText
         field.text = transaction?.transactionName ?? ""
-        field.delegate = self
+        field.addAction(UIAction { [weak self] _ in
+            self?.viewModel.transactionName = field.text ?? ""
+        }, for: .editingChanged)
         field.translatesAutoresizingMaskIntoConstraints = false
         field.textColor = .neutral5
         
@@ -190,14 +227,16 @@ class AddAmountViewController: UIViewController {
         
         return label
     }()
-
+    
     
     // 거래 금액 입력창
     private lazy var transactionAmountViewTextField: UITextField = {
         let field = UITextField()
         let placeholderText = "거래 금액을 입력해주세요."
         field.placeholder = placeholderText
-        field.delegate = self
+        field.addAction(UIAction { [weak self] _ in
+            self?.viewModel.transactionAmount = field.text ?? ""
+        }, for: .editingChanged)
         if let spendingAmount = transaction?.spendingAmount {
             field.text = String(abs(spendingAmount))
         } else {
@@ -260,15 +299,18 @@ class AddAmountViewController: UIViewController {
         
         view.addGestureRecognizer(tapGesture)
         
-        
-        // TODO: - 정보 다 입력하기 전에 버튼 비활성화 되도록
-        // TODO: - 채우지 않은 항목 있으면 경고창 뜨도록
         // save 버튼
         let barButtonSystemItem: UIBarButtonItem.SystemItem = (transaction != nil) ? .done : .save
         
         navigationItem.rightBarButtonItem =  UIBarButtonItem(barButtonSystemItem: barButtonSystemItem,
-                                                            target: self,
-                                                            action: #selector(save))
+                                                             target: self,
+                                                             action: #selector(save))
+        
+        viewModel.$isValid
+            .sink { isValid in
+                self.navigationItem.rightBarButtonItem?.isEnabled = isValid
+            }
+            .store(in: &cancellables)
         
         // MARK: - viewDidLoad > 오토 레이아웃 허가
         titleView.translatesAutoresizingMaskIntoConstraints = false
@@ -435,7 +477,7 @@ class AddAmountViewController: UIViewController {
         for category in labels {
             let button = UIButton(type: .system)
             button.setTitle(category, for: .normal)
-        
+            
             // 버튼 스타일
             var defaultConfig = UIButton.Configuration.filled()
             defaultConfig.baseBackgroundColor = .neutral80
@@ -463,6 +505,7 @@ class AddAmountViewController: UIViewController {
                 // 선택된 버튼 이름 저장
                 self.selectCategoryName = ""
                 self.selectCategoryName = button.titleLabel?.text
+                self.viewModel.transactionCategory = self.selectCategoryName ?? ""
             }, for: .touchUpInside)
             
         }
@@ -484,11 +527,7 @@ class AddAmountViewController: UIViewController {
         }
         
         navigationController?.popViewController(animated: true)
-
+        
     }
 }
 
-//MARK: - Delegate
-extension AddAmountViewController: UITextFieldDelegate{
-    
-}
