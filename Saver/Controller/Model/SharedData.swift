@@ -27,6 +27,8 @@ class ShareData{
     private var saverEntries: [SaverModel]
     private var addTestEntries: [SaverModel]
     private var monthTransactionData: [SaverModel]
+
+    private var categoriesList: [String]
     
     private init(){
         saverEntries = [
@@ -41,7 +43,7 @@ class ShareData{
             SaverModel(transactionName: "Groceries", spendingAmount: 500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Food"),
         ]
         monthTransactionData = []
-//      dbController.insertData(data: saverEntries)
+        categoriesList = []
     }
     
     //SwiftData 가져오기
@@ -51,6 +53,21 @@ class ShareData{
                 self?.saverEntries = data
             }
         }
+    }
+    
+    func getSaverEntries() -> [SaverModel] {
+        return self.saverEntries
+    }
+    
+    //MARK: - 데이터들 중 카테고리만을 Set으로 가져오기
+    func getCategories() -> [String] {
+        self.categoriesList.removeAll()
+        var result: Set<String> = []
+        saverEntries.forEach { entry in
+            result.insert(entry.name)
+        }
+        
+        return self.categoriesList
     }
     
     //특정 달 data만 분류하기
@@ -66,7 +83,7 @@ class ShareData{
     }
     
     //특정 달 data만 분류하기 -report-
-    func getMonthSaverEntries(month: Int) -> [SaverModel]{
+    func getMonthSaverEntries(month: Int) -> [SaverModel] {
         saverEntries.filter{ data in
             let components = Calendar(identifier: .gregorian).dateComponents([.month], from: data.transactionDate)
             return components.month == month
