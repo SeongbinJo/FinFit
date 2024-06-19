@@ -418,8 +418,7 @@ class AddAmountViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         let components = Calendar.current.dateComponents([.year, .month], from: dateViewDateSelect.date)
         ShareData.shared.loadSaverEntries()
-        ShareData.shared.getYearMonthTransactionData(year: components.year!, month: components.month!)
-        fetchData = ShareData.shared.getYearMonthData()
+        fetchData = ShareData.shared.getSaverEntries()
         self.categoriesInsertSet()
         categoryButtonCreated(labels: getCategories)
     }

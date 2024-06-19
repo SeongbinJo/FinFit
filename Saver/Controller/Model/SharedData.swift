@@ -55,6 +55,10 @@ class ShareData{
         }
     }
     
+    func getSaverEntries() -> [SaverModel] {
+        return self.saverEntries
+    }
+    
     //MARK: - 데이터들 중 카테고리만을 Set으로 가져오기
     func getCategories() -> [String] {
         self.categoriesList.removeAll()
