@@ -53,8 +53,11 @@ class AddAmountViewController: UIViewController {
     
     // MARK: - 변수
     let dbController = DBController.shared
-    var testCategories: [String] = ["test1", "test2", "test3", "test4", "test5", "test6"]
+//    var testCategories: [String] = ["test1", "test2", "test3", "test4", "test5", "test6"]
     var selectCategoryName: String?
+    
+    var getCategories: [String] = []
+    private var fetchData: [SaverModel] = []
     
     // 지출/수익 세그먼트컨트롤 인덱스 -> 0: 지출, 1: 수익
     var segueIndex: Int?
@@ -240,7 +243,7 @@ class AddAmountViewController: UIViewController {
             self?.viewModel.transactionAmount = field.text ?? ""
         }, for: .editingChanged)
         if let spendingAmount = transaction?.spendingAmount {
-            field.text = String(abs(spendingAmount))
+            field.text = String(abs(Int(spendingAmount)))
         } else {
             field.text = ""
         }
@@ -308,6 +311,11 @@ class AddAmountViewController: UIViewController {
                                                              target: self,
                                                              action: #selector(save))
         
+        if transaction != nil {
+            viewModel.transactionName = transaction!.transactionName
+            viewModel.transactionAmount = String(transaction!.spendingAmount)
+        }
+        
         viewModel.$isValid
             .sink { isValid in
                 self.navigationItem.rightBarButtonItem?.isEnabled = isValid
@@ -333,7 +341,7 @@ class AddAmountViewController: UIViewController {
         view.addSubview(transactionAmountView)
         view.addSubview(transactionCategoryViewTitle)
         view.addSubview(transactionCategoryScroll)
-        categoryButtonCreated(labels: testCategories)
+//        categoryButtonCreated(labels: Array(getCategories))
         
         
         // MARK: - viewDidLoad > 오토 레이아웃
@@ -407,6 +415,15 @@ class AddAmountViewController: UIViewController {
         ])
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        let components = Calendar.current.dateComponents([.year, .month], from: dateViewDateSelect.date)
+        ShareData.shared.loadSaverEntries()
+        ShareData.shared.getYearMonthTransactionData(year: components.year!, month: components.month!)
+        fetchData = ShareData.shared.getYearMonthData()
+        self.categoriesInsertSet()
+        categoryButtonCreated(labels: getCategories)
+    }
+    
     @objc func tapHandler(_ sender: UIView) {
         transactionNameViewTextField.resignFirstResponder()
         transactionAmountViewTextField.resignFirstResponder()
@@ -432,6 +449,7 @@ class AddAmountViewController: UIViewController {
         categoryAddConfig.buttonSize = .medium
         
         categoryAddButton.configuration = categoryAddConfig
+    
         
         // 추가 버튼 동작
         categoryAddButton.addAction(UIAction { _ in
@@ -452,13 +470,13 @@ class AddAmountViewController: UIViewController {
                 if let alertTextField = categoryAddAlert.textFields?.first,
                    let newCategory = alertTextField.text {
                     // 배열에 값 추가
-                    self.testCategories.append(newCategory)
+                    self.getCategories.insert(newCategory, at: 0)
                     
                     // 기존 버튼 삭제
                     self.transactionCategoryButton.arrangedSubviews.forEach { $0.removeFromSuperview() }
                     
                     // 버튼 리로드
-                    self.categoryButtonCreated(labels: self.testCategories)
+                    self.categoryButtonCreated(labels: self.getCategories)
                 }
             }
             
@@ -492,6 +510,7 @@ class AddAmountViewController: UIViewController {
             
             transactionCategoryButton.addArrangedSubview(button)
             buttons.append(button)
+    
             
             // 버튼 동작
             button.addAction(UIAction { _ in
@@ -512,6 +531,17 @@ class AddAmountViewController: UIViewController {
             
         }
         
+    }
+    
+    func categoriesInsertSet(){
+        getCategories.removeAll()
+        var setCategories: Set<String> = []
+        for data in fetchData {
+            let uniqueData = setCategories.insert(data.name)
+            if uniqueData.inserted {
+                getCategories.append(uniqueData.memberAfterInsert)
+            }
+        }
     }
     
     @objc func save() {

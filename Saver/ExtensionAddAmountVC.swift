@@ -10,7 +10,7 @@ import UIKit
 extension AddAmountViewController: UICollectionViewDataSource {
     // 셀 개수
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return  testCategories.count
+        return  getCategories.count
     }
     
     // 셀 생성 및 반환
@@ -25,7 +25,7 @@ extension AddAmountViewController: UICollectionViewDataSource {
         
         // 레이블(버튼 텍스트)
         let label = UILabel()
-        label.text = testCategories[indexPath.item]
+        label.text = getCategories[indexPath.item]
         label.textColor = .white
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -55,7 +55,7 @@ extension AddAmountViewController:  UICollectionViewDelegate {
 extension AddAmountViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let label = UILabel()
-        label.text = testCategories[indexPath.item]
+        label.text = getCategories[indexPath.item]
         label.sizeToFit()
         
         return CGSize(width: label.frame.width + 20, height: 30)
