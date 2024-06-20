@@ -304,6 +304,12 @@ class AddAmountViewController: UIViewController {
         
         view.addGestureRecognizer(tapGesture)
         
+        let components = Calendar.current.dateComponents([.year, .month], from: dateViewDateSelect.date)
+        ShareData.shared.loadSaverEntries()
+        fetchData = ShareData.shared.getSaverEntries()
+        self.categoriesInsertSet()
+        categoryButtonCreated(labels: getCategories)
+        
         // save 버튼
         let barButtonSystemItem: UIBarButtonItem.SystemItem = (transaction != nil) ? .done : .save
         
@@ -416,11 +422,7 @@ class AddAmountViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        let components = Calendar.current.dateComponents([.year, .month], from: dateViewDateSelect.date)
-        ShareData.shared.loadSaverEntries()
-        fetchData = ShareData.shared.getSaverEntries()
-        self.categoriesInsertSet()
-        categoryButtonCreated(labels: getCategories)
+
     }
     
     @objc func tapHandler(_ sender: UIView) {
