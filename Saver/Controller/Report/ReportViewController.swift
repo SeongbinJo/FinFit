@@ -634,8 +634,8 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
 
             // 애니메이션 효과 적용
             let animatedHeight = valueHeight * animator.phaseY
-            let contentTop = viewPortHandler.contentTop ?? 0
-            let contentBottom = viewPortHandler.contentBottom ?? 0
+            let contentTop = viewPortHandler.contentTop
+            let contentBottom = viewPortHandler.contentBottom
 
             // 상단 및 하단 라벨 높이를 계산하여 막대 그래프 높이 조정
             let topLabelHeight: CGFloat = {
@@ -702,7 +702,7 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
         let y = barRect.origin.y - size.height - labelOffset // 막대 그래프 상단에 위치
 
         // 상단 라벨이 차트 뷰 상단에 닿지 않도록 조정
-        let adjustedY = max(viewPortHandler.contentTop ?? 0 + 2 * labelOffset, y)
+        let adjustedY = max(viewPortHandler.contentTop + 2 * labelOffset, y)
 
         let textRect = CGRect(x: x, y: adjustedY, width: size.width, height: size.height)
         label.draw(in: textRect, withAttributes: attributes)
@@ -716,7 +716,7 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
 
         let size = label.size(withAttributes: attributes)
         let x = barRect.midX - size.width / 2
-        let y = (viewPortHandler.contentBottom ?? 0) - size.height - 2 * labelOffset // 라벨을 막대 바로 아래에 위치
+        let y = (viewPortHandler.contentBottom) - size.height - 2 * labelOffset // 라벨을 막대 바로 아래에 위치
 
         let textRect = CGRect(x: x, y: y, width: size.width, height: size.height)
         label.draw(in: textRect, withAttributes: attributes)
