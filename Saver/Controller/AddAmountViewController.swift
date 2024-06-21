@@ -251,6 +251,30 @@ class AddAmountViewController: UIViewController {
         return scroll
     }()
     
+    private lazy var mainScroll: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.showsVerticalScrollIndicator = false
+        scroll.showsHorizontalScrollIndicator = false
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+//        scroll.addSubview(titleView)
+//        scroll.addSubview(dateView)
+//        scroll.addSubview(segueStackView)
+//        scroll.addSubview(transactionNameView)
+//        scroll.addSubview(transactionAmountView)
+//        scroll.addSubview(transactionCategoryViewTitle)
+//        scroll.addSubview(transactionCategoryScroll)
+        scroll.addSubview(mainStack)
+        return scroll
+    }()
+    
+    private lazy var mainStack: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [titleView, dateView, segueStackView, transactionNameView, transactionAmountView, transactionCategoryViewTitle, transactionCategoryScroll])
+        view.axis = .vertical
+        view.distribution = .equalSpacing
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -282,13 +306,14 @@ class AddAmountViewController: UIViewController {
         
         
         // MARK: - viewDidLoad > view 추가
-        view.addSubview(titleView)
-        view.addSubview(dateView)
-        view.addSubview(segueStackView)
-        view.addSubview(transactionNameView)
-        view.addSubview(transactionAmountView)
-        view.addSubview(transactionCategoryViewTitle)
-        view.addSubview(transactionCategoryScroll)
+//        view.addSubview(titleView)
+//        view.addSubview(dateView)
+//        view.addSubview(segueStackView)
+//        view.addSubview(transactionNameView)
+//        view.addSubview(transactionAmountView)
+//        view.addSubview(transactionCategoryViewTitle)
+//        view.addSubview(transactionCategoryScroll)
+        view.addSubview(mainScroll)
         categoryButtonCreated(labels: testCategories)
         
         
@@ -296,6 +321,17 @@ class AddAmountViewController: UIViewController {
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
+            
+            mainScroll.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            mainScroll.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            mainScroll.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            mainScroll.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            
+            mainStack.topAnchor.constraint(equalTo: mainScroll.topAnchor, constant: 20),
+            mainStack.bottomAnchor.constraint(equalTo: mainScroll.bottomAnchor, constant: -20),
+            mainStack.leadingAnchor.constraint(equalTo: mainScroll.leadingAnchor, constant: 24),
+            mainStack.trailingAnchor.constraint(equalTo: mainScroll.trailingAnchor, constant: -24),
+            
             // MARK: - viewDidLoad > 오토 레이아웃 > titleView
             titleView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
             titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
