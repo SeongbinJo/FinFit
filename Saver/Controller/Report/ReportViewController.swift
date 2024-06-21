@@ -194,14 +194,12 @@ class ReportViewController: UIViewController {
         self.selectedCategory = myData.first?.0
         view.backgroundColor = .saverBackground
         view.addSubview(spendingUIStackView)
-        if !myData.isEmpty{
             addViewWithConstraints([legendScrollView, categoryExpenditureTableView], to: view)
             setupLegendScrollView(labels: myData.map{$0.0})
             setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{ $0.1.totalAmount }))
             spendingAmountLabel.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
             spendingAmountLabel.applySmallSuffixFontStyle()
             categoryExpenditureTableView.reloadData()
-        }
         
         //오토레이아웃 설정
         let safeArea = view.safeAreaLayoutGuide
