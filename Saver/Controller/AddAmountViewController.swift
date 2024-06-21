@@ -372,7 +372,7 @@ class AddAmountViewController: UIViewController {
 //        view.addSubview(transactionCategoryViewTitle)
 //        view.addSubview(transactionCategoryScroll)
         view.addSubview(mainScroll)
-        categoryButtonCreated(labels: testCategories)
+//        categoryButtonCreated(labels: testCategories)
         
         
         // MARK: - viewDidLoad > 오토 레이아웃
