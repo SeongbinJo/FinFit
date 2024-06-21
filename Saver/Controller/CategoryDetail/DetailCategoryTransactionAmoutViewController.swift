@@ -21,6 +21,7 @@ class DetailCategoryTransactionAmoutViewController: UIViewController{
         view.layer.masksToBounds = true
         view.backgroundColor = .saverBackground
         view.separatorStyle = .none
+        view.sectionHeaderTopPadding = 0.0
         view.register(CategoryListDetailTableCellTableViewCell.self, forCellReuseIdentifier: "categoryCell")
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -84,10 +85,40 @@ extension DetailCategoryTransactionAmoutViewController: UITableViewDelegate, UIT
         1
     }
     
+    //섹션상단에 넣을 뷰 높이 지정
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return section == 0 ? 0.0 : 1.0
+    }
+    
+    //섹션상단에 넣을 뷰
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // Create the main header view
+           let headerView = UIView()
+           headerView.backgroundColor = .clear
+           
+           // Create an inner view with the desired background color
+           let innerView = UIView()
+           innerView.backgroundColor = .neutral60
+           innerView.translatesAutoresizingMaskIntoConstraints = false
+           
+           // Add the inner view to the header view
+           headerView.addSubview(innerView)
+           
+           // Set up Auto Layout constraints for the inner view to provide the left and right margins
+           NSLayoutConstraint.activate([
+               innerView.topAnchor.constraint(equalTo: headerView.topAnchor),
+               innerView.bottomAnchor.constraint(equalTo: headerView.bottomAnchor),
+               innerView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 24),
+               innerView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -24)
+           ])
+           
+           return headerView
+    }
+    
     
     //섹션하단에 넣을 뷰 높이 지정
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return section == (tableView.numberOfSections - 1) ? 0.0 : 20.0 //마지막 셀의 하단 제거
+        return section == (tableView.numberOfSections - 1) ? 1.0 : 20.0 //마지막 셀의 하단 제거
     }
     
     //섹션하단에 넣을 뷰
