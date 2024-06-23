@@ -277,8 +277,8 @@ class AddAmountViewController: UIViewController {
     private lazy var transactionCategoryButton: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.alignment = .fill
-        stack.distribution = .equalSpacing
+        stack.alignment = .center
+        stack.distribution = .fillProportionally
         stack.spacing = 16
         stack.translatesAutoresizingMaskIntoConstraints = false
         
