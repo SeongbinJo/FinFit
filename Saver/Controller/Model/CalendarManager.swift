@@ -16,7 +16,7 @@ class CalendarManager {
     
     private init() {
         days = []
-        self.dateFormatter.dateFormat = "yyyy년 M월"
+        self.dateFormatter.formatter(type: .monthDayE)
     }
     
     // 달력 초기화
