@@ -25,7 +25,7 @@ class ReportViewController: UIViewController {
     private lazy var spendingAmountNameLabel: UILabel = {
         let label = UILabel()
         label.text = "\(month)월 지출 금액"
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.font = UIFont.saverSubTitleSemibold
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -33,11 +33,10 @@ class ReportViewController: UIViewController {
     
     //지출금액
     private lazy var spendingAmountLabel: UILabel = {
-        let label = UILabel()
+        let label = CustomUILabel()
         label.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
-        label.font = UIFont.systemFont(ofSize: 26, weight: .bold)
+        label.font = UIFont.saverTitleBold
         label.textColor = .white
-        label.applySmallSuffixFontStyle()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -48,7 +47,7 @@ class ReportViewController: UIViewController {
         let view = BarChartView()
         view.noDataText = "데이터가 존재하지 않습니다" //데이터가 없을 시 Text
         view.noDataTextAlignment = .center
-        view.noDataFont = UIFont.systemFont(ofSize: 20, weight: .semibold) //데이터가 없을 시 textFont 설정
+        view.noDataFont = UIFont.saverSubTitleSemibold //데이터가 없을 시 textFont 설정
         view.noDataTextColor = .white //데이터가 없을 시 textColor
         view.layer.cornerRadius = 10
         
@@ -198,7 +197,6 @@ class ReportViewController: UIViewController {
             setupLegendScrollView(labels: myData.map{$0.0})
             setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{ $0.1.totalAmount }))
             spendingAmountLabel.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
-            spendingAmountLabel.applySmallSuffixFontStyle()
             categoryExpenditureTableView.reloadData()
         
         //오토레이아웃 설정
@@ -437,7 +435,6 @@ class ReportViewController: UIViewController {
         
         spendingAmountNameLabel.text = "\(month)월 지출 금액"
         spendingAmountLabel.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
-        spendingAmountLabel.applySmallSuffixFontStyle()
     }
     
     //MARK: - 필요한 데이터로 변환 및 생성
@@ -562,42 +559,6 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     }
 }
 
-//MARK: - '원' 글씨크기 작게 만들기
-extension UILabel{
-    func applySmallSuffixFontStyle(){
-        guard let text = self.text else { return }
-        
-        //'원'의 글자 크기를 작게 설정
-        // label의 text를 기반으로 기존의 문자열을 변경할 수 있게 NSMutableAttributedString을 생성합니다
-        let attributedText = NSMutableAttributedString(string: text)
-        //지정된 범위에 대해 속성을 설정
-        attributedText.setAttributes([.font: UIFont.systemFont(ofSize: self.font.pointSize - 6, weight: .semibold),], range: NSRange(location: text.count - 1, length: 1))
-        //속성 적용
-        self.attributedText = attributedText
-    }
-}
-
-//MARK: - UIFont 커스텀
-extension UIFont{
-    //Title
-    static let saverTitleBold = UIFont.systemFont(ofSize: 25, weight: .bold)
-    static let saverTitleRegular = UIFont.systemFont(ofSize: 25, weight: .regular)
-    
-    //SubTitle
-    static let saverSubTitleSemibold = UIFont.systemFont(ofSize: 20, weight: .semibold)
-    static let saverSubTitleRegular = UIFont.systemFont(ofSize: 20, weight: .regular)
-    
-    //Body
-    static let saverBody1Semibold = UIFont.systemFont(ofSize: 16, weight: .semibold)
-    static let saverBody1Regurlar = UIFont.systemFont(ofSize: 16, weight: .regular)
-    static let saverBody2Semibold = UIFont.systemFont(ofSize: 14, weight: .semibold)
-    static let saverBody2Regurlar = UIFont.systemFont(ofSize: 14, weight: .regular)
-    
-    //Caption
-    static let saverCaption1Regular = UIFont.systemFont(ofSize: 12, weight: .regular)
-    static let saverCaption2Regular = UIFont.systemFont(ofSize: 10, weight: .regular)
-}
-
 //MARK: - 막대그래프를 둥글게 만들기 위해 render재정의
 class CustomRoundedBarChartRenderer: BarChartRenderer {
 
@@ -640,7 +601,7 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
                 if i < topLabels.count {
                     let topLabel = topLabels[i]
                     let attributes: [NSAttributedString.Key: Any] = [
-                        .font: UIFont.systemFont(ofSize: 16, weight: .regular)
+                        .font: UIFont.saverBody1Regurlar
                     ]
                     return topLabel.size(withAttributes: attributes).height
                 }
@@ -651,7 +612,7 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
                 if i < bottomLabels.count {
                     let bottomLabel = bottomLabels[i]
                     let attributes: [NSAttributedString.Key: Any] = [
-                        .font: UIFont.systemFont(ofSize: 14, weight: .semibold)
+                        .font: UIFont.saverBody2Semibold
                     ]
                     return bottomLabel.size(withAttributes: attributes).height
                 }
@@ -691,7 +652,7 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
 
     private func drawTopLabel(context: CGContext, label: String, barRect: CGRect, topLabelHeight: CGFloat) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 16, weight: .regular),
+            .font: UIFont.saverBody1Regurlar,
             .foregroundColor: UIColor.white
         ]
 
@@ -708,7 +669,7 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
 
     private func drawBottomLabel(context: CGContext, label: String, barRect: CGRect) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 14, weight: .semibold),
+            .font: UIFont.saverBody2Semibold,
             .foregroundColor: UIColor.white
         ]
 
