@@ -56,7 +56,7 @@ final class HomeViewController: UIViewController {
         let todayComponents = calendar.dateComponents([.year, .month, .day], from: Date())
         ShareData.shared.getYearMonthTransactionData(year: todayComponents.year!, month: todayComponents.month!)
         
-        dateFormatter.dateFormat = "yyyy년 M월"
+        dateFormatter.formatter(type: .yearMonth)
         todayString = dateFormatter.string(from: Date())
         
         CalendarManager.manager.configureCalendar(date: Date())
@@ -341,13 +341,13 @@ final class HomeViewController: UIViewController {
     
     //MARK: - 날짜별 Transaction 테이블 뷰
     func setupTransactionTableView() {
-        self.dateFormatter.dateFormat = "M월 d일 E요일"
+        self.dateFormatter.formatter(type: .monthDayE)
         self.dateFormatter.locale = Locale(identifier: "ko-KR")
-        currentDayTitle.text = self.dateFormatter.string(from: Date())
+        currentDayTitle.text = self.dateFormatter.string(from: self.selectedDate ?? Date())
         currentDayTitle.textColor = .neutral20
         currentDayTitle.translatesAutoresizingMaskIntoConstraints = false
         
-        let todayComponents = self.calendar.dateComponents([.day], from: Date())
+        let todayComponents = self.calendar.dateComponents([.day], from: self.selectedDate ?? Date())
         currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!)) 원"
         currentDayAmount.textColor = .neutral20
         currentDayAmount.font = UIFont.systemFont(ofSize: 25)
@@ -374,7 +374,6 @@ final class HomeViewController: UIViewController {
             transactionTableView.topAnchor.constraint(equalTo: currentDayAmount.bottomAnchor, constant: 10),
             transactionTableView.leadingAnchor.constraint(equalTo: calendarView.leadingAnchor),
             transactionTableView.trailingAnchor.constraint(equalTo: calendarView.trailingAnchor),
-//            transactionTableView.heightAnchor.constraint(equalToConstant: 100),
             transactionTableView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
         
@@ -407,7 +406,7 @@ final class HomeViewController: UIViewController {
     //MARK: - Today 버튼을 누르면 currentDayTitle.text 변경
     func changeCurrentDayTitleByTodayButton() {
         self.selectedDate = Date()
-        self.dateFormatter.dateFormat = "M월 d일 E요일"
+        self.dateFormatter.formatter(type: .monthDayE)
         self.currentDayTitle.text = self.dateFormatter.string(from: Date())
         self.transactionTableView.reloadData()
     }
@@ -458,7 +457,6 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
         transactionTableView.reloadData()
         self.updateTableViewHeight()
         calendarCollectionView.reloadData()
-        print("삭제 클릭")
     }
     
     func editTransaction(transaction: SaverModel) {
@@ -477,7 +475,6 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
         self.totalAmountCurrentMonth() // 내역 추가할 때마다 월별 합계금액 타이틀 변경
         self.transactionTableView.reloadData()
         self.calendarCollectionView.reloadData()
-        print("저장 일단 완료.")
     }
     
     func editTransactionInAddView(oldTransactoin: SaverModel, newTransaction: SaverModel) {
@@ -489,7 +486,6 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
         self.totalAmountCurrentMonth() // 내역 추가할 때마다 월별 합계금액 타이틀 변경
         self.transactionTableView.reloadData()
         self.calendarCollectionView.reloadData()
-        print("업뎃 일단 완료.")
     }
     
 }
@@ -554,7 +550,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 let totalAmountInDay = ShareData.shared.totalAmountIndDay(day: days[indexPath.row])
                 self.currentDayAmount.text = "\(totalAmountInDay) 원"
                 
-                self.dateFormatter.dateFormat = "M월 d일 E요일"
+                self.dateFormatter.formatter(type: .monthDayE)
                 self.currentDayTitle.text = self.dateFormatter.string(from: date ?? Date())
                 
                 self.selectedDate = date // 선택한 날짜를 저장 -> 테이블 뷰 리스트 불러올 때 사용!
@@ -599,4 +595,15 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     
+}
+
+extension DateFormatter {
+    enum DateFormat: String {
+        case yearMonth = "yyyy년 M월"
+        case monthDayE = "M월 d일 E요일"
+    }
+    
+    func formatter(type: DateFormat) {
+        self.dateFormat = type.rawValue
+    }
 }
