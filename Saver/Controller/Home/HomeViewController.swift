@@ -1,6 +1,6 @@
 import UIKit
 
-class HomeViewController: UIViewController {
+final class HomeViewController: UIViewController {
     // 날짜 관련
     private var dateFormatter: DateFormatter = DateFormatter()
     private var calendar: Calendar = Calendar.current
@@ -124,7 +124,6 @@ class HomeViewController: UIViewController {
         addTransactionButton.tintColor = .white
         addTransactionButton.configuration = config
         addTransactionButton.addAction(UIAction {_ in
-            print("내역추가 버튼 클릭. (현재 테이블 뷰. 셀 관련 액션 테스트 중")
             let addAmountViewController = AddAmountViewController()
             addAmountViewController.delegate = self
             self.navigationController?.pushViewController(addAmountViewController, animated: true)
