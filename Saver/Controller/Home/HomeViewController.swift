@@ -154,7 +154,7 @@ final class HomeViewController: UIViewController {
     }
     
     //MARK: - ChangeMonthButton의 configuration
-    func ConfigurationChangeMonthButton() {
+    func configurationChangeMonthButton() {
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         config.imagePlacement = .trailing
@@ -171,7 +171,7 @@ final class HomeViewController: UIViewController {
     
     //MARK: - changeMonthButton setup
     func setupchangeMonthButton() {
-        ConfigurationChangeMonthButton()
+        configurationChangeMonthButton()
         
         changeMonthButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -399,7 +399,7 @@ final class HomeViewController: UIViewController {
         self.totalAmountCurrentMonth()
         self.checkToday()
         // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
-        self.ConfigurationChangeMonthButton()
+        self.configurationChangeMonthButton()
         self.calendarCollectionView.reloadData()
     }
     
@@ -438,7 +438,7 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
         self.totalAmountCurrentMonth()
         self.checkToday()
         // yearMonthButtonLabel로 버튼을 사용 -> config로 title을 지정해주었기 때문에 다시 지정해주어야함.
-        ConfigurationChangeMonthButton()
+        configurationChangeMonthButton()
         
         let dateComponents = self.calendar.dateComponents([.year, .month], from: CalendarManager.manager.calendarDate)
         ShareData.shared.getYearMonthTransactionData(year: dateComponents.year!, month: dateComponents.month!)
