@@ -24,11 +24,16 @@ class GoalExpenditureViewController: UIViewController {
     
     // 구분선
     private var dividingLine: UIView = UIView()
+    
+    // 리포트, 드롭다운 버튼 스택뷰
+    private var goalExpenditureTitleLabel: UILabel = UILabel()
+    private var dropDownButton: UIButton = UIButton()
+    private var goalExpenditureTitleStackView: UIStackView = UIStackView()
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupScrollView()
         setupSegmentButton()
         setupGoalBoxStackView()
@@ -133,6 +138,13 @@ class GoalExpenditureViewController: UIViewController {
             dividingLine.trailingAnchor.constraint(equalTo: viewInScrollView.trailingAnchor),
             dividingLine.heightAnchor.constraint(equalToConstant: 5)
         ])
+    }
+    
+    //MARK: - 구분선 아래 '지출목표 리포트 + 드롭다운 버튼' setup
+    func setupGoalExpenditureTitleStackView() {
+        goalExpenditureTitleLabel.text = "지출 목표 리포트"
+//        dropDownButton.setTitle("", for: <#T##UIControl.State#>)
+        
     }
     
 }
