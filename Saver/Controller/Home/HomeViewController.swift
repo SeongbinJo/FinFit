@@ -357,7 +357,7 @@ final class HomeViewController: UIViewController {
         transactionTableView.dataSource = self
         transactionTableView.register(TransactionTableViewCell.self, forCellReuseIdentifier: "TransactionCell")
         transactionTableView.backgroundColor = .clear
-        transactionTableView.showsVerticalScrollIndicator = false
+//        transactionTableView.showsVerticalScrollIndicator = false
         transactionTableView.translatesAutoresizingMaskIntoConstraints = false
         
         scrollView.addSubview(currentDayTitle)

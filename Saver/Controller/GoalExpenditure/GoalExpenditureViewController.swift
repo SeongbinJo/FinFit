@@ -29,6 +29,10 @@ class GoalExpenditureViewController: UIViewController {
     private var goalExpenditureTitleLabel: UILabel = UILabel()
     private var dropDownButton: UIButton = UIButton()
     private var goalExpenditureTitleStackView: UIStackView = UIStackView()
+    
+    // 지출 목표 리포트 TableView
+    private var goalExpenditureTableView: UITableView = UITableView(frame: .zero, style: .plain)
+    private var goalTableViewHeightContraint: NSLayoutConstraint!
 
     
     override func viewDidLoad() {
@@ -39,6 +43,7 @@ class GoalExpenditureViewController: UIViewController {
         setupGoalBoxStackView()
         setupDividingLine()
         setupGoalExpenditureTitleStackView()
+        setupGoalExpenditureTableView()
     }
     
     //MARK: - 최상단 스크롤뷰 setup
@@ -170,5 +175,41 @@ class GoalExpenditureViewController: UIViewController {
             goalExpenditureTitleStackView.trailingAnchor.constraint(equalTo: goalBoxStackView.trailingAnchor)
         ])
     }
+    
+    //MARK: - 지출 목표 리포트 테이블 뷰(TableView)
+    func setupGoalExpenditureTableView() {
+        goalExpenditureTableView.delegate = self
+        goalExpenditureTableView.dataSource = self
+        goalExpenditureTableView.register(GoalExpenditureTableViewCell.self, forCellReuseIdentifier: "cell")
+        goalExpenditureTableView.backgroundColor = .yellow
+        goalExpenditureTableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        viewInScrollView.addSubview(goalExpenditureTableView)
+        
+        NSLayoutConstraint.activate([
+            goalExpenditureTableView.topAnchor.constraint(equalTo: goalExpenditureTitleStackView.bottomAnchor, constant: 20),
+            goalExpenditureTableView.leadingAnchor.constraint(equalTo: goalExpenditureTitleStackView.leadingAnchor),
+            goalExpenditureTableView.trailingAnchor.constraint(equalTo: goalExpenditureTitleStackView.trailingAnchor),
+            goalExpenditureTableView.bottomAnchor.constraint(equalTo: viewInScrollView.bottomAnchor),
+//            goalExpenditureTableView.heightAnchor.constraint(equalToConstant: 400)
+        ])
+    }
+    
+}
+
+extension GoalExpenditureViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        160
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        2
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! GoalExpenditureTableViewCell
+        return cell
+    }
+    
     
 }
