@@ -32,7 +32,7 @@ class GoalExpenditureViewController: UIViewController {
     
     // 지출 목표 리포트 TableView
     private var goalExpenditureTableView: UITableView = UITableView(frame: .zero, style: .plain)
-    private var goalTableViewHeightContraint: NSLayoutConstraint!
+    private var goalTableViewHeightConstraint: NSLayoutConstraint!
 
     
     override func viewDidLoad() {
@@ -44,6 +44,12 @@ class GoalExpenditureViewController: UIViewController {
         setupDividingLine()
         setupGoalExpenditureTitleStackView()
         setupGoalExpenditureTableView()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        updateTableViewHeight()
     }
     
     //MARK: - 최상단 스크롤뷰 setup
@@ -191,8 +197,20 @@ class GoalExpenditureViewController: UIViewController {
             goalExpenditureTableView.leadingAnchor.constraint(equalTo: goalExpenditureTitleStackView.leadingAnchor),
             goalExpenditureTableView.trailingAnchor.constraint(equalTo: goalExpenditureTitleStackView.trailingAnchor),
             goalExpenditureTableView.bottomAnchor.constraint(equalTo: viewInScrollView.bottomAnchor),
-//            goalExpenditureTableView.heightAnchor.constraint(equalToConstant: 400)
         ])
+        
+        goalTableViewHeightConstraint = goalExpenditureTableView.heightAnchor.constraint(equalToConstant: 0)
+        goalTableViewHeightConstraint.isActive = true
+        
+    }
+    
+    //MARK: - 테이블 뷰 높이 동적 조절
+    func updateTableViewHeight() {
+        let numberOfRows = goalExpenditureTableView.numberOfRows(inSection: 0)
+        let rowHeight = 160 // UITableView 델리겟의 row 높이와 맞춰줌
+        let newHeight = CGFloat(numberOfRows * rowHeight)
+        
+        goalTableViewHeightConstraint.constant = newHeight
     }
     
 }
