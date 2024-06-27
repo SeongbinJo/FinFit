@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		58233E1A2C16BD7A00780531 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58233E192C16BD7A00780531 /* SharedData.swift */; };
+		58305AE42C2BF1AE00081E1A /* GoalExpenditureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58305AE32C2BF1AE00081E1A /* GoalExpenditureViewController.swift */; };
 		5837A6D92C11BB5D0036E654 /* TransactionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5837A6D82C11BB5D0036E654 /* TransactionTableViewCell.swift */; };
+		58B968622C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B968612C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift */; };
 		58F099DA2C0F6DC4008B4289 /* CalendarPopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F099D92C0F6DC4008B4289 /* CalendarPopUpViewController.swift */; };
 		58FAB1622C0ECA63005251EB /* CalendarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58FAB1612C0ECA63005251EB /* CalendarManager.swift */; };
 		58FAB1642C0ED0F5005251EB /* CalendarCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58FAB1632C0ED0F5005251EB /* CalendarCollectionViewCell.swift */; };
@@ -30,7 +32,9 @@
 
 /* Begin PBXFileReference section */
 		58233E192C16BD7A00780531 /* SharedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedData.swift; sourceTree = "<group>"; };
+		58305AE32C2BF1AE00081E1A /* GoalExpenditureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalExpenditureViewController.swift; sourceTree = "<group>"; };
 		5837A6D82C11BB5D0036E654 /* TransactionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionTableViewCell.swift; sourceTree = "<group>"; };
+		58B968612C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalExpenditureTableViewCell.swift; sourceTree = "<group>"; };
 		58F099D92C0F6DC4008B4289 /* CalendarPopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPopUpViewController.swift; sourceTree = "<group>"; };
 		58FAB1612C0ECA63005251EB /* CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarManager.swift; sourceTree = "<group>"; };
 		58FAB1632C0ED0F5005251EB /* CalendarCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -63,6 +67,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		58305AE22C2BF17D00081E1A /* GoalExpenditure */ = {
+			isa = PBXGroup;
+			children = (
+				58305AE32C2BF1AE00081E1A /* GoalExpenditureViewController.swift */,
+				58B968612C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift */,
+			);
+			path = GoalExpenditure;
+			sourceTree = "<group>";
+		};
 		5893DB842C19BAA600143B21 /* Home */ = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +108,7 @@
 			children = (
 				BF6AAC942C15759700873654 /* Extension */,
 				79FE80872C0DA3BC00517428 /* Controller */,
+				79FE80852C0D9FA600517428 /* DataController.swift */,
 				7953E8022C0D508C0095AC36 /* AppDelegate.swift */,
 				7953E8042C0D508C0095AC36 /* SceneDelegate.swift */,
 				7953E80B2C0D508F0095AC36 /* Assets.xcassets */,
@@ -139,7 +153,7 @@
 				5893DB842C19BAA600143B21 /* Home */,
 				796B01292C16EBF200E7D972 /* CategoryDetail */,
 				796B01282C16EBE400E7D972 /* Report */,
-				79FE80852C0D9FA600517428 /* DataController.swift */,
+				58305AE22C2BF17D00081E1A /* GoalExpenditure */,
 				79FE807F2C0D99CD00517428 /* Model */,
 			);
 			path = Controller;
@@ -229,6 +243,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58B968622C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift in Sources */,
 				58FAB1642C0ED0F5005251EB /* CalendarCollectionViewCell.swift in Sources */,
 				79FE80862C0D9FA600517428 /* DataController.swift in Sources */,
 				7981A5D32C10079900104450 /* CategoryExpenditureTableViewCell.swift in Sources */,
@@ -240,6 +255,7 @@
 				796B012D2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift in Sources */,
 				BFC5170F2C0E9C730072A31D /* AddAmountViewController.swift in Sources */,
 				79FE80842C0D9A5800517428 /* DataModel.swift in Sources */,
+				58305AE42C2BF1AE00081E1A /* GoalExpenditureViewController.swift in Sources */,
 				5837A6D92C11BB5D0036E654 /* TransactionTableViewCell.swift in Sources */,
 				58233E1A2C16BD7A00780531 /* SharedData.swift in Sources */,
 				7953E8032C0D508C0095AC36 /* AppDelegate.swift in Sources */,
