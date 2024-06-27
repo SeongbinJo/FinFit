@@ -48,7 +48,6 @@ class GoalExpenditureViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
         updateTableViewHeight()
     }
     
