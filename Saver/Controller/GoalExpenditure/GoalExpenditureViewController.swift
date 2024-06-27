@@ -38,6 +38,7 @@ class GoalExpenditureViewController: UIViewController {
         setupSegmentButton()
         setupGoalBoxStackView()
         setupDividingLine()
+        setupGoalExpenditureTitleStackView()
     }
     
     //MARK: - 최상단 스크롤뷰 setup
@@ -143,8 +144,31 @@ class GoalExpenditureViewController: UIViewController {
     //MARK: - 구분선 아래 '지출목표 리포트 + 드롭다운 버튼' setup
     func setupGoalExpenditureTitleStackView() {
         goalExpenditureTitleLabel.text = "지출 목표 리포트"
-//        dropDownButton.setTitle("", for: <#T##UIControl.State#>)
         
+        var config = UIButton.Configuration.plain()
+        config.imagePlacement = .trailing
+        config.attributedTitle = AttributedString("이름순")
+        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0)
+        dropDownButton.configuration = config
+        dropDownButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        dropDownButton.backgroundColor = .green
+        
+        goalExpenditureTitleStackView.axis = .horizontal
+        goalExpenditureTitleStackView.distribution = .equalSpacing
+        goalExpenditureTitleStackView.alignment = .center
+        goalExpenditureTitleStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        goalExpenditureTitleStackView.addArrangedSubview(goalExpenditureTitleLabel)
+        goalExpenditureTitleStackView .addArrangedSubview(dropDownButton)
+        goalExpenditureTitleStackView.backgroundColor = .yellow
+        
+        viewInScrollView.addSubview(goalExpenditureTitleStackView)
+        
+        NSLayoutConstraint.activate([
+            goalExpenditureTitleStackView.topAnchor.constraint(equalTo: dividingLine.bottomAnchor, constant: 30),
+            goalExpenditureTitleStackView.leadingAnchor.constraint(equalTo: goalBoxStackView.leadingAnchor),
+            goalExpenditureTitleStackView.trailingAnchor.constraint(equalTo: goalBoxStackView.trailingAnchor)
+        ])
     }
     
 }
