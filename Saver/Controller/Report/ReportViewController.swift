@@ -8,7 +8,7 @@
 import UIKit
 import DGCharts //그래프를 그리기 위한 라이브러리
 
-class ReportViewController: UIViewController {
+class ReportViewController: UIViewController, AxisValueFormatter {
     //MARK: - property
     //그래프 작성을 위한 임시 데이터
     private var fetchData = [SaverModel]()
@@ -43,43 +43,11 @@ class ReportViewController: UIViewController {
     
     //MARK: - 2. Stack(stack(지출금액이름, 지출금액), 그래프)
     //지출금액 그래프
-    private lazy var spendingReport: BarChartView = {
-        let view = BarChartView()
-        view.noDataText = "데이터가 존재하지 않습니다" //데이터가 없을 시 Text
-        view.noDataTextAlignment = .center
-        view.noDataFont = UIFont.saverSubTitleSemibold //데이터가 없을 시 textFont 설정
-        view.noDataTextColor = .white //데이터가 없을 시 textColor
-        view.layer.cornerRadius = 10
-        
-        view.isUserInteractionEnabled = false //사용자가 해당 view는 상호작요을 못하게 한다.
-        view.minOffset = 0 //내부 여백 설정
-        //x축 설정
-        let xAxis = view.xAxis //charView에 x축
-        xAxis.drawGridLinesEnabled = false //x축 격자 제거
-        xAxis.drawAxisLineEnabled = false //상단 x축 라인 제거
-        xAxis.drawLabelsEnabled = false //상단 x축 라벨 표시
-        //        xAxis.enabled = false //x축 하단 라벨 숨기기
-        xAxis.labelPosition = .bottom //x축 라벨 위치를 하단으로 설정
-        xAxis.granularity = 1 //x축 라벨의 최소 간격을 1로 설정
-        xAxis.labelFont = .saverBody2Semibold
-        xAxis.labelTextColor = .white
-        //        xAxis.yOffset = -8.0 //그래프와 라벨의 사이의 간격
-        
-        //왼쪽 Y축 설정
-        let leftAxis = view.leftAxis //charView에 Y축 설정
-        leftAxis.drawGridLinesEnabled = false //왼쪽 Y축 격자 제거
-        leftAxis.drawAxisLineEnabled = false //왼쪽 Y축 라인 제거
-        leftAxis.drawLabelsEnabled = false //왼쪽 Y축 라벨 제거
-        
-        //오른쪽 Y축 설정
-        let rightAxis = view.rightAxis //charView에 Y축 설정
-        rightAxis.drawGridLinesEnabled = false //오른쪽 Y축 격자 제거
-        rightAxis.drawAxisLineEnabled = false //오른쪽 Y축 라인 제거
-        rightAxis.drawLabelsEnabled = false //오른쪽 Y축 라벨 제거
-        
+    private lazy var spendingReport: CustomBarChartView = {
+        let view = CustomBarChartView()
         //그래프를 그려주는 함수 실행
+        view.xAxis.valueFormatter = self // X축 레이블 설정
         setBarData(barChartView: view, barChartDataEntries: entryData(values: myData.map{ $0.1.totalAmount })) //금액을 기준으로 그래프를 만들기 때문에 금액변수를 넘긴다.
-        
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -271,17 +239,22 @@ class ReportViewController: UIViewController {
             let barChartData = BarChartData(dataSet: barChartDataSet)
             barChartData.barWidth = 0.6
             barChartView.data = barChartData
+
             
             let customRenderer = CustomRoundedBarChartRenderer(dataProvider: barChartView, animator: barChartView.chartAnimator, viewPortHandler: barChartView.viewPortHandler)
             customRenderer.topLabels = topLabels
-            customRenderer.bottomLabels = labels
+//            customRenderer.bottomLabels = labels
             barChartView.renderer = customRenderer
-            
             barChartView.animate(yAxisDuration: 0.7, easingOption: .easeInOutQuad)
         }
         barChartView.notifyDataSetChanged()
         barChartView.legend.enabled = false
     }
+    
+    func stringForValue(_ value: Double, axis: DGCharts.AxisBase?) -> String {
+        return myData[Int(value) % myData.count].0
+    }
+    
     
     private func entryData(values: [Double]) -> [BarChartDataEntry] {
         var barDataEntries: [BarChartDataEntry] = []
