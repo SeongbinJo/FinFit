@@ -27,11 +27,9 @@ class CustomBarChartView: BarChartView{
         self.noDataFont = UIFont.saverSubTitleSemibold //데이터가 없을 시 textFont 설정
         self.noDataTextColor = .white //데이터가 없을 시 textColor
         self.layer.cornerRadius = 10
-        
         self.isUserInteractionEnabled = false //사용자가 해당 view는 상호작요을 못하게 한다.
         self.minOffset = 0 //내부 여백 설정
-
-        //x축 설정
+        
         let xAxis = self.xAxis //chartView에 x축
         xAxis.drawGridLinesEnabled = false //x축 격자 제거
         xAxis.drawAxisLineEnabled = false //상단 x축 라인 제거

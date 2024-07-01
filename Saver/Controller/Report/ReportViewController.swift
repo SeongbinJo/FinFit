@@ -219,19 +219,15 @@ class ReportViewController: UIViewController, AxisValueFormatter {
         if barChartDataEntries.isEmpty {
             barChartView.data = nil
         } else {
-            var labels = [String]()
             var topLabels = [String]()
             let total = myData.map { $0.1.totalAmount }.reduce(0.0, +)
             
             if myData.count > 4 {
-                labels = myData.prefix(3).map { $0.0 }
-                topLabels = myData.prefix(3).map { "\(Int(($0.1.totalAmount / total) * 100))%" }
-                labels += ["기타"]
+                topLabels = myData.prefix(3).map { "\(String(format: "%.1f", ($0.1.totalAmount / total) * 100))%" }
                 let remainingData = myData.dropFirst(3).map { $0.1.totalAmount }.reduce(0, +)
-                topLabels.append("\(Int(round((remainingData / total) * 100)))%")
+                topLabels.append("\(String(format: "%.1f", (remainingData / total) * 100))%")
             } else {
-                labels = myData.map { $0.0 }
-                topLabels = myData.map { "\(Int(($0.1.totalAmount / total * 100)))%" }
+                topLabels = myData.map { "\(String(format: "%.1f", ($0.1.totalAmount / total) * 100))%" }
             }
             
             let barChartDataSet = BarChartDataSet(entries: barChartDataEntries, label: "사용금액")
@@ -252,7 +248,7 @@ class ReportViewController: UIViewController, AxisValueFormatter {
     
     func stringForValue(_ value: Double, axis: DGCharts.AxisBase?) -> String {
         if myData.count > 4{
-            if Int(value) < 4{
+            if Int(value) < 3{
                 return myData[Int(value) % myData.count].0
             }else{
                 return "기타"
@@ -547,7 +543,7 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
 class CustomRoundedBarChartRenderer: BarChartRenderer {
 
     var topLabels: [String] = [] //상단 Label 문자
-    var minBarHeight: CGFloat = 10.0 // 최소 바 높이
+    var minBarHeight: CGFloat = 8.0 // 최소 바 높이
     let labelOffset: CGFloat = 8.0 // 라벨과 막대 사이의 간격
     let cornerRadius: CGFloat = 10.0 // 둥근 모서리 정도
 
