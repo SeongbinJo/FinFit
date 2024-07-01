@@ -251,7 +251,19 @@ class ReportViewController: UIViewController, AxisValueFormatter {
     }
     
     func stringForValue(_ value: Double, axis: DGCharts.AxisBase?) -> String {
-        return myData[Int(value) % myData.count].0
+        if myData.count > 4{
+            if Int(value) < 4{
+                return myData[Int(value) % myData.count].0
+            }else{
+                return "기타"
+            }
+        }else{
+            if Int(value) < myData.count{
+                return myData[Int(value) % myData.count].0
+            }else{
+                return ""
+            }
+        }
     }
     
     
@@ -531,7 +543,7 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
     }
 }
 
-//MARK: - 막대그래프를 둥글게 만들기 위해 render재정의
+//MARK: - 막대그래프에 radius, topLabel 만들기 위해 render재정의
 class CustomRoundedBarChartRenderer: BarChartRenderer {
 
     var topLabels: [String] = [] //상단 Label 문자
@@ -565,9 +577,6 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
             //막대의 사각형 영역을 정의
             var barRect = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
             trans?.rectValueToPixel(&barRect)
-
-            // 데이터의 크기에 따라 높이 조절
-            let valueHeight = CGFloat(y)
             
             // 상단 Label 높이를 계산하여 막대 그래프 높이 조정
             let topLabelHeight: CGFloat = {
@@ -582,11 +591,13 @@ class CustomRoundedBarChartRenderer: BarChartRenderer {
                 return 0
             }()
 
-            let totalAvailableHeight = contentRect.height - labelOffset - topLabelHeight // 상단 Label 간격을 확보한 총 사용할 수 있는 높이*/
-            let finalBarHeight = max(valueHeight * totalAvailableHeight, minBarHeight) //만약에 해당 그래프의 높이가 최소높이보다 작으면 최소높이로 지정
+            // 상단 Label 간격을 확보한 총 사용할 수 있는 높이
+            let totalAvailableHeight = contentRect.height - labelOffset - topLabelHeight
+            //만약에 해당 그래프의 높이가 최소높이보다 작으면 최소높이로 지정
+            let finalBarHeight = max(y * totalAvailableHeight, minBarHeight)
 
             // 막대 그래프의 시작 위치 계산
-            let barStartY = contentRect.height - finalBarHeight/* - labelOffset*/ // 막대 그래프의 시작 y 위치
+            let barStartY = contentRect.height - finalBarHeight// 막대 그래프의 시작 y 위치
             
             // 막대 그래프의 위치와 크기 설정
             barRect.origin.y = barStartY + finalBarHeight * (1.0 - animator.phaseY)
