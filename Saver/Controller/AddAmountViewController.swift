@@ -477,11 +477,10 @@ class AddAmountViewController: UIViewController {
         
         // 카테고리 추가 버튼 스타일
         var categoryAddConfig = UIButton.Configuration.filled()
-        categoryAddConfig.baseBackgroundColor = .neutral80
-        categoryAddConfig.baseForegroundColor = .incomeAmount
-        categoryAddConfig.background.strokeColor = .incomeAmount
+        categoryAddConfig.baseBackgroundColor = .incomeAmount
+        categoryAddConfig.baseForegroundColor = .white
         categoryAddConfig.background.strokeWidth = 1
-        categoryAddConfig.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20)
+        categoryAddConfig.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
         categoryAddConfig.cornerStyle = .capsule
         categoryAddConfig.buttonSize = .medium
         
@@ -538,8 +537,8 @@ class AddAmountViewController: UIViewController {
             // 버튼 스타일
             var defaultConfig = UIButton.Configuration.filled()
             defaultConfig.baseBackgroundColor = .neutral80
-            defaultConfig.baseForegroundColor = .white
-            defaultConfig.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20)
+            defaultConfig.baseForegroundColor = .neutral5
+            defaultConfig.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
             defaultConfig.cornerStyle = .capsule
             defaultConfig.buttonSize = .medium
             
@@ -554,11 +553,13 @@ class AddAmountViewController: UIViewController {
                 // 모든 버튼 색상 초기화
                 for btn in buttons {
                     btn.configuration?.baseBackgroundColor = .neutral80
-                    btn.configuration?.baseForegroundColor = .white
+                    btn.configuration?.baseForegroundColor = .neutral5
+                    btn.configuration?.background.strokeColor = .clear
                 }
                 // 모든 버튼 색상 초기화 후 선택된 버튼만 색상 변경
-                button.configuration?.baseBackgroundColor = .incomeAmount
+                button.configuration?.baseBackgroundColor = .neutral80
                 button.configuration?.baseForegroundColor = .white
+                button.configuration?.background.strokeColor = .incomeAmount
                 
                 // 선택된 버튼 이름 저장
                 self.selectCategoryName = ""
