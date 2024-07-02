@@ -37,8 +37,6 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
         return label
     }()
     
-    
-    
     //Satck(지출 금액, 카테고리)
     private lazy var categorySpendingStack: UIStackView = {
        let stackView = UIStackView(arrangedSubviews: [categoryTransactionAmountLabel, categoryLabel])
