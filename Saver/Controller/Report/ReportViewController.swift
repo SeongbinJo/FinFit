@@ -44,9 +44,8 @@ class ReportViewController: UIViewController, UITableViewDataSource, UITableView
     //지출금액 그래프
     private lazy var spendingReport: CustomBarChartView = {
         let view = CustomBarChartView()
-        //그래프를 그려주는 함수 실행
-        view.values = myData.map{ $0.1.totalAmount }
-        view.labels = myData.map{ $0.0}
+        view.values = myData.map{ $0.1.totalAmount } //데이터의 크기
+        view.labels = myData.map{ $0.0} //데이터 상단 라벨
         // X축 레이블 설정
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
