@@ -13,7 +13,6 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
     //지출 날짜
     private lazy var categoryTransactionDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "0000-00-00(-)"
         label.font = .saverBody1Regurlar
         label.textColor = .neutral20
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -22,9 +21,7 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
     
     //지출 금액
     private lazy var categoryTransactionAmountLabel: UILabel = {
-        let label = UILabel()
-        label.text = "-원"
-//        label.numberOfLines = 1
+        let label = CustomUILabel()
         label.font = .saverSubTitleSemibold
         label.textColor = .spendingAmount
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -34,15 +31,11 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
     //카테고리명
     private lazy var categoryLabel: UILabel = {
         let label = UILabel()
-        label.text = "000에 입금"
-//        label.numberOfLines = 1
         label.font = .saverBody2Regurlar
         label.textColor = .neutral20
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    
     
     //Satck(지출 금액, 카테고리)
     private lazy var categorySpendingStack: UIStackView = {
@@ -66,7 +59,6 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.backgroundColor = .saverBackground
         contentView.addSubview(categoryTransactionStackView)
-//        let safeArea = safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
             
@@ -95,6 +87,5 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
         categoryTransactionDateLabel.text = "\(foramtter.string(from: entry.date))"
         categoryTransactionAmountLabel.text = "\(ShareData.shared.formatNumber(Double(entry.totalAmount)))원"
         categoryLabel.text = entry.saverModels.first?.name
-        categoryTransactionAmountLabel.applySmallSuffixFontStyle()
     }
 }

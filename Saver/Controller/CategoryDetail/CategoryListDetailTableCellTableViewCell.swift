@@ -11,7 +11,6 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     //MARK: - 날짜 표시
     private lazy var dateLabl: UILabel = {
         let label = UILabel()
-        label.text = ""
         label.font = .saverBody1Regurlar
         label.textColor = .neutral20
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -20,8 +19,7 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     
     //MARK: - 금액 표시
     private lazy var amountLabel: UILabel = {
-        let label = UILabel()
-        label.text = ""
+        let label = CustomUILabel()
         label.font = .saverSubTitleSemibold
         label.textColor = .spendingAmount
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -31,8 +29,6 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     //MARK: - 거래내용
     private lazy var transactionNameLabel: UILabel = {
         let label = UILabel()
-        label.text = ""
-//        label.numberOfLines = 2
         label.font = .saverBody2Regurlar
         label.textColor = .neutral20
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -99,7 +95,6 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
         dateLabl.text = "\(foramtter.string(from: entry.transactionDate))"
         transactionNameLabel.text = entry.transactionName
         amountLabel.text = "\(ShareData.shared.formatNumber(Double(entry.spendingAmount)))원"
-        amountLabel.applySmallSuffixFontStyle()
     }
 
 }

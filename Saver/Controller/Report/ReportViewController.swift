@@ -8,7 +8,7 @@
 import UIKit
 import DGCharts //그래프를 그리기 위한 라이브러리
 
-class ReportViewController: UIViewController {
+class ReportViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     //MARK: - property
     //그래프 작성을 위한 임시 데이터
     private var fetchData = [SaverModel]()
@@ -18,14 +18,13 @@ class ReportViewController: UIViewController {
     private var month = Calendar.current.component(.month, from: Date())
     private let mainLR: CGFloat = 24
     private let viewPadding: CGFloat = 20
-    private let colors: [UIColor] = [.incomeAmount, .primaryBlue80, .primaryBlue60, .primaryBlue40]
     
     //MARK: - 1. Stack(지출금액이름, 지출금액)
     //지출금액이름
     private lazy var spendingAmountNameLabel: UILabel = {
         let label = UILabel()
         label.text = "\(month)월 지출 금액"
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.font = UIFont.saverSubTitleSemibold
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -33,54 +32,21 @@ class ReportViewController: UIViewController {
     
     //지출금액
     private lazy var spendingAmountLabel: UILabel = {
-        let label = UILabel()
+        let label = CustomUILabel()
         label.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
-        label.font = UIFont.systemFont(ofSize: 26, weight: .bold)
+        label.font = UIFont.saverTitleBold
         label.textColor = .white
-        label.applySmallSuffixFontStyle()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     //MARK: - 2. Stack(stack(지출금액이름, 지출금액), 그래프)
     //지출금액 그래프
-    private lazy var spendingReport: BarChartView = {
-        let view = BarChartView()
-        view.noDataText = "데이터가 존재하지 않습니다" //데이터가 없을 시 Text
-        view.noDataTextAlignment = .center
-        view.noDataFont = UIFont.systemFont(ofSize: 20, weight: .semibold) //데이터가 없을 시 textFont 설정
-        view.noDataTextColor = .white //데이터가 없을 시 textColor
-        view.layer.cornerRadius = 10
-        
-        view.isUserInteractionEnabled = false //사용자가 해당 view는 상호작요을 못하게 한다.
-        view.minOffset = 0 //내부 여백 설정
-        //x축 설정
-        let xAxis = view.xAxis //charView에 x축
-        xAxis.drawGridLinesEnabled = false //x축 격자 제거
-        xAxis.drawAxisLineEnabled = false //상단 x축 라인 제거
-        xAxis.drawLabelsEnabled = false //상단 x축 라벨 표시
-        //        xAxis.enabled = false //x축 하단 라벨 숨기기
-        xAxis.labelPosition = .bottom //x축 라벨 위치를 하단으로 설정
-        xAxis.granularity = 1 //x축 라벨의 최소 간격을 1로 설정
-        xAxis.labelFont = .saverBody2Semibold
-        xAxis.labelTextColor = .white
-        //        xAxis.yOffset = -8.0 //그래프와 라벨의 사이의 간격
-        
-        //왼쪽 Y축 설정
-        let leftAxis = view.leftAxis //charView에 Y축 설정
-        leftAxis.drawGridLinesEnabled = false //왼쪽 Y축 격자 제거
-        leftAxis.drawAxisLineEnabled = false //왼쪽 Y축 라인 제거
-        leftAxis.drawLabelsEnabled = false //왼쪽 Y축 라벨 제거
-        
-        //오른쪽 Y축 설정
-        let rightAxis = view.rightAxis //charView에 Y축 설정
-        rightAxis.drawGridLinesEnabled = false //오른쪽 Y축 격자 제거
-        rightAxis.drawAxisLineEnabled = false //오른쪽 Y축 라인 제거
-        rightAxis.drawLabelsEnabled = false //오른쪽 Y축 라벨 제거
-        
-        //그래프를 그려주는 함수 실행
-        setBarData(barChartView: view, barChartDataEntries: entryData(values: myData.map{ $0.1.totalAmount })) //금액을 기준으로 그래프를 만들기 때문에 금액변수를 넘긴다.
-        
+    private lazy var spendingReport: CustomBarChartView = {
+        let view = CustomBarChartView()
+        view.values = myData.map{ $0.1.totalAmount } //데이터의 크기
+        view.labels = myData.map{ $0.0} //데이터 상단 라벨
+        // X축 레이블 설정
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -196,9 +162,8 @@ class ReportViewController: UIViewController {
         view.addSubview(spendingUIStackView)
             addViewWithConstraints([legendScrollView, categoryExpenditureTableView], to: view)
             setupLegendScrollView(labels: myData.map{$0.0})
-            setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{ $0.1.totalAmount }))
+        spendingReport.updateDate(values: myData.map{ $0.1.totalAmount }, labels: myData.map{ $0.0 })
             spendingAmountLabel.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
-            spendingAmountLabel.applySmallSuffixFontStyle()
             categoryExpenditureTableView.reloadData()
         
         //오토레이아웃 설정
@@ -247,71 +212,6 @@ class ReportViewController: UIViewController {
             afterMonthButton.centerYAnchor.constraint(equalTo: spendingUIStackView.centerYAnchor),
         ])
     }
-    
-    //MARK: - 그래프 생성
-    private func setBarData(barChartView: BarChartView, barChartDataEntries: [BarChartDataEntry]) {
-        if barChartDataEntries.isEmpty {
-            barChartView.data = nil
-        } else {
-            var labels = [String]()
-            var topLabels = [String]()
-            let total = myData.map { $0.1.totalAmount }.reduce(0.0, +)
-            
-            if myData.count > 4 {
-                labels = myData.prefix(3).map { $0.0 }
-                topLabels = myData.prefix(3).map { "\(Int(($0.1.totalAmount / total) * 100))%" }
-                labels += ["기타"]
-                let remainingData = myData.dropFirst(3).map { $0.1.totalAmount }.reduce(0, +)
-                topLabels.append("\(Int(round((remainingData / total) * 100)))%")
-            } else {
-                labels = myData.map { $0.0 }
-                topLabels = myData.map { "\(Int(($0.1.totalAmount / total * 100)))%" }
-            }
-            
-            let barChartDataSet = BarChartDataSet(entries: barChartDataEntries, label: "사용금액")
-            barChartDataSet.colors = self.colors
-            let barChartData = BarChartData(dataSet: barChartDataSet)
-            barChartData.barWidth = 0.6
-            barChartView.data = barChartData
-            
-            let customRenderer = CustomRoundedBarChartRenderer(dataProvider: barChartView, animator: barChartView.chartAnimator, viewPortHandler: barChartView.viewPortHandler)
-            customRenderer.topLabels = topLabels
-            customRenderer.bottomLabels = labels
-            barChartView.renderer = customRenderer
-            
-            barChartView.animate(yAxisDuration: 0.7, easingOption: .easeInOutQuad)
-        }
-        barChartView.notifyDataSetChanged()
-        barChartView.legend.enabled = false
-    }
-    
-    private func entryData(values: [Double]) -> [BarChartDataEntry] {
-        var barDataEntries: [BarChartDataEntry] = []
-        let count = values.count
-        guard count > 0 else { return barDataEntries }
-        
-        var condensedData = [Double]()
-        
-        if values.count > 4 {
-            condensedData += values[0...2]
-            condensedData.append(values[3...values.count-1].reduce(0.0, +))
-        } else {
-            condensedData = values
-            condensedData += [Double](repeating: 0.0, count: 4-values.count)
-        }
-        
-        let total = condensedData.reduce(0.0, +)
-        for i in 0..<4 {
-            let value = condensedData[i]
-            let finalValue = value / total
-            barDataEntries.append(BarChartDataEntry(x: Double(i), y: finalValue))
-        }
-        
-        return barDataEntries
-    }
-    
-    
-    
     
     //MARK: - LegendScrol생성
     //그래프의 legend를 스크롤로 생성하는 함수
@@ -422,7 +322,7 @@ class ReportViewController: UIViewController {
     //달을 변경했을 때 뷰를 업데이트하는 함수
     func reloadViewUpdate(){
         categoryFilterSaverEntries()
-        setBarData(barChartView: spendingReport, barChartDataEntries: entryData(values: myData.map{$0.1.totalAmount}))
+        spendingReport.updateDate(values: myData.map{ $0.1.totalAmount }, labels: myData.map{ $0.0 })
         legendStackView.subviews.forEach{ $0.removeFromSuperview() }
         if myData.isEmpty{
             selectedCategory = nil
@@ -437,7 +337,6 @@ class ReportViewController: UIViewController {
         
         spendingAmountNameLabel.text = "\(month)월 지출 금액"
         spendingAmountLabel.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
-        spendingAmountLabel.applySmallSuffixFontStyle()
     }
     
     //MARK: - 필요한 데이터로 변환 및 생성
@@ -492,7 +391,7 @@ class ReportViewController: UIViewController {
 
 //MARK: - Delegate
 //UITableView
-extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
+extension ReportViewController{
     
     //MARK: - sections설정
     //섹션의 개수
@@ -559,164 +458,5 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate{
             sheetPresentationController?.selectedDetentIdentifier = .medium
         }
         present(detailCateogryTransactionViewController, animated: true)
-    }
-}
-
-//MARK: - '원' 글씨크기 작게 만들기
-extension UILabel{
-    func applySmallSuffixFontStyle(){
-        guard let text = self.text else { return }
-        
-        //'원'의 글자 크기를 작게 설정
-        // label의 text를 기반으로 기존의 문자열을 변경할 수 있게 NSMutableAttributedString을 생성합니다
-        let attributedText = NSMutableAttributedString(string: text)
-        //지정된 범위에 대해 속성을 설정
-        attributedText.setAttributes([.font: UIFont.systemFont(ofSize: self.font.pointSize - 6, weight: .semibold),], range: NSRange(location: text.count - 1, length: 1))
-        //속성 적용
-        self.attributedText = attributedText
-    }
-}
-
-//MARK: - UIFont 커스텀
-extension UIFont{
-    //Title
-    static let saverTitleBold = UIFont.systemFont(ofSize: 25, weight: .bold)
-    static let saverTitleRegular = UIFont.systemFont(ofSize: 25, weight: .regular)
-    
-    //SubTitle
-    static let saverSubTitleSemibold = UIFont.systemFont(ofSize: 20, weight: .semibold)
-    static let saverSubTitleRegular = UIFont.systemFont(ofSize: 20, weight: .regular)
-    
-    //Body
-    static let saverBody1Semibold = UIFont.systemFont(ofSize: 16, weight: .semibold)
-    static let saverBody1Regurlar = UIFont.systemFont(ofSize: 16, weight: .regular)
-    static let saverBody2Semibold = UIFont.systemFont(ofSize: 14, weight: .semibold)
-    static let saverBody2Regurlar = UIFont.systemFont(ofSize: 14, weight: .regular)
-    
-    //Caption
-    static let saverCaption1Regular = UIFont.systemFont(ofSize: 12, weight: .regular)
-    static let saverCaption2Regular = UIFont.systemFont(ofSize: 10, weight: .regular)
-}
-
-//MARK: - 막대그래프를 둥글게 만들기 위해 render재정의
-class CustomRoundedBarChartRenderer: BarChartRenderer {
-
-    var topLabels: [String] = []
-    var bottomLabels: [String] = []
-    var minBarHeight: CGFloat = 10.0 // 최소 바 높이
-    let labelOffset: CGFloat = 8.0 // 라벨과 막대 사이의 간격
-    let cornerRadius: CGFloat = 10.0 // 둥근 모서리 정도
-
-    override func drawDataSet(context: CGContext, dataSet: BarChartDataSetProtocol, index: Int) {
-        guard let barData = dataProvider?.barData else { return }
-        let trans = dataProvider?.getTransformer(forAxis: dataSet.axisDependency)
-
-        let barWidthHalf = barData.barWidth / 2.0
-
-        for i in 0 ..< min(Int(ceil(CGFloat(dataSet.entryCount) * animator.phaseX)), dataSet.entryCount) {
-            guard let entry = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
-            let x = entry.x
-            let y = entry.y
-
-            let left = CGFloat(x - barWidthHalf)
-            let right = CGFloat(x + barWidthHalf)
-            let top = CGFloat(y >= 0.0 ? y : 0.0)
-            let bottom = CGFloat(y <= 0.0 ? y : 0.0)
-
-            var barRect = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
-            trans?.rectValueToPixel(&barRect)
-
-            // 데이터의 크기에 따라 높이 조절
-            let valueHeight = CGFloat(y)
-            if valueHeight == 0 { continue } // 데이터가 없으면 건너뜀
-
-            // 애니메이션 효과 적용
-            let animatedHeight = valueHeight * animator.phaseY
-            let contentTop = viewPortHandler.contentTop
-            let contentBottom = viewPortHandler.contentBottom
-
-            // 상단 및 하단 라벨 높이를 계산하여 막대 그래프 높이 조정
-            let topLabelHeight: CGFloat = {
-                if i < topLabels.count {
-                    let topLabel = topLabels[i]
-                    let attributes: [NSAttributedString.Key: Any] = [
-                        .font: UIFont.systemFont(ofSize: 16, weight: .regular)
-                    ]
-                    return topLabel.size(withAttributes: attributes).height
-                }
-                return 0
-            }()
-
-            let bottomLabelHeight: CGFloat = {
-                if i < bottomLabels.count {
-                    let bottomLabel = bottomLabels[i]
-                    let attributes: [NSAttributedString.Key: Any] = [
-                        .font: UIFont.systemFont(ofSize: 14, weight: .semibold)
-                    ]
-                    return bottomLabel.size(withAttributes: attributes).height
-                }
-                return 0
-            }()
-
-            let totalAvailableHeight = contentBottom - contentTop - 6 * labelOffset - topLabelHeight - bottomLabelHeight // 라벨 간격을 확보한 총 높이
-            let maxBarHeight = totalAvailableHeight
-            let finalBarHeight = min(animatedHeight * totalAvailableHeight, maxBarHeight)
-
-            // 막대 그래프의 시작 위치 계산
-            let bottomLabelY = contentBottom - bottomLabelHeight - 2 * labelOffset // 하단 라벨의 y 위치
-            let barStartY = bottomLabelY - finalBarHeight - labelOffset // 막대 그래프의 시작 y 위치
-
-            // 막대 그래프의 위치와 크기 설정
-            barRect.origin.y = barStartY + finalBarHeight * (1.0 - animator.phaseY)
-            barRect.size.height = finalBarHeight * animator.phaseY
-
-            let bezierPath = UIBezierPath(roundedRect: barRect, cornerRadius: cornerRadius)
-            context.addPath(bezierPath.cgPath)
-            context.setFillColor(dataSet.color(atIndex: i).cgColor)
-            context.fillPath()
-
-            // 상단 텍스트 그리기
-            if i < topLabels.count {
-                let topLabel = topLabels[i]
-                drawTopLabel(context: context, label: topLabel, barRect: barRect, topLabelHeight: topLabelHeight)
-            }
-
-            // 하단 텍스트 그리기
-            if i < bottomLabels.count {
-                let bottomLabel = bottomLabels[i]
-                drawBottomLabel(context: context, label: bottomLabel, barRect: barRect)
-            }
-        }
-    }
-
-    private func drawTopLabel(context: CGContext, label: String, barRect: CGRect, topLabelHeight: CGFloat) {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 16, weight: .regular),
-            .foregroundColor: UIColor.white
-        ]
-
-        let size = label.size(withAttributes: attributes)
-        let x = barRect.midX - size.width / 2
-        let y = barRect.origin.y - size.height - labelOffset // 막대 그래프 상단에 위치
-
-        // 상단 라벨이 차트 뷰 상단에 닿지 않도록 조정
-        let adjustedY = max(viewPortHandler.contentTop + 2 * labelOffset, y)
-
-        let textRect = CGRect(x: x, y: adjustedY, width: size.width, height: size.height)
-        label.draw(in: textRect, withAttributes: attributes)
-    }
-
-    private func drawBottomLabel(context: CGContext, label: String, barRect: CGRect) {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 14, weight: .semibold),
-            .foregroundColor: UIColor.white
-        ]
-
-        let size = label.size(withAttributes: attributes)
-        let x = barRect.midX - size.width / 2
-        let y = (viewPortHandler.contentBottom) - size.height - 2 * labelOffset // 라벨을 막대 바로 아래에 위치
-
-        let textRect = CGRect(x: x, y: y, width: size.width, height: size.height)
-        label.draw(in: textRect, withAttributes: attributes)
     }
 }
