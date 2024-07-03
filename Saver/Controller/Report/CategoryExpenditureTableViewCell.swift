@@ -20,7 +20,7 @@ class CategoryExpenditureTableViewCell: UITableViewCell {
     }()
     
     //지출 금액
-    private lazy var categoryTransactionAmountLabel: UILabel = {
+    private lazy var categoryTransactionAmountLabel: CustomUILabel = {
         let label = CustomUILabel()
         label.font = .saverSubTitleSemibold
         label.textColor = .spendingAmount

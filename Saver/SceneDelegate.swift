@@ -19,8 +19,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let homeViewController = HomeViewController()
         let reportViewController = ReportViewController()
+        let addSpendingGoalController = AddSpendingGoalView() //임시
         
-        let firstNavigationController = UINavigationController(rootViewController: GoalExpenditureViewController())
+        let firstNavigationController = UINavigationController(rootViewController: addSpendingGoalController)
         let secondNavigationController = UINavigationController(rootViewController: reportViewController)
         
         // HomeViewController가 나타난 후 자동으로 AddAmountViewController로 전환

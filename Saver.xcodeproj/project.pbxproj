@@ -16,6 +16,7 @@
 		58FAB1642C0ED0F5005251EB /* CalendarCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58FAB1632C0ED0F5005251EB /* CalendarCollectionViewCell.swift */; };
 		790F74802C2B346E004232D3 /* CustomUILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790F747F2C2B346E004232D3 /* CustomUILabel.swift */; };
 		790F74822C2B37E4004232D3 /* UIFontExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790F74812C2B37E4004232D3 /* UIFontExtension.swift */; };
+		793B568C2C354442000BDD98 /* AddSpendingGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793B568B2C354442000BDD98 /* AddSpendingGoalView.swift */; };
 		7942149A2C2DDE6100818BD8 /* CustomBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794214992C2DDE6100818BD8 /* CustomBarChartView.swift */; };
 		7953E8032C0D508C0095AC36 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953E8022C0D508C0095AC36 /* AppDelegate.swift */; };
 		7953E8052C0D508C0095AC36 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953E8042C0D508C0095AC36 /* SceneDelegate.swift */; };
@@ -43,6 +44,7 @@
 		58FAB1632C0ED0F5005251EB /* CalendarCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCollectionViewCell.swift; sourceTree = "<group>"; };
 		790F747F2C2B346E004232D3 /* CustomUILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUILabel.swift; sourceTree = "<group>"; };
 		790F74812C2B37E4004232D3 /* UIFontExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIFontExtension.swift; sourceTree = "<group>"; };
+		793B568B2C354442000BDD98 /* AddSpendingGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSpendingGoalView.swift; sourceTree = "<group>"; };
 		794214992C2DDE6100818BD8 /* CustomBarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBarChartView.swift; sourceTree = "<group>"; };
 		7953E7FF2C0D508C0095AC36 /* Saver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Saver.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7953E8022C0D508C0095AC36 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 		79FE80872C0DA3BC00517428 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				793B568B2C354442000BDD98 /* AddSpendingGoalView.swift */,
 				BFC5170E2C0E9C730072A31D /* AddAmountViewController.swift */,
 				5893DB842C19BAA600143B21 /* Home */,
 				796B01292C16EBF200E7D972 /* CategoryDetail */,
@@ -269,6 +272,7 @@
 				790F74802C2B346E004232D3 /* CustomUILabel.swift in Sources */,
 				7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */,
 				58FAB1622C0ECA63005251EB /* CalendarManager.swift in Sources */,
+				793B568C2C354442000BDD98 /* AddSpendingGoalView.swift in Sources */,
 				BF6AAC932C15758500873654 /* ExtensionAddAmountVC.swift in Sources */,
 				796B012D2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift in Sources */,
 				7942149A2C2DDE6100818BD8 /* CustomBarChartView.swift in Sources */,

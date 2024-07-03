@@ -18,7 +18,7 @@ class CategoryListDetailTableCellTableViewCell: UITableViewCell {
     }()
     
     //MARK: - 금액 표시
-    private lazy var amountLabel: UILabel = {
+    private lazy var amountLabel: CustomUILabel = {
         let label = CustomUILabel()
         label.font = .saverSubTitleSemibold
         label.textColor = .spendingAmount

@@ -31,7 +31,7 @@ class ReportViewController: UIViewController, UITableViewDataSource, UITableView
     }()
     
     //지출금액
-    private lazy var spendingAmountLabel: UILabel = {
+    private lazy var spendingAmountLabel: CustomUILabel = {
         let label = CustomUILabel()
         label.text = "\(ShareData.shared.formatNumber(myData.map{$0.1.totalAmount}.reduce(0, +)))원"
         label.font = UIFont.saverTitleBold
@@ -220,7 +220,6 @@ class ReportViewController: UIViewController, UITableViewDataSource, UITableView
         for label in labels{
             //모양
             let capsuleView = UIView()
-            capsuleView.backgroundColor = .systemPink
             capsuleView.layer.cornerRadius = 20
             capsuleView.layer.masksToBounds = true
             capsuleView.translatesAutoresizingMaskIntoConstraints = false
