@@ -21,8 +21,9 @@ class GoalDetailViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
 
-//        navigationItem.title = "식비"
-//        self.navigationController?.navigationBar.tintColor = .lightGray
+        self.navigationItem.title = "asdf"
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.black]
+
         
         naviItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(naviAction))
         self.navigationItem.rightBarButtonItem = naviItem
