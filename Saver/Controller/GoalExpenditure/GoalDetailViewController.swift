@@ -13,17 +13,20 @@ class GoalDetailViewController: UIViewController {
     
     private var scrollView: UIScrollView = UIScrollView()
     
+    // 상단 지출목표 타이틀 Label
     private var semiTitle: UILabel = UILabel()
     private var titleLabel: UILabel = UILabel()
     private var titleStackView: UIStackView = UIStackView()
+    
+    // 그래프 관련 View
+    private var graphStackView: UIStackView = UIStackView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
 
-        self.navigationItem.title = "asdf"
+        self.navigationItem.title = "Title"
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.black]
-
         
         naviItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(naviAction))
         self.navigationItem.rightBarButtonItem = naviItem
@@ -53,9 +56,9 @@ class GoalDetailViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
-    
     //MARK: - 타이틀라벨 스택뷰 setup
     func setupTitleStackView() {
+//        uiimage
         semiTitle.text = "현재 누적 지출 금액 300,000원"
         semiTitle.font = UIFont.preferredFont(forTextStyle: .caption1)
         semiTitle.textColor = .black
@@ -81,5 +84,14 @@ class GoalDetailViewController: UIViewController {
             titleStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
         ])
     }
-
+    
+    //MARK: - 그래프 StackView setup
+    func setupGraphStackView() {
+        graphStackView.axis = .vertical
+        graphStackView.distribution = .fill
+        graphStackView.alignment = .leading
+        
+        graphStackView.backgroundColor = .lightGray
+        graphStackView.translatesAutoresizingMaskIntoConstraints = false
+    }
 }

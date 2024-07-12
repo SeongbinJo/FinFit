@@ -25,23 +25,13 @@ class ShareData{
     let dbController = DBController.shared
     
     private var saverEntries: [SaverModel]
-    private var addTestEntries: [SaverModel]
+    
     private var monthTransactionData: [SaverModel]
 
     private var categoriesList: [String]
     
     private init(){
-        saverEntries = [
-            SaverModel(transactionName: "Groceries", spendingAmount: 5000, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 5, day: 30).date!, name: "Food"),
-            SaverModel(transactionName: "Rent", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 1).date!, name: "Housing"),
-            SaverModel(transactionName: "Salary", spendingAmount: 2500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 13).date!, name: "Income"),
-            SaverModel(transactionName: "Bonus", spendingAmount: 1000.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 13).date!, name: "Income"),
-            SaverModel(transactionName: "Utilities", spendingAmount: -100.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Utilities"),
-            SaverModel(transactionName: "Dining Out", spendingAmount: -75.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Food"),
-        ]
-        addTestEntries = [
-            SaverModel(transactionName: "Groceries", spendingAmount: 500.0, transactionDate: DateComponents(calendar: Calendar.current, year: 2024, month: 6, day: 11).date!, name: "Food"),
-        ]
+        saverEntries = []
         monthTransactionData = []
         categoriesList = []
     }
@@ -115,10 +105,28 @@ class ShareData{
     }
     
     // 특정 날짜의 합계금액
-    func totalAmountIndDay(day: Int) -> String {
-        let totalAmount = self.getTransactionListOfDay(day: day).reduce(0) { $0 + $1.spendingAmount }
-        let amountString: String = self.formatNumber(totalAmount)
-        return amountString
+//    func totalAmountIndDay(day: Int) -> String {
+//        let totalAmount = self.getTransactionListOfDay(day: day).reduce(0) { $0 + $1.spendingAmount }
+//        let amountString: String = self.formatNumber(totalAmount)
+//        return amountString
+//    }
+    
+    func totalAmountIndDay(day: Int) -> (revenueAmount: String, expenditureAmount: String, totalAmount: String) {
+        let (revenueAmount, expenditureAmount) = self.getTransactionListOfDay(day: day).reduce((0, 0)) { (result, transaction) in
+            var (revenueAmount, expenditureAmount) = result
+            if transaction.spendingAmount < 0 {
+                expenditureAmount += transaction.spendingAmount
+            } else {
+                revenueAmount += transaction.spendingAmount
+            }
+            return (revenueAmount, expenditureAmount)
+        }
+
+        let revenueString: String = self.formatNumber(revenueAmount)
+        let expenditureString: String = self.formatNumber(expenditureAmount)
+        let totalString: String = self.formatNumber(revenueAmount + expenditureAmount)
+
+        return (revenueString, expenditureString, totalString)
     }
     
     // DataController에서 데이터를 삭제했을 때

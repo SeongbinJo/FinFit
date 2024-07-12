@@ -19,13 +19,46 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         return numberLabel
     }()
     
-    lazy var amountOfDay: UILabel = {
-        let amountLabel = UILabel()
-        amountLabel.text = "1,000"
-        amountLabel.font = UIFont.systemFont(ofSize: 10, weight: .light)
-        amountLabel.numberOfLines = 2
-        amountLabel.translatesAutoresizingMaskIntoConstraints = false
-        return amountLabel
+//    private lazy var amountOfDay: UILabel = {
+//        let amountLabel = UILabel()
+//        amountLabel.text = "1,000"
+//        amountLabel.font = UIFont.systemFont(ofSize: 10, weight: .light)
+//        amountLabel.numberOfLines = 1
+//        amountLabel.translatesAutoresizingMaskIntoConstraints = false
+//        return amountLabel
+//    }()
+    
+    private var revenueLabel: UILabel = {
+        let label = UILabel()
+        label.text = "revenue"
+        label.font = UIFont.systemFont(ofSize: 10, weight: .light)
+        label.numberOfLines = 1
+        
+        return label
+    }()
+    
+    private var expenditureLabel: UILabel = {
+        let label = UILabel()
+        label.text = "expenditure"
+        label.font = UIFont.systemFont(ofSize: 10, weight: .light)
+        label.numberOfLines = 1
+        
+        return label
+    }()
+
+    
+    private lazy var amountStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.alignment = .leading
+        
+        stackView.addArrangedSubview(revenueLabel)
+        stackView.addArrangedSubview(expenditureLabel)
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
     }()
     
     private lazy var stackView: UIStackView = {
@@ -35,7 +68,7 @@ class CalendarCollectionViewCell: UICollectionViewCell {
         stackView.alignment = .center
         
         stackView.addArrangedSubview(numberOfDayLabel)
-        stackView.addArrangedSubview(amountOfDay)
+        stackView.addArrangedSubview(amountStackView)
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
@@ -62,65 +95,55 @@ class CalendarCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
         contentView.backgroundColor = .clear
-        amountOfDay.textColor = .black
-        amountOfDay.text = "-"
+        
+        revenueLabel.text = "-"
+        amountStackView.addArrangedSubview(expenditureLabel)
+        expenditureLabel.text = ""
+        
         contentView.layer.borderWidth = 0
     }
     
-    // day = 1~31 중 하나의 문자열
-    // 'yyyy년 M월 d일'의 String or Date를 넘겨주고 configureCell에서
-    // DataController로 필터링해서 데이터를 가져온 다음,
-    // 해당 데이터들의 금액의 합을 구해서 amountOfDay에 String값으로 넣어준다!?
-    
-    // 델리겟 프로토콜을 선언하고 콜렉션 뷰의 셀이 초기화 될때,
-    // DataController의 함수들을 HomeViewController(테이블 뷰 extension 내부)에 선언된 델리겟 필수 메서드 안에서 사용하고,
-    // configureCell() 내부에서 delegate.method()로 함수 실행.
-    // 그럼 의존성 낮출 수 있나..? 유지보수나 재사용성을 보면 델리게이트 패턴을 사용하는게 옳다 -소혜 강사님-
     func configureCell(date: Date, day: Int, isToday: Bool) {
         numberOfDayLabel.text = String(day)
         numberOfDayLabel.textColor = .neutral20
-        amountOfDayLabelColor(day: day)
+        revenueLabel.textColor = .incomeAmount
+        expenditureLabel.textColor = .spendingAmount
+//        amountOfDayLabelColor(day: day)
         if isToday && String(day) == self.today {
             contentView.backgroundColor = .neutral60
         }
         switch day {
         case 0:
             numberOfDayLabel.text = ""
-            amountOfDay.text = ""
+            revenueLabel.text = ""
+            expenditureLabel.text = ""
+//            amountOfDay.text = ""
+            print("hi")
         default:
-            amountOfDay.text = ShareData.shared.getTransactionListOfDay(day: day).count > 0 ? "\(ShareData.shared.totalAmountIndDay(day: day))" : "-"
+            if ShareData.shared.getTransactionListOfDay(day: day).count > 0 {
+                let revenue = ShareData.shared.totalAmountIndDay(day: day).revenueAmount
+                let expenditure = ShareData.shared.totalAmountIndDay(day: day).expenditureAmount
+                revenueLabel.text = revenue == "0" ? "" :  "+\(ShareData.shared.totalAmountIndDay(day: day).revenueAmount)"
+                expenditureLabel.text = expenditure == "0" ? "" : ShareData.shared.totalAmountIndDay(day: day).expenditureAmount
+            } else {
+                revenueLabel.text = "-"
+//                expenditureLabel.text = ""
+                expenditureLabel.removeFromSuperview()
+            }
         }
     }
     
-    func amountOfDayLabelColor(day: Int) {
-        let amount = ShareData.shared.totalAmountIndDay(day: day)
-        switch amount.first {
-        case "-":
-            amountOfDay.textColor = .spendingAmount
-        case "0":
-            amountOfDay.textColor = .neutral20
-        default:
-            amountOfDay.textColor = .incomeAmount
-        }
-    }
-    
-    //MARK: - 날짜별 spendingAmount 합계(더미데이터 전용)
-    // 매개변수의 날짜를 필터링한 후, 내역이 존재하면 reduce로 합산
-//    func totalAmountOfDayData(date: Date) -> String {
-//        let filteredArray: [SaverModel] = HomeViewController.dummyData.filter { $0.transactionDate == date }
-//
-//        guard !filteredArray.isEmpty else { return "-" }
-//        let result: Double = filteredArray.reduce(0) { $0 + $1.spendingAmount }
-//        switch result {
-//        case ..<0.0:
-//            amountOfDay.textColor = .red
-//        case 0.0:
-//            amountOfDay.textColor = .black
+//    func amountOfDayLabelColor(day: Int) {
+//        let amount = ShareData.shared.totalAmountIndDay(day: day).revenueAmount
+//        switch amount.first {
+//        case "-":
+//            amountOfDay.textColor = .spendingAmount
+//        case "0":
+//            amountOfDay.textColor = .neutral20
 //        default:
-//            amountOfDay.textColor = .blue
+//            amountOfDay.textColor = .incomeAmount
 //        }
-//        return "\(result)원"
 //    }
-    
 }

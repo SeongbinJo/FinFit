@@ -147,20 +147,24 @@ class GoalExpenditureViewController: UIViewController {
     func setupGoalExpenditureTitleStackView() {
         goalExpenditureTitleLabel.text = "지출 목표 리포트"
         
-        let nameOrder: UIAction = UIAction(title: "이름순") { action in
-            
-        }
-        let amountOrder: UIAction = UIAction(title: "금액순") { action in
-            
-        }
-        
-        let menu: UIMenu = UIMenu(options: .displayInline, children: [nameOrder, amountOrder])
         
         var config = UIButton.Configuration.plain()
         config.imagePlacement = .trailing
         config.attributedTitle = AttributedString("이름순")
         config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0)
         dropDownButton.configuration = config
+        
+        let nameOrder: UIAction = UIAction(title: "이름순") { action in
+            config.attributedTitle = AttributedString("이름순")
+            self.dropDownButton.configuration = config
+        }
+        let amountOrder: UIAction = UIAction(title: "금액순") { action in
+            config.attributedTitle = AttributedString("금액순")
+            self.dropDownButton.configuration = config
+        }
+        
+        let menu: UIMenu = UIMenu(options: .displayInline, children: [nameOrder, amountOrder])
+
         dropDownButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         dropDownButton.menu = menu
         dropDownButton.showsMenuAsPrimaryAction = true
