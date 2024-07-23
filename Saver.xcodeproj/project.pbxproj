@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		58233E1A2C16BD7A00780531 /* SharedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58233E192C16BD7A00780531 /* SharedData.swift */; };
 		58305AE42C2BF1AE00081E1A /* GoalExpenditureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58305AE32C2BF1AE00081E1A /* GoalExpenditureViewController.swift */; };
+		583775862C359CEA00847CD3 /* GoalDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 583775852C359CEA00847CD3 /* GoalDetailViewController.swift */; };
 		5837A6D92C11BB5D0036E654 /* TransactionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5837A6D82C11BB5D0036E654 /* TransactionTableViewCell.swift */; };
 		58B968622C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B968612C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift */; };
 		58F099DA2C0F6DC4008B4289 /* CalendarPopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F099D92C0F6DC4008B4289 /* CalendarPopUpViewController.swift */; };
@@ -36,6 +37,7 @@
 /* Begin PBXFileReference section */
 		58233E192C16BD7A00780531 /* SharedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedData.swift; sourceTree = "<group>"; };
 		58305AE32C2BF1AE00081E1A /* GoalExpenditureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalExpenditureViewController.swift; sourceTree = "<group>"; };
+		583775852C359CEA00847CD3 /* GoalDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailViewController.swift; sourceTree = "<group>"; };
 		5837A6D82C11BB5D0036E654 /* TransactionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionTableViewCell.swift; sourceTree = "<group>"; };
 		58B968612C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalExpenditureTableViewCell.swift; sourceTree = "<group>"; };
 		58F099D92C0F6DC4008B4289 /* CalendarPopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPopUpViewController.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			isa = PBXGroup;
 			children = (
 				58305AE32C2BF1AE00081E1A /* GoalExpenditureViewController.swift */,
+				583775852C359CEA00847CD3 /* GoalDetailViewController.swift */,
 				58B968612C2DDACE006981A8 /* GoalExpenditureTableViewCell.swift */,
 			);
 			path = GoalExpenditure;
@@ -268,6 +271,7 @@
 				79FE80892C0DA4A700517428 /* ReportViewController.swift in Sources */,
 				790F74802C2B346E004232D3 /* CustomUILabel.swift in Sources */,
 				7953E8072C0D508C0095AC36 /* HomeViewController.swift in Sources */,
+				583775862C359CEA00847CD3 /* GoalDetailViewController.swift in Sources */,
 				58FAB1622C0ECA63005251EB /* CalendarManager.swift in Sources */,
 				BF6AAC932C15758500873654 /* ExtensionAddAmountVC.swift in Sources */,
 				796B012D2C16EDA700E7D972 /* CategoryListDetailTableCellTableViewCell.swift in Sources */,
@@ -425,7 +429,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 643M6R9A8T;
+				DEVELOPMENT_TEAM = P95R3MRRWK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Saver/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FinFit;

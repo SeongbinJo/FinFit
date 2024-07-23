@@ -55,24 +55,16 @@ class GoalExpenditureViewController: UIViewController {
     func setupScrollView() {
         scrollView.showsVerticalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .red
         
         viewInScrollView.axis = .vertical
         viewInScrollView.alignment = .center
-        viewInScrollView.distribution = .fillEqually
+        viewInScrollView.distribution = .fill
         viewInScrollView.translatesAutoresizingMaskIntoConstraints = false
-        
-        scrollView.addSubview(viewInScrollView)
         
         view.addSubview(scrollView)
         
         NSLayoutConstraint.activate([
-            viewInScrollView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            viewInScrollView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            viewInScrollView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            viewInScrollView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            viewInScrollView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            viewInScrollView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
-            
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -89,12 +81,12 @@ class GoalExpenditureViewController: UIViewController {
         }, for: .valueChanged)
         segmentButton.translatesAutoresizingMaskIntoConstraints = false
         
-        viewInScrollView.addSubview(segmentButton)
+        scrollView.addSubview(segmentButton)
         
         NSLayoutConstraint.activate([
-            segmentButton.topAnchor.constraint(equalTo: viewInScrollView.topAnchor),
-            segmentButton.leadingAnchor.constraint(equalTo: viewInScrollView.leadingAnchor, constant: 24),
-            segmentButton.trailingAnchor.constraint(equalTo: viewInScrollView.trailingAnchor, constant: -24),
+            segmentButton.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            segmentButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            segmentButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             segmentButton.heightAnchor.constraint(equalToConstant: 35)
         ])
     }
@@ -124,7 +116,7 @@ class GoalExpenditureViewController: UIViewController {
         goalBoxStackView.addArrangedSubview(goalLabel)
         goalBoxStackView.addArrangedSubview(addButton)
         
-        viewInScrollView.addSubview(goalBoxStackView)
+        scrollView.addSubview(goalBoxStackView)
         
         NSLayoutConstraint.activate([
             addButton.widthAnchor.constraint(equalToConstant: 35),
@@ -141,12 +133,12 @@ class GoalExpenditureViewController: UIViewController {
         dividingLine.backgroundColor = .gray
         dividingLine.translatesAutoresizingMaskIntoConstraints = false
         
-        viewInScrollView.addSubview(dividingLine)
+        scrollView.addSubview(dividingLine)
         
         NSLayoutConstraint.activate([
             dividingLine.topAnchor.constraint(equalTo: goalBoxStackView.bottomAnchor, constant: 30),
-            dividingLine.leadingAnchor.constraint(equalTo: viewInScrollView.leadingAnchor),
-            dividingLine.trailingAnchor.constraint(equalTo: viewInScrollView.trailingAnchor),
+            dividingLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dividingLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             dividingLine.heightAnchor.constraint(equalToConstant: 5)
         ])
     }
@@ -155,12 +147,27 @@ class GoalExpenditureViewController: UIViewController {
     func setupGoalExpenditureTitleStackView() {
         goalExpenditureTitleLabel.text = "지출 목표 리포트"
         
+        
         var config = UIButton.Configuration.plain()
         config.imagePlacement = .trailing
         config.attributedTitle = AttributedString("이름순")
         config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0)
         dropDownButton.configuration = config
+        
+        let nameOrder: UIAction = UIAction(title: "이름순") { action in
+            config.attributedTitle = AttributedString("이름순")
+            self.dropDownButton.configuration = config
+        }
+        let amountOrder: UIAction = UIAction(title: "금액순") { action in
+            config.attributedTitle = AttributedString("금액순")
+            self.dropDownButton.configuration = config
+        }
+        
+        let menu: UIMenu = UIMenu(options: .displayInline, children: [nameOrder, amountOrder])
+
         dropDownButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        dropDownButton.menu = menu
+        dropDownButton.showsMenuAsPrimaryAction = true
         dropDownButton.backgroundColor = .green
         
         goalExpenditureTitleStackView.axis = .horizontal
@@ -172,12 +179,12 @@ class GoalExpenditureViewController: UIViewController {
         goalExpenditureTitleStackView .addArrangedSubview(dropDownButton)
         goalExpenditureTitleStackView.backgroundColor = .yellow
         
-        viewInScrollView.addSubview(goalExpenditureTitleStackView)
+        scrollView.addSubview(goalExpenditureTitleStackView)
         
         NSLayoutConstraint.activate([
             goalExpenditureTitleStackView.topAnchor.constraint(equalTo: dividingLine.bottomAnchor, constant: 30),
             goalExpenditureTitleStackView.leadingAnchor.constraint(equalTo: goalBoxStackView.leadingAnchor),
-            goalExpenditureTitleStackView.trailingAnchor.constraint(equalTo: goalBoxStackView.trailingAnchor)
+            goalExpenditureTitleStackView.trailingAnchor.constraint(equalTo: goalBoxStackView.trailingAnchor),
         ])
     }
     
@@ -187,15 +194,16 @@ class GoalExpenditureViewController: UIViewController {
         goalExpenditureTableView.dataSource = self
         goalExpenditureTableView.register(GoalExpenditureTableViewCell.self, forCellReuseIdentifier: "cell")
         goalExpenditureTableView.backgroundColor = .yellow
+        goalExpenditureTableView.isScrollEnabled = false
         goalExpenditureTableView.translatesAutoresizingMaskIntoConstraints = false
         
-        viewInScrollView.addSubview(goalExpenditureTableView)
+        scrollView.addSubview(goalExpenditureTableView)
         
         NSLayoutConstraint.activate([
             goalExpenditureTableView.topAnchor.constraint(equalTo: goalExpenditureTitleStackView.bottomAnchor, constant: 20),
             goalExpenditureTableView.leadingAnchor.constraint(equalTo: goalExpenditureTitleStackView.leadingAnchor),
             goalExpenditureTableView.trailingAnchor.constraint(equalTo: goalExpenditureTitleStackView.trailingAnchor),
-            goalExpenditureTableView.bottomAnchor.constraint(equalTo: viewInScrollView.bottomAnchor),
+            goalExpenditureTableView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
         
         goalTableViewHeightConstraint = goalExpenditureTableView.heightAnchor.constraint(equalToConstant: 0)
@@ -210,6 +218,7 @@ class GoalExpenditureViewController: UIViewController {
         let newHeight = CGFloat(numberOfRows * rowHeight)
         
         goalTableViewHeightConstraint.constant = newHeight
+        print("테이블뷰 높이 재조정")
     }
     
 }
@@ -220,12 +229,18 @@ extension GoalExpenditureViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! GoalExpenditureTableViewCell
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedCell = tableView.cellForRow(at: indexPath) as? GoalExpenditureTableViewCell
+        let detailViewController = GoalDetailViewController()
+        navigationController?.pushViewController(detailViewController, animated: true)
     }
     
     

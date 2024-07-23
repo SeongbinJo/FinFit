@@ -215,7 +215,7 @@ final class HomeViewController: UIViewController {
             let todayComponents = self.calendar.dateComponents([.year, .month, .day], from: Date())
             ShareData.shared.getYearMonthTransactionData(year: todayComponents.year!, month: todayComponents.month!)
             self.changeCalendarMethod(date: CalendarManager.manager.calendarDate)
-            self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!)) 원"
+            self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!).totalAmount) 원"
         }, for: .touchUpInside)
         
         prevNextButtonStackView.axis = .horizontal
@@ -348,7 +348,7 @@ final class HomeViewController: UIViewController {
         currentDayTitle.translatesAutoresizingMaskIntoConstraints = false
         
         let todayComponents = self.calendar.dateComponents([.day], from: self.selectedDate ?? Date())
-        currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!)) 원"
+        currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!).totalAmount) 원"
         currentDayAmount.textColor = .neutral20
         currentDayAmount.font = UIFont.systemFont(ofSize: 25)
         currentDayAmount.translatesAutoresizingMaskIntoConstraints = false
@@ -452,7 +452,7 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
     func deleteTransaction(transaction: SaverModel) {
         ShareData.shared.removeData(transaction: transaction)
         let todayComponents = self.calendar.dateComponents([.day], from: transaction.transactionDate)
-        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!)) 원"
+        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: todayComponents.day!).totalAmount) 원"
         self.totalAmountCurrentMonth() // 내역 삭제할 때마다 월별 합계금액 타이틀 변경
         transactionTableView.reloadData()
         self.updateTableViewHeight()
@@ -471,7 +471,7 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
         let components = self.calendar.dateComponents([.year, .month], from: self.selectedDate ?? Date())
         ShareData.shared.getYearMonthTransactionData(year: components.year!, month: components.month!)
         let dateComponents = self.calendar.dateComponents([.day], from: transaction.transactionDate)
-        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: dateComponents.day!)) 원"
+        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: dateComponents.day!).totalAmount) 원"
         self.totalAmountCurrentMonth() // 내역 추가할 때마다 월별 합계금액 타이틀 변경
         self.transactionTableView.reloadData()
         self.calendarCollectionView.reloadData()
@@ -482,7 +482,7 @@ extension HomeViewController: CalendarPopUpViewControllerDelegate, TransactionTa
         let components = self.calendar.dateComponents([.year, .month], from: self.selectedDate ?? Date())
         ShareData.shared.getYearMonthTransactionData(year: components.year!, month: components.month!)
         let dateComponents = self.calendar.dateComponents([.day], from: oldTransactoin.transactionDate)
-        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: dateComponents.day!)) 원"
+        self.currentDayAmount.text = "\(ShareData.shared.totalAmountIndDay(day: dateComponents.day!).totalAmount) 원"
         self.totalAmountCurrentMonth() // 내역 추가할 때마다 월별 합계금액 타이틀 변경
         self.transactionTableView.reloadData()
         self.calendarCollectionView.reloadData()
@@ -547,7 +547,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 let date = calendar.date(from: dateComponents)
                 
             
-                let totalAmountInDay = ShareData.shared.totalAmountIndDay(day: days[indexPath.row])
+                let totalAmountInDay = ShareData.shared.totalAmountIndDay(day: days[indexPath.row]).totalAmount
                 self.currentDayAmount.text = "\(totalAmountInDay) 원"
                 
                 self.dateFormatter.formatter(type: .monthDayE)
